@@ -1,0 +1,11 @@
+[
+ {"id":"hook",   "text":"Psst. Yes, you. It's Friday... and you have no plans?"},
+ {"id":"world",  "text":"In a world... where the good seats vanish in minutes..."},
+ {"id":"squad",  "text":"Your friends want the movie. Or the comedy show. Or the match!"},
+ {"id":"pick",   "text":"So pick one. Together. Right here."},
+ {"id":"seats",  "text":"Middle row. Dead centre. Chef's kiss."},
+ {"id":"pay",    "text":"One tap, paid. And I didn't even spill."},
+ {"id":"snack",  "text":"Samosas? Pre-ordered. Popcorn too. Wait... is that... me?"},
+ {"id":"gate",   "text":"No paper. No queue. Just walk in like a star."},
+ {"id":"end",    "text":"BookMyShow. Your seat's waiting."}
+]

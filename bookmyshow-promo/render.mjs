@@ -4,11 +4,12 @@ import { createRequire } from 'module';
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import fs from 'fs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 const dir = path.dirname(fileURLToPath(import.meta.url));
-const out = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : path.join(dir, 'bookmyshow-promo.mp4');
+const out = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : path.join(dir, 'build', 'video-only.mp4');
 const sheet = process.argv.includes('--sheet');
 
 const browser = await chromium.launch();
@@ -16,6 +17,7 @@ const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
 await page.goto('file://' + path.join(dir, 'promo.html') + '?render');
 await page.evaluate(() => window.ready);
 const { dur, fps } = await page.evaluate(() => ({ dur: window.DURATION, fps: window.FPS }));
+fs.writeFileSync(path.join(dir, 'audio', 'timeline.json'), JSON.stringify(await page.evaluate(() => window.timeline()), null, 1));
 
 const times = [];
 if (sheet) for (let t = 0.2; t < dur; t += dur / 24) times.push(t);
