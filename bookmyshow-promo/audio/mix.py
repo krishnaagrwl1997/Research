@@ -39,7 +39,7 @@ def bell(m, d=0.5):
     return (np.sin(2 * np.pi * f * t) + .3 * np.sin(2 * np.pi * f * 2.76 * t)) * env(d, .002, .14) * 0.25
 
 CHORDS = [(48, [60, 64, 67]), (43, [59, 62, 67]), (45, [60, 64, 69]), (41, [60, 65, 69])]  # C G Am F
-BPM = 118; beat = 60 / BPM; bar = 4 * beat
+BPM = tl.get('bpm', 118); beat = 60 / BPM; bar = 4 * beat; BEAT0 = tl.get('beat0', 0)
 
 def music():
     secs = tl['music'] + [[tl['duration'] + 1, 'end']]
@@ -59,11 +59,11 @@ def music():
             add(out, bass(36, 2.0) * 1.2, start)
             add(out, hp(noise(2.0), 5000) * env(2.0, .002, .5) * 0.25, start)
             continue
-        n = int(np.ceil((end - start) / beat))
-        for b in range(n):
-            at = start + b * beat
+        b0 = int(np.ceil((start - BEAT0) / beat - 1e-6))
+        for b in range(b0, b0 + int((end - start) / beat) + 2):
+            at = BEAT0 + b * beat
             if at >= end: break
-            ci = int(((at) // bar)) % 4; root, ch = CHORDS[ci]
+            ci = (b // 4) % 4; root, ch = CHORDS[ci]
             add(out, kick(), at, 0.9 if mode == 'full' else 0.0)
             if mode == 'full' and b % 2 == 1: add(out, clap(), at, 0.55)
             add(out, hat(), at + beat / 2, 0.5)
@@ -141,12 +141,27 @@ def flashes():
     return out
 def curtain(): d = 1.0; t = t_(d); return lp(noise(d), 900) * np.sin(np.pi * t / d) ** 2 * 0.3
 def hit(): return np.zeros(1)  # carried by the 'outro' music section
+def popburst():
+    out = np.zeros(int(0.9 * SR))
+    for k in range(9): add(out, pop() * (0.6 + rng.random() * .5), rng.random() * 0.5)
+    return out
+def confetti_sfx():
+    out = np.zeros(int(1.2 * SR))
+    add(out, hp(noise(0.25), 1500) * env(.25, .002, .08) * .8, 0)
+    for k in range(18): add(out, bp(noise(0.03), 3000, 9000) * env(.03, .001, .01), 0.05 + rng.random() * 1.0, 0.35)
+    return out
+def zoomhit():
+    t = t_(0.6); f = 200 + 1400 * (1 - np.exp(-t * 9))
+    x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / .2) * .3
+    add(x, kick(), 0); return x
+def swoosh():
+    d = 0.5; t = t_(d); return (bp(noise(d), 800, 6000) * np.sin(np.pi * t / d) ** 2 * 0.3 + np.sin(2 * np.pi * np.cumsum(300 + 900 * t / d) / SR) * np.sin(np.pi * t / d) * .08)
 
 SFX = {'whoosh': whoosh, 'beep': beep, 'projector': projector, 'pop': pop, 'stab': lambda: stab([60, 64, 67], .4) * 4,
        'boom': lambda: boom(48), 'boom2': lambda: boom(41), 'poofs': poofs, 'ping': ping, 'slam': slam, 'swish': swish,
        'flick': flick, 'ding': ding, 'blip': blip, 'blip2': lambda: blip(84), 'lock': lock, 'sparkle': sparkle, 'tap': tap,
        'success': success, 'fall': fall, 'scratch': scratch, 'steps': steps, 'scan': scan, 'cheer': lambda: crowd(2.2, .3, .8),
-       'flashes': flashes, 'curtain': curtain, 'hit': hit, 'applause': lambda: crowd(3.0, .25, 1.2) * .8}
+       'flashes': flashes, 'popburst': popburst, 'confetti': confetti_sfx, 'zoomhit': zoomhit, 'swoosh': swoosh, 'curtain': curtain, 'hit': hit, 'applause': lambda: crowd(3.0, .25, 1.2) * .8}
 
 # ---------- assemble ----------
 voice = np.zeros(N)
