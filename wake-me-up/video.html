@@ -5,7 +5,7 @@
 <script>
 // Kinetic-type music video in the "how do you communicate a change?" format.
 // Timed to "Wake Me Up" (Avicii), ~124 BPM. render(t) draws one frame at time t (seconds).
-const W = 960, H = 720, BPM = 124, B = 60 / BPM, DURATION = 20.5;
+const W = 960, H = 720, BPM = 124, B = 60 / BPM, DURATION = 22.5;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const RED = '#e3241b', INK = '#1a1410', PAPER = '#e7e4df', DARK = '#131112';
 const PI = Math.PI, TAU = PI * 2;
@@ -193,6 +193,19 @@ function thermal(g, maskFn, hx, hy, glowY) {
 
 // ---------- the story ----------
 const Q = ['all', 'this', 'time', 'i', 'was', 'finding', 'myself'];
+// When each word is sung, in beats from the clip start (0:47.09 in the song). Measured with Whisper.
+const SUNG = {
+  q: [0, .5, 1.05, 2.1, 2.6, 3.1, 4.15],          // all this time i was finding myself
+  know: [5.6, 6.0, 6.6, 7.45],                     // and i didn't know
+  lost: [9.1, 9.6, 10.35],                         // i was lost
+  time2: [32, 32.5, 33],                           // all this time (2nd chorus)
+  finding2: [33.5, 34, 34.7, 36],                  // i was finding myself
+};
+let SB = 0; // current song beat
+const sung = times => times.filter(x => SB >= x).length;
+// Scenes are written on their own beat clock; this maps song beats -> scene beats so each scene sits on its lyric.
+const WARP = [[0, 0], [1.05, 1], [2.1, 2], [3.6, 4], [5.0, 7], [5.6, 8], [12.0, 13], [12.6, 14], [18.6, 16.5], [21.8, 18.5], [22.8, 19.2], [26.0, 21.2], [26.7, 21.9], [29.5, 24.5], [32.0, 28], [38.7, 33], [42.0, 35.5], [46.5, 42.4]];
+function warp(sb) { for (let i = 1; i < WARP.length; i++) { const [a, x] = WARP[i - 1], [b, y] = WARP[i]; if (sb <= b) return x + (y - x) * clamp((sb - a) / (b - a)); } return WARP[WARP.length - 1][1]; }
 const RING = ['plant', 'backpack', 'guitar', 'compass', 'book', 'camera', 'moon', 'sun', 'clock', 'heart', 'boot', 'mountain'];
 function ringPos(i, rot, cx = 480, cy = 370, rx = 300, ry = 215) { const a = i / RING.length * TAU + rot; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, a]; }
 
@@ -208,7 +221,7 @@ function s1(g, bt) {
     if (bt > 1.55) pen(g, [[640, 440], [700, 520], [760, 470], [820, 560], [900, 520]], seg(bt, 1.55, 1.95), INK, 2);
     return;
   }
-  const n = Math.ceil(seg(bt, 2, 3.2) * Q.length), boxes = sentence(g, Q, n, 480, 370, 26, INK, 600);
+  const boxes = sentence(g, Q, sung(SUNG.q), 480, 370, 26, INK, 600);
   pen(g, [[600, 60], [585, 160], [560, 250], [530, 320], [500, 400], [470, 520], [520, 620], [600, 650]], seg(bt, 2.05, 2.7), INK, 1.8, seg(bt, 2.55, 3.1));
   const f = boxes[5]; scribble(g, f.cx, 372, f.w * .72, 26, eOut(seg(bt, 3.1, 3.9)), 11, '#3a1610', 2.2, 1.15, -.05);
 }
@@ -232,7 +245,7 @@ function s2(g, bt) {
     gr.addColorStop(0, '#ffffff'); gr.addColorStop(.25, `rgb(${lerp(110, 40, cyanToBlue)},${lerp(240, 110, cyanToBlue)},255)`); gr.addColorStop(1, `rgb(${lerp(60, 20, cyanToBlue)},${lerp(200, 70, cyanToBlue)},${lerp(230, 255, cyanToBlue)})`);
     g.fillStyle = gr; star4(g, -40, 360, 360 * sp, .12 + (bt - 4) * .04, 1.15, .9, .1); g.fill(); g.restore();
   }
-  sentence(g, Q, Q.length, 480, 370, 26, INK, 600);
+  sentence(g, Q, sung(SUNG.q), 480, 370, 26, INK, 600);
   const f = sentence(g, Q, 0, 480, 370, 26, INK, 600)[5]; scribble(g, f.cx, 372, f.w * .72, 26, 1, 11, '#3a1610', 2.2, 1.15, -.05);
 }
 // S3 (7-8): a red/orange orb swallows the frame, "myself" stays lit
@@ -247,7 +260,7 @@ function s3(g, bt) {
 }
 // S4 (8-12.5): thermal profile + orbit ring, "and i didn't know" -> "i was lost."
 function ring(g, bt, half) {
-  const p = eOut(seg(bt, 8.3, 9)), out = seg(bt, 11.6, 12.2); if (p <= 0 || out >= 1) return;
+  const p = eOut(seg(bt, 8.3, 9)), out = seg(bt, 11.9, 12.6); if (p <= 0 || out >= 1) return;
   g.save(); g.translate(660, 300); g.rotate(-.32 + Math.sin(bt * .8) * .05); g.strokeStyle = `rgba(255,255,255,${.9 * (1 - out)})`; g.lineWidth = 2.6;
   const a0 = half ? 0 : PI, len = PI * p;
   g.beginPath(); g.ellipse(0, 0, 215, 52, 0, a0, a0 + len); g.stroke();
@@ -263,8 +276,8 @@ function s4(g, bt) {
   thermal(g, headMask, 640, 330, 520);
   g.restore();
   ring(g, bt, true);
-  if (bt < 11.2) sentence(g, ['and', 'i', "didn't", 'know'], Math.ceil(seg(bt, 8.1, 10) * 4), 70, 372, 24, '#fff', 600, 'left');
-  else sentence(g, ['i', 'was', 'lost.'], Math.ceil(seg(bt, 11.2, 12.1) * 3), 70, 372, 24, '#fff', 600, 'left');
+  if (SB < SUNG.lost[0]) sentence(g, ['and', 'i', "didn't", 'know'], sung(SUNG.know), 70, 372, 24, '#fff', 600, 'left');
+  else sentence(g, ['i', 'was', 'lost.'], sung(SUNG.lost), 70, 372, 24, '#fff', 600, 'left');
   const flash = seg(bt, 12.4, 13); if (flash > 0) { g.fillStyle = `rgba(120,90,85,${flash * .45})`; g.fillRect(0, 0, W, H); }
 }
 // S5 (12.5-13.5): the thermal frame breaks into chunky pixels
@@ -301,11 +314,11 @@ function s6(g, bt) {
 }
 // S7 (16.5-24.5): three value words, each with its object, light interstitials between
 const VALUES = [
-  { w: 'wander.', o: 'boot', a: 16.5, b: 18.5, fx: 'star' },
-  { w: 'wonder.', o: 'compass', a: 19.2, b: 21.2, fx: 'spark' },
-  { w: 'wiser.', o: 'book', a: 21.9, b: 24.5, fx: 'beam' },
+  { w: 'over.', o: 'mountain', a: 16.5, b: 18.5, fx: 'star' },
+  { w: 'wiser.', o: 'book', a: 19.2, b: 21.2, fx: 'beam' },
+  { w: 'older.', o: 'clock', a: 21.9, b: 24.5, fx: 'spark' },
 ];
-const INTER = [[18.5, 19.2, ['plant', 'backpack', 'heart', 'mountain']], [21.2, 21.9, ['clock', 'sun', 'moon']]];
+const INTER = [[18.5, 19.2, ['plant', 'backpack', 'heart', 'compass']], [21.2, 21.9, ['boot', 'sun', 'moon']]];
 function s7(g, bt) {
   const v = VALUES.find(v => bt >= v.a && bt < v.b);
   if (!v) {
@@ -357,8 +370,8 @@ function s9(g, bt) {
   const R = rng(9); for (let i = 0; i < 22; i++) { const x = R() * W, y = (R() * H - (bt - 28) * 20 * (1 + R())) % H; g.strokeStyle = `rgba(255,255,255,${.2 + R() * .5})`; g.lineWidth = 1.4; g.beginPath(); g.moveTo(x, (y + H) % H); g.lineTo(x + 2, (y + H) % H + 6); g.stroke(); }
   thermal(g, c => handMask(c, 540 + Math.sin(bt * .9) * 8, 470 + (1 - rise) * 420, -.12 + Math.sin(bt * .7) * .04, curl, 1), 540, 420 + (1 - rise) * 420, 520);
   const dim = 1 - seg(bt, 32.3, 33) * .6;
-  sentence(g, ['until', 'the', 'day'], Math.ceil(seg(bt, 28.5, 29.4) * 3), 405, 290, 24, `rgba(255,255,255,${dim})`, 600, 'right');
-  sentence(g, ['you', 'finally'], Math.ceil(seg(bt, 29.8, 30.6) * 2), 660, 290, 24, `rgba(255,255,255,${dim})`, 600, 'left');
+  sentence(g, ['all', 'this', 'time'], sung(SUNG.time2), 405, 290, 24, `rgba(255,255,255,${dim})`, 600, 'right');
+  sentence(g, ['i', 'was', 'finding', 'myself'], sung(SUNG.finding2), 660, 290, 24, `rgba(255,255,255,${dim})`, 600, 'left');
   const w = seg(bt, 32.2, 33); if (w > 0) { g.fillStyle = `rgba(110,70,62,${w * .5})`; g.fillRect(0, 0, W, H); }
 }
 // S10 (33-35.5): W-A-K-E, one letter per half beat, each with its object
@@ -396,7 +409,7 @@ function post(g, frame) {
   g.globalCompositeOperation = 'source-over'; vignette(g, .18, W / 2, H / 2, 300);
 }
 function render(t, frame = Math.round(t * 24)) {
-  const bt = t / B, g = ctx; reset(g);
+  SB = t / B; const bt = warp(SB), g = ctx; reset(g);
   if (bt < 4) s1(g, bt); else if (bt < 7) s2(g, bt); else if (bt < 8) s3(g, bt);
   else if (bt < 13) s4(g, bt); else if (bt < 14) s5(g, bt); else if (bt < 16.5) s6(g, bt);
   else if (bt < 24.5) s7(g, bt); else if (bt < 28) s8(g, bt); else if (bt < 33) s9(g, bt);

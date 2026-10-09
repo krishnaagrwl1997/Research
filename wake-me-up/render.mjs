@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const FPS = 24, DURATION = 20.5;
+const FPS = 24, DURATION = 22.5;
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 960, height: 720 } });
 await page.goto('file://' + path.join(here, 'video.html'));
