@@ -1,0 +1,545 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BMS spec promo</title>
+<style>html,body{margin:0;background:#111}canvas{display:block;width:100vw;height:auto}</style>
+</head><body><canvas id="c"></canvas>
+<script>
+// Spec/concept promo for BookMyShow. Original mascot "Kernel" (a popcorn bucket).
+// Everything is drawn on canvas as a pure function of time so frames render deterministically.
+const W = 1280, H = 720, S = 1.5, FPS = 30, TR = 0.45;
+const cv = document.getElementById('c'); cv.width = W * S; cv.height = H * S;
+const ctx = cv.getContext('2d');
+function mk(w = W * S, h = H * S) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+const offA = mk(), offB = mk();
+
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, d) => clamp((t - a) / d);
+const eOut = x => 1 - Math.pow(1 - x, 3);
+const eIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eBack = x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+
+const C = {
+  ink: '#141414', paper: '#FFFDF8', cream: '#F4EFE6', red: '#E23744', deep: '#9C1D2B',
+  yellow: '#F6E94B', salmon: '#FFB199', peri: '#A9B4FF', mint: '#8FE3B9', sky: '#7CC4FF',
+  lav: '#C9B6FF', dark: '#151515', green: '#1FA35B', grey: '#CFCBC4'
+};
+const SANS = 'Inter', MONO = '"DejaVu Sans Mono"';
+let GT = 0;
+
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function rr(c, x, y, w, h, r) { c.beginPath(); c.roundRect(x, y, w, h, r); }
+function card(c, x, y, w, h, fill = '#fff', r = 14, sh = 6) {
+  rr(c, x + sh, y + sh, w, h, r); c.fillStyle = C.ink; c.fill();
+  rr(c, x, y, w, h, r); c.fillStyle = fill; c.fill(); c.lineWidth = 3; c.strokeStyle = C.ink; c.stroke();
+}
+function pop(c, cx, cy, p, fn, rot = 0) {
+  if (p <= 0) return;
+  c.save(); c.translate(cx, cy); c.rotate(rot); const s = eBack(clamp(p)); c.scale(s, s);
+  c.globalAlpha *= clamp(p * 3); c.translate(-cx, -cy); fn(); c.restore();
+}
+function font(c, w, s, f = SANS) { c.font = `${w} ${s}px ${f}`; }
+function txt(c, s, x, y, { w = 600, size = 16, f = SANS, col = C.ink, al = 'left', ls = '0px' } = {}) {
+  font(c, w, size, f); c.fillStyle = col; c.textAlign = al; c.letterSpacing = ls; c.fillText(s, x, y); c.letterSpacing = '0px';
+}
+function pill(c, x, y, w, h, fill, stroke = C.ink) { rr(c, x, y, w, h, h / 2); c.fillStyle = fill; c.fill(); if (stroke) { c.lineWidth = 2.5; c.strokeStyle = stroke; c.stroke(); } }
+function check(c, x, y, s, col = '#fff', lw = 3) { c.beginPath(); c.moveTo(x - s * .5, y); c.lineTo(x - s * .1, y + s * .4); c.lineTo(x + s * .55, y - s * .4); c.strokeStyle = col; c.lineWidth = lw; c.lineCap = 'round'; c.lineJoin = 'round'; c.stroke(); }
+
+// headline: lines = [[word | {t, hl, tc}], ...]
+function headline(c, lines, x, y, size, t, t0, col = C.ink) {
+  font(c, 700, size); c.letterSpacing = '-1.5px';
+  let k = 0;
+  lines.forEach((line, li) => {
+    let cx = x; const ly = y + li * size * 1.1;
+    line.forEach(tok => {
+      const o = typeof tok === 'string' ? { t: tok } : tok;
+      const wd = c.measureText(o.t).width;
+      const d = t0 + k * 0.07; k++;
+      const p = eOut(seg(t, d, 0.45));
+      if (p > 0) {
+        if (o.hl) {
+          const hp = eOut(seg(t, d + 0.25, 0.35));
+          c.fillStyle = o.hl; c.fillRect(cx - 6, ly - size * .84, (wd + 12) * hp, size * 1.06);
+        }
+        c.save(); c.globalAlpha *= p; c.fillStyle = o.tc || col; c.textAlign = 'left';
+        c.fillText(o.t, cx, ly + (1 - p) * 26); c.restore();
+      }
+      cx += wd + size * 0.27;
+    });
+  });
+  c.letterSpacing = '0px';
+}
+
+// ---------- dithered sprites ----------
+const PAL = ['#141414', '#FFF6EC', '#E23744', '#9C1D2B', '#FFE7A8', '#E9B949', '#F6E94B', '#F2A3A8', '#8A8580', '#5A1220']
+  .map(h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]);
+const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+function dither(src, dst, spread = 60) {
+  const sc = src.getContext('2d', { willReadFrequently: true });
+  const im = sc.getImageData(0, 0, src.width, src.height), d = im.data;
+  for (let y = 0; y < src.height; y++) for (let x = 0; x < src.width; x++) {
+    const i = (y * src.width + x) * 4;
+    if (d[i + 3] < 110) { d[i + 3] = 0; continue; }
+    const th = (BAYER[y & 3][x & 3] / 16 - 0.47) * spread;
+    const r = d[i] + th, g = d[i + 1] + th, b = d[i + 2] + th;
+    let best = 0, bd = 1e9;
+    for (let p = 0; p < PAL.length; p++) {
+      const q = PAL[p], dd = (r - q[0]) ** 2 * .3 + (g - q[1]) ** 2 * .59 + (b - q[2]) ** 2 * .11;
+      if (dd < bd) { bd = dd; best = p; }
+    }
+    d[i] = PAL[best][0]; d[i + 1] = PAL[best][1]; d[i + 2] = PAL[best][2]; d[i + 3] = 255;
+  }
+  dst.getContext('2d').putImageData(im, 0, 0);
+}
+
+const LW = 200, LH = 236;
+const mLow = mk(LW, LH), mOut = mk(LW, LH);
+const KERNELS = [[52, 70, 20], [80, 52, 22], [112, 46, 22], [142, 60, 21], [158, 82, 16], [40, 88, 15], [96, 72, 20], [128, 80, 18], [66, 86, 16], [100, 30, 15]];
+
+function mascot(o = {}) {
+  const { blink = 0, lx = 0, ly = 0, mouth = 'smile', hand = null, shock = 0, wave = 0, squash = 0 } = o;
+  const c = mLow.getContext('2d', { willReadFrequently: true });
+  c.clearRect(0, 0, LW, LH);
+  c.save();
+  c.translate(100, 230); c.scale(1 + squash * .06, 1 - squash * .06); c.translate(-100, -230);
+  c.lineJoin = 'round'; c.lineCap = 'round';
+  // ticket stub poking out of the popcorn
+  c.save(); c.translate(150, 46); c.rotate(0.38);
+  c.beginPath(); c.roundRect(-17, -36, 34, 62, 4); c.fillStyle = '#F6E94B'; c.fill(); c.lineWidth = 3; c.strokeStyle = C.ink; c.stroke();
+  c.beginPath(); c.arc(-17, -5, 5, -Math.PI / 2, Math.PI / 2); c.arc(17, -5, 5, Math.PI / 2, -Math.PI / 2); c.fillStyle = '#00000000';
+  c.setLineDash([3, 3]); c.beginPath(); c.moveTo(-12, 8); c.lineTo(12, 8); c.lineWidth = 2; c.stroke(); c.setLineDash([]);
+  starPath(c, 0, -14, 9, 4); c.fillStyle = C.red; c.fill();
+  c.restore();
+  // popcorn
+  for (const [x, y, r] of KERNELS) {
+    const g = c.createRadialGradient(x - r * .35, y - r * .4, r * .1, x, y, r);
+    g.addColorStop(0, '#FFFDF2'); g.addColorStop(.55, '#FFE7A8'); g.addColorStop(1, '#E9B949');
+    c.beginPath(); c.arc(x, y, r, 0, 7); c.fillStyle = g; c.fill(); c.lineWidth = 2.5; c.strokeStyle = C.ink; c.stroke();
+  }
+  // bucket
+  const tl = 26, tr = 174, bl = 50, br = 150, ty = 96, by = 228;
+  c.save();
+  c.beginPath(); c.moveTo(tl, ty); c.lineTo(tr, ty); c.lineTo(br, by); c.lineTo(bl, by); c.closePath(); c.clip();
+  const n = 7;
+  for (let i = 0; i < n; i++) {
+    c.beginPath();
+    c.moveTo(lerp(tl, tr, i / n), ty); c.lineTo(lerp(tl, tr, (i + 1) / n), ty);
+    c.lineTo(lerp(bl, br, (i + 1) / n), by); c.lineTo(lerp(bl, br, i / n), by); c.closePath();
+    c.fillStyle = i % 2 ? '#FFF6EC' : C.red; c.fill();
+  }
+  const sg = c.createLinearGradient(tl, 0, tr, 0);
+  sg.addColorStop(0, 'rgba(60,0,10,.55)'); sg.addColorStop(.3, 'rgba(0,0,0,0)'); sg.addColorStop(.72, 'rgba(0,0,0,0)'); sg.addColorStop(1, 'rgba(60,0,10,.6)');
+  c.fillStyle = sg; c.fillRect(0, 0, LW, LH);
+  c.restore();
+  c.beginPath(); c.moveTo(tl, ty); c.lineTo(tr, ty); c.lineTo(br, by); c.lineTo(bl, by); c.closePath(); c.lineWidth = 3; c.strokeStyle = C.ink; c.stroke();
+  // rim
+  const rg = c.createLinearGradient(0, 86, 0, 104); rg.addColorStop(0, '#E23744'); rg.addColorStop(1, '#9C1D2B');
+  c.beginPath(); c.roundRect(20, 86, 160, 18, 7); c.fillStyle = rg; c.fill(); c.lineWidth = 3; c.stroke();
+  // face patch
+  const fg = c.createRadialGradient(92, 140, 6, 100, 156, 54); fg.addColorStop(0, '#FFFFFF'); fg.addColorStop(.7, '#FFF6EC'); fg.addColorStop(1, '#E8D9C4');
+  c.beginPath(); c.ellipse(100, 160, 48, 42, 0, 0, 7); c.fillStyle = fg; c.fill(); c.lineWidth = 3; c.stroke();
+  // cheeks
+  c.fillStyle = 'rgba(242,120,130,.75)';
+  c.beginPath(); c.ellipse(68, 174, 9, 6, 0, 0, 7); c.fill(); c.beginPath(); c.ellipse(132, 174, 9, 6, 0, 0, 7); c.fill();
+  // eyes
+  const ey = 152, eh = 12 + shock * 4;
+  for (const ex of [82, 118]) {
+    if (blink > .5) {
+      c.beginPath(); c.arc(ex, ey + 2, 8, Math.PI * 1.1, Math.PI * 1.9, false); c.lineWidth = 3.5; c.strokeStyle = C.ink; c.stroke();
+    } else {
+      c.beginPath(); c.ellipse(ex + lx * 2.5, ey + ly * 2.5, 9 + shock * 2, eh, 0, 0, 7); c.fillStyle = C.ink; c.fill();
+      c.beginPath(); c.arc(ex + lx * 2.5 + 3, ey + ly * 2.5 - 5, 3.4, 0, 7); c.fillStyle = '#fff'; c.fill();
+    }
+  }
+  // brows
+  c.lineWidth = 3.5; c.strokeStyle = C.ink;
+  const bu = shock * 7;
+  c.beginPath(); c.moveTo(72, 134 - bu); c.quadraticCurveTo(82, 129 - bu, 92, 133 - bu); c.stroke();
+  c.beginPath(); c.moveTo(108, 133 - bu); c.quadraticCurveTo(118, 129 - bu, 128, 134 - bu); c.stroke();
+  // mouth
+  c.lineWidth = 3.5;
+  if (mouth === 'o') { c.beginPath(); c.ellipse(100, 181, 5 + shock * 2, 6 + shock * 3, 0, 0, 7); c.fillStyle = C.ink; c.fill(); }
+  else if (mouth === 'grin') {
+    c.beginPath(); c.moveTo(88, 174); c.quadraticCurveTo(100, 194, 112, 174); c.closePath(); c.fillStyle = C.ink; c.fill();
+    c.beginPath(); c.ellipse(100, 184, 5, 3, 0, 0, 7); c.fillStyle = '#E23744'; c.fill();
+  } else { c.beginPath(); c.arc(100, 172, 9, Math.PI * .15, Math.PI * .85); c.stroke(); }
+  // hands
+  const glove = (x, y) => { c.beginPath(); c.arc(x, y, 11, 0, 7); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 3; c.strokeStyle = C.ink; c.stroke(); };
+  if (hand === 'psst') {
+    c.beginPath(); c.moveTo(150, 168); c.quadraticCurveTo(150, 196, 124, 184); c.lineWidth = 4; c.strokeStyle = C.ink; c.stroke(); glove(120, 181);
+  }
+  if (hand === 'wave') {
+    const a = Math.sin(wave * Math.PI * 2) * .35;
+    c.save(); c.translate(160, 160); c.rotate(-0.9 + a);
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(34, 0); c.lineWidth = 4; c.strokeStyle = C.ink; c.stroke(); glove(38, 0); c.restore();
+  }
+  c.restore();
+  dither(mLow, mOut);
+  return mOut;
+}
+function drawMascot(c, cx, cy, sc, o) {
+  const m = mascot(o); c.imageSmoothingEnabled = false;
+  c.drawImage(m, cx - LW * sc / 2, cy - LH * sc / 2, LW * sc, LH * sc); c.imageSmoothingEnabled = true;
+}
+function starPath(c, x, y, R, r) {
+  c.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rad = i % 2 ? r : R; c.lineTo(x + Math.cos(a) * rad, y + Math.sin(a) * rad); }
+  c.closePath();
+}
+// floating ticket token
+const tokLow = mk(44, 30), tok = mk(44, 30);
+(() => {
+  const c = tokLow.getContext('2d');
+  const g = c.createLinearGradient(0, 0, 44, 30); g.addColorStop(0, '#FFE7A8'); g.addColorStop(.5, '#E9B949'); g.addColorStop(1, '#9C1D2B');
+  c.beginPath(); c.roundRect(3, 3, 38, 24, 4); c.fillStyle = g; c.fill();
+  c.globalCompositeOperation = 'destination-out';
+  c.beginPath(); c.arc(3, 15, 5, 0, 7); c.arc(41, 15, 5, 0, 7); c.fill();
+  c.globalCompositeOperation = 'source-over';
+  starPath(c, 22, 15, 7, 3); c.fillStyle = '#E23744'; c.fill();
+  dither(tokLow, tok, 90);
+})();
+function tokens(c, t, seed, n = 7) {
+  const R = mulberry(seed);
+  for (let i = 0; i < n; i++) {
+    const x = R() * W, y = R() * H, sp = 6 + R() * 10, ph = R() * 6, sc = 1.6 + R() * 1.6;
+    const px = x + Math.sin(t * .6 + ph) * 18, py = (y - t * sp + H) % H;
+    if (Math.abs(px - W / 2) < 330 && py > 120 && py < 600) continue;
+    c.save(); c.translate(px, py); c.rotate(Math.sin(t * .9 + ph) * .8); c.scale(Math.cos(t * 1.4 + ph) * sc, sc);
+    c.imageSmoothingEnabled = false; c.drawImage(tok, -22, -15); c.restore();
+  }
+  c.imageSmoothingEnabled = true;
+}
+
+// ---------- shared pieces ----------
+function chrome(c, s) {
+  const col = s.darkUI ? 'rgba(255,255,255,.55)' : 'rgba(20,20,20,.55)';
+  txt(c, s.label, 40, 46, { w: 400, size: 13, f: MONO, col });
+  const f = Math.floor(GT * FPS), ss = Math.floor(f / FPS), ff = f % FPS;
+  const tc = `00:00:${String(ss).padStart(2, '0')}:${String(ff).padStart(2, '0')}`;
+  txt(c, `BMS · SPEC   ${tc}`, 1240, 46, { w: 400, size: 13, f: MONO, col, al: 'right' });
+}
+function badge(c, lt, o = {}) {
+  const cx = 78, cy = 638, r = 44;
+  c.beginPath(); c.arc(cx + 4, cy + 4, r, 0, 7); c.fillStyle = C.ink; c.fill();
+  c.beginPath(); c.arc(cx, cy, r, 0, 7); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 3; c.strokeStyle = C.ink; c.stroke();
+  c.save(); c.beginPath(); c.arc(cx, cy, r - 2, 0, 7); c.clip();
+  const bl = ((lt + 0.7) % 2.9) < 0.13 ? 1 : 0;
+  drawMascot(c, cx, cy + 6 + Math.sin(lt * 4) * 1.5, 0.36, { blink: bl, lx: 1, ...o });
+  c.restore();
+}
+function phone(c, x, y, w, h, dark = false) {
+  rr(c, x + 6, y + 6, w, h, 34); c.fillStyle = C.ink; c.fill();
+  rr(c, x, y, w, h, 34); c.fillStyle = C.ink; c.fill();
+  rr(c, x + 9, y + 9, w - 18, h - 18, 26); c.fillStyle = dark ? '#1E1E1E' : C.paper; c.fill();
+  pill(c, x + w / 2 - 40, y + 20, 80, 20, C.ink, null);
+  txt(c, '7:24', x + 34, y + 36, { w: 600, size: 12, col: dark ? '#fff' : C.ink });
+  return { x: x + 9, y: y + 9, w: w - 18, h: h - 18 };
+}
+function qr(c, x, y, size, seed, fg = C.ink) {
+  const N = 23, m = size / N, R = mulberry(seed);
+  c.fillStyle = '#fff'; c.fillRect(x - m, y - m, size + 2 * m, size + 2 * m);
+  c.fillStyle = fg;
+  const finder = (i, j) => (i < 7 && j < 7) || (i >= N - 7 && j < 7) || (i < 7 && j >= N - 7);
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const r = R(); if (!finder(i, j) && r < .48) c.fillRect(x + i * m, y + j * m, m + .3, m + .3); }
+  for (const [i, j] of [[0, 0], [N - 7, 0], [0, N - 7]]) {
+    c.fillRect(x + i * m, y + j * m, 7 * m, 7 * m); c.fillStyle = '#fff'; c.fillRect(x + (i + 1) * m, y + (j + 1) * m, 5 * m, 5 * m);
+    c.fillStyle = fg; c.fillRect(x + (i + 2) * m, y + (j + 2) * m, 3 * m, 3 * m);
+  }
+}
+function bubble(c, x, y, s, p, tail = 'right') {
+  pop(c, x, y, p, () => {
+    font(c, 600, 22); const w = c.measureText(s).width + 36;
+    pill(c, x - w / 2 + 4, y - 22 + 4, w, 44, C.ink, null); pill(c, x - w / 2, y - 22, w, 44, '#fff');
+    c.beginPath(); const tx = tail === 'right' ? x + w / 2 - 6 : x - w / 2 + 6;
+    c.moveTo(tx, y - 4); c.lineTo(tx + (tail === 'right' ? 18 : -18), y + 8); c.lineTo(tx - (tail === 'right' ? 4 : -4), y + 12);
+    c.fillStyle = '#fff'; c.fill();
+    txt(c, s, x, y + 8, { w: 600, size: 22, al: 'center' });
+  });
+}
+function cursor(c, x, y, press = 0) {
+  c.save(); c.translate(x, y); c.scale(1 - press * .15, 1 - press * .15);
+  c.beginPath(); c.moveTo(0, 0); c.lineTo(0, 26); c.lineTo(7, 20); c.lineTo(12, 31); c.lineTo(17, 29); c.lineTo(12, 18); c.lineTo(21, 18); c.closePath();
+  c.fillStyle = '#fff'; c.fill(); c.lineWidth = 2.5; c.strokeStyle = C.ink; c.lineJoin = 'round'; c.stroke(); c.restore();
+}
+
+// ---------- scenes ----------
+const scenes = [
+  { dur: 3.8, bg: C.cream, label: '// psst — for everyone who loves a good show', badge: false, draw(c, t) {
+    tokens(c, t, 7, 9);
+    const up = eBack(seg(t, 0.05, 0.7));
+    const lean = Math.sin(clamp((t - 0.9) / 1.2) * Math.PI) * 0.06;
+    c.save(); c.translate(860, 420 + (1 - up) * 500); c.rotate(-lean);
+    drawMascot(c, 0, 0, 2.15, { lx: -1, ly: .2, hand: t > 0.8 && t < 2.6 ? 'psst' : null, mouth: t > 0.8 && t < 2.6 ? 'o' : 'smile', blink: (t > 2.9 && t < 3.03) ? 1 : 0, squash: Math.max(0, Math.sin(seg(t, .55, .35) * Math.PI)) });
+    c.restore();
+    bubble(c, 610, 250, 'psst…', seg(t, 0.85, 0.45), 'right');
+    headline(c, [['Weekend'], [{ t: 'plans?', hl: C.red, tc: '#fff' }]], 80, 470, 84, t, 1.9);
+  }},
+  { dur: 3.8, bg: C.salmon, label: '// 01 · the problem', draw(c, t) {
+    headline(c, [['Still', 'stuck', 'in'], ['the', 'ticket'], [{ t: 'queue?', hl: C.yellow }]], 80, 250, 70, t, 0.25);
+    const p = seg(t, 0.4, 0.5);
+    pop(c, 935, 330, p, () => {
+      const x = 700, y = 165, w = 470, h = 330;
+      card(c, x, y, w, h);
+      txt(c, 'BOX OFFICE · 7:30 PM SHOW', x + 24, y + 36, { w: 400, size: 12, f: MONO, ls: '1px' });
+      rr(c, x + 24, y + 54, w - 48, 52, 8); c.fillStyle = C.ink; c.fill();
+      const fp = eIO(seg(t, 0.8, 1.0));
+      rr(c, x + 28, y + 58, (w - 56) * fp, 44, 6); c.fillStyle = C.red; c.fill();
+      txt(c, fp < 1 ? 'selling fast…' : 'HOUSEFULL', x + 44, y + 89, { w: 700, size: 22, col: '#fff' });
+      const rows = [['queue time', '45 min'], ['seats', '?'], ['change for ₹500', '?'], ['show at 7:30?', '?']];
+      rows.forEach(([a, b], i) => {
+        const rp = eOut(seg(t, 1.3 + i * 0.28, 0.35)); if (rp <= 0) return;
+        const yy = y + 152 + i * 44;
+        c.save(); c.globalAlpha = rp; c.translate((1 - rp) * 20, 0);
+        txt(c, '— ' + a, x + 28, yy, { w: 500, size: 16 });
+        c.setLineDash([2, 5]); c.beginPath(); c.moveTo(x + 210, yy - 5); c.lineTo(x + w - 70, yy - 5); c.strokeStyle = '#999'; c.lineWidth = 1.5; c.stroke(); c.setLineDash([]);
+        txt(c, b, x + w - 30, yy, { w: 700, size: 17, col: b === '?' ? C.red : C.ink, al: 'right' });
+        c.restore();
+      });
+    });
+  }},
+  { dur: 3.8, bg: C.yellow, label: '// 02 · discover', draw(c, t) {
+    headline(c, [['Movies,', 'gigs,'], ['comedy,', 'sports.'], [{ t: 'One', hl: C.red, tc: '#fff' }, { t: 'app.', hl: C.red, tc: '#fff' }]], 80, 250, 66, t, 0.25);
+    pop(c, 940, 360, seg(t, 0.35, 0.5), () => {
+      const x = 700, y = 105, w = 480, h = 500;
+      card(c, x, y, w, h, C.paper);
+      pill(c, x + 22, y + 22, w - 44, 44, '#fff');
+      c.beginPath(); c.arc(x + 48, y + 43, 8, 0, 7); c.moveTo(x + 54, y + 49); c.lineTo(x + 60, y + 55); c.lineWidth = 2.5; c.strokeStyle = C.ink; c.stroke();
+      const q = 'Search movies, events, plays…', n = Math.floor(clamp((t - 0.8) / 1.0) * q.length);
+      txt(c, q.slice(0, n) + (t % .6 < .3 ? '|' : ''), x + 72, y + 50, { w: 500, size: 15, col: '#666' });
+      const chips = ['Movies', 'Events', 'Comedy', 'Sports', 'Plays'];
+      const act = t < 1.6 ? 0 : Math.floor((t - 1.6) / 0.45) % chips.length;
+      let cx = x + 22;
+      chips.forEach((ch, i) => { font(c, 600, 14); const cw = c.measureText(ch).width + 28; pill(c, cx, y + 82, cw, 32, i === act ? C.red : '#fff'); txt(c, ch, cx + 14, y + 103, { size: 14, col: i === act ? '#fff' : C.ink }); cx += cw + 8; });
+      const posters = [['MONSOON', 'HEIST', '#F07A2E', '9.1', 'Movie · UA'], ['NEON RAGA', 'LIVE', '#7B5CF0', '8.8', 'Concert'], ['CHAI &', 'CHAOS', '#14A88E', '9.4', 'Stand-up'], ['FINAL', 'OVER', '#2F6BE0', '8.6', 'Sports']];
+      posters.forEach(([a, b, col, r, k], i) => {
+        const px = x + 22 + (i % 2) * 222, py = y + 132 + Math.floor(i / 2) * 178;
+        pop(c, px + 104, py + 80, seg(t, 0.7 + i * 0.12, 0.45), () => {
+          rr(c, px, py, 210, 132, 10); c.fillStyle = col; c.fill(); c.lineWidth = 2.5; c.strokeStyle = C.ink; c.stroke();
+          c.save(); rr(c, px, py, 210, 132, 10); c.clip();
+          c.globalAlpha = .25; c.beginPath(); c.arc(px + 170, py + 30, 46, 0, 7); c.fillStyle = '#fff'; c.fill(); c.restore();
+          txt(c, a, px + 14, py + 92, { w: 800, size: 20, col: '#fff', ls: '-0.5px' });
+          txt(c, b, px + 14, py + 116, { w: 800, size: 20, col: '#fff', ls: '-0.5px' });
+          txt(c, '★ ' + r, px + 4, py + 154, { w: 700, size: 14 });
+          txt(c, k, px + 206, py + 154, { w: 400, size: 12, f: MONO, col: '#555', al: 'right' });
+        });
+      });
+    });
+  }},
+  { dur: 4.0, bg: C.peri, label: '// 03 · seats', draw(c, t) {
+    headline(c, [['Pick', 'your'], [{ t: 'exact', hl: C.yellow }, 'seat.']], 80, 280, 76, t, 0.25);
+    pop(c, 925, 360, seg(t, 0.35, 0.5), () => {
+      const x = 650, y = 100, w = 550, h = 520;
+      card(c, x, y, w, h);
+      txt(c, 'MONSOON HEIST', x + 26, y + 40, { w: 800, size: 20 });
+      txt(c, 'Sat, 25 Oct · 7:30 PM · Screen 3', x + 26, y + 62, { w: 400, size: 12, f: MONO, col: '#666' });
+      c.beginPath(); c.moveTo(x + 110, y + 104); c.quadraticCurveTo(x + w / 2, y + 84, x + w - 110, y + 104); c.lineWidth = 4; c.strokeStyle = C.ink; c.stroke();
+      txt(c, 'SCREEN THIS WAY', x + w / 2, y + 124, { w: 400, size: 10, f: MONO, col: '#888', al: 'center', ls: '2px' });
+      const R = mulberry(42), rows = 'ABCDEFGH';
+      const sel = { 'G7': 1.55, 'G8': 2.05 };
+      for (let r = 0; r < 8; r++) {
+        txt(c, rows[r], x + 34, y + 160 + r * 34, { w: 400, size: 11, f: MONO, col: '#888' });
+        for (let k = 0; k < 12; k++) {
+          const id = rows[r] + (k + 1); const booked = !sel[id] && R() < .38;
+          const sx = x + 58 + k * 38 + (k >= 6 ? 20 : 0), sy = y + 144 + r * 34;
+          const st = sel[id] !== undefined ? seg(t, sel[id], 0.3) : 0;
+          pop(c, sx + 14, sy + 11, st > 0 ? 1 + Math.sin(st * Math.PI) * .25 : 1, () => {
+            rr(c, sx, sy, 28, 22, 6);
+            c.fillStyle = booked ? C.grey : st > 0 ? C.red : '#fff'; c.fill();
+            if (!booked) { c.lineWidth = 2; c.strokeStyle = C.ink; c.stroke(); }
+          });
+        }
+      }
+      // cursor path to G7 then G8
+      const g7 = [x + 58 + 6 * 38 + 20 + 14, y + 144 + 6 * 34 + 12], g8 = [g7[0] + 38, g7[1]];
+      const p1 = eIO(seg(t, 0.9, 0.6)), p2 = eIO(seg(t, 1.75, 0.3));
+      const cxp = lerp(lerp(x + w + 40, g7[0], p1), g8[0], p2), cyp = lerp(lerp(y + h + 30, g7[1], p1), g8[1], p2);
+      const press = Math.max(Math.sin(seg(t, 1.45, .2) * Math.PI), Math.sin(seg(t, 1.95, .2) * Math.PI));
+      if (t < 3.0) cursor(c, cxp, cyp, press);
+      const bp = eOut(seg(t, 2.3, 0.4));
+      if (bp > 0) {
+        c.save(); c.globalAlpha = bp; c.translate(0, (1 - bp) * 16);
+        c.fillStyle = C.ink; c.fillRect(x + 24, y + h - 78, w - 48, 2);
+        txt(c, '2 × Recliner · G7, G8', x + 26, y + h - 36, { w: 600, size: 16 });
+        pill(c, x + w - 196, y + h - 62, 170, 42, C.red); txt(c, 'Pay ₹840', x + w - 111, y + h - 34, { w: 700, size: 17, col: '#fff', al: 'center' });
+        c.restore();
+      }
+    });
+  }},
+  { dur: 3.8, bg: C.mint, label: '// 04 · pay', draw(c, t) {
+    headline(c, [['Pay', 'in'], [{ t: 'one', hl: C.yellow }, { t: 'tap.', hl: C.yellow }]], 80, 280, 84, t, 0.25);
+    txt(c, 'UPI · cards · wallets', 84, 470, { w: 400, size: 16, f: MONO, col: 'rgba(20,20,20,.6)' });
+    const pp = eOut(seg(t, 0.3, 0.6));
+    c.save(); c.translate(0, (1 - pp) * 700);
+    const sc = phone(c, 770, 60, 310, 600);
+    txt(c, 'PAYMENT', sc.x + 24, sc.y + 72, { w: 400, size: 11, f: MONO, col: '#777', ls: '2px' });
+    txt(c, '₹840', sc.x + 24, sc.y + 124, { w: 800, size: 46, ls: '-1px' });
+    txt(c, 'Monsoon Heist · 2 tickets', sc.x + 24, sc.y + 150, { w: 500, size: 14, col: '#555' });
+    ['UPI', 'Credit / debit card', 'Wallet'].forEach((o, i) => {
+      const oy = sc.y + 182 + i * 64;
+      rr(c, sc.x + 18, oy, sc.w - 36, 52, 12); c.fillStyle = i === 0 ? '#FFF4F5' : '#fff'; c.fill(); c.lineWidth = i === 0 ? 2.5 : 1.5; c.strokeStyle = i === 0 ? C.red : '#ccc'; c.stroke();
+      c.beginPath(); c.arc(sc.x + 44, oy + 26, 9, 0, 7); c.lineWidth = 2; c.strokeStyle = i === 0 ? C.red : '#999'; c.stroke();
+      if (i === 0) { c.beginPath(); c.arc(sc.x + 44, oy + 26, 4.5, 0, 7); c.fillStyle = C.red; c.fill(); }
+      txt(c, o, sc.x + 64, oy + 31, { w: 600, size: 15 });
+    });
+    const press = Math.sin(seg(t, 1.45, .22) * Math.PI);
+    const by = sc.y + sc.h - 86, bw = sc.w - 36;
+    c.save(); c.translate(sc.x + 18 + bw / 2, by + 28); c.scale(1 - press * .05, 1 - press * .05); c.translate(-(sc.x + 18 + bw / 2), -(by + 28));
+    pill(c, sc.x + 18, by, bw, 56, C.red, null);
+    if (t < 1.6) txt(c, 'Pay ₹840', sc.x + 18 + bw / 2, by + 35, { w: 700, size: 18, col: '#fff', al: 'center' });
+    else if (t < 2.2) { c.beginPath(); c.arc(sc.x + 18 + bw / 2, by + 28, 11, t * 9, t * 9 + 4.4); c.lineWidth = 3; c.strokeStyle = '#fff'; c.stroke(); }
+    c.restore();
+    const ok = eOut(seg(t, 2.2, 0.45));
+    if (ok > 0) {
+      c.save(); c.globalAlpha = ok; rr(c, sc.x, sc.y, sc.w, sc.h, 26); c.fillStyle = C.green; c.fill(); c.restore();
+      pop(c, sc.x + sc.w / 2, sc.y + 250, ok, () => {
+        c.beginPath(); c.arc(sc.x + sc.w / 2, sc.y + 250, 54, 0, 7); c.fillStyle = '#fff'; c.fill();
+        check(c, sc.x + sc.w / 2, sc.y + 250, 44, C.green, 8);
+      });
+      c.save(); c.globalAlpha = ok;
+      txt(c, 'Payment successful', sc.x + sc.w / 2, sc.y + 350, { w: 700, size: 20, col: '#fff', al: 'center' });
+      txt(c, '₹840 · UPI', sc.x + sc.w / 2, sc.y + 376, { w: 400, size: 13, f: MONO, col: 'rgba(255,255,255,.8)', al: 'center' });
+      c.restore();
+    }
+    c.restore();
+    pop(c, 1150, 190, seg(t, 0.9, 0.4), () => { pill(c, 1100, 172, 104, 36, C.yellow); txt(c, '⚡ 1 tap', 1152, 196, { w: 700, size: 15, al: 'center' }); }, 0.12);
+  }},
+  { dur: 3.8, bg: C.sky, label: '// 05 · your ticket', draw(c, t) {
+    headline(c, [['Your', 'ticket,'], ['in', 'your'], [{ t: 'pocket.', hl: C.yellow }]], 80, 250, 72, t, 0.25);
+    const p = eOut(seg(t, 0.35, 0.7));
+    c.save(); c.translate(915, 330 + (1 - p) * 520); c.rotate(lerp(-0.22, -0.05, p) + Math.sin(t * 1.5) * .008); c.translate(-915, -330);
+    const x = 620, y = 180, w = 590, h = 300, cut = 400;
+    rr(c, x + 7, y + 7, w, h, 16); c.fillStyle = C.ink; c.fill();
+    rr(c, x, y, w, h, 16); c.fillStyle = C.paper; c.fill();
+    c.save(); rr(c, x, y, w, h, 16); c.clip(); c.fillStyle = C.yellow; c.fillRect(x + cut, y, w - cut, h); c.restore();
+    rr(c, x, y, w, h, 16); c.lineWidth = 3; c.strokeStyle = C.ink; c.stroke();
+    for (const ny of [y, y + h]) { c.beginPath(); c.arc(x + cut, ny, 16, 0, 7); c.fillStyle = C.sky; c.fill(); c.lineWidth = 3; c.stroke(); }
+    c.setLineDash([6, 6]); c.beginPath(); c.moveTo(x + cut, y + 22); c.lineTo(x + cut, y + h - 22); c.lineWidth = 2; c.stroke(); c.setLineDash([]);
+    txt(c, 'M-TICKET · BOOKING #BMS-48213', x + 28, y + 40, { w: 400, size: 11, f: MONO, col: '#777', ls: '1px' });
+    txt(c, 'MONSOON HEIST', x + 28, y + 88, { w: 800, size: 34, ls: '-1px' });
+    [['DATE', 'Sat, 25 Oct'], ['TIME', '7:30 PM'], ['SCREEN', '3 · Recliner'], ['SEATS', 'G7, G8']].forEach(([a, b], i) => {
+      const cx = x + 28 + (i % 2) * 180, cy = y + 140 + Math.floor(i / 2) * 64;
+      txt(c, a, cx, cy, { w: 400, size: 10, f: MONO, col: '#888', ls: '2px' });
+      txt(c, b, cx, cy + 26, { w: 700, size: 19 });
+    });
+    qr(c, x + cut + 25, y + 62, 140, 99);
+    txt(c, 'ADMIT 2', x + cut + 95, y + 250, { w: 700, size: 14, f: MONO, al: 'center' });
+    c.restore();
+    pop(c, 1060, 560, seg(t, 1.5, 0.4), () => { pill(c, 950, 540, 220, 40, '#fff'); check(c, 975, 560, 14, C.green, 3.5); txt(c, 'Saved to your phone', 995, 566, { w: 600, size: 15 }); });
+  }},
+  { dur: 3.8, bg: C.lav, label: '// 06 · extras', draw(c, t) {
+    headline(c, [['Skip', 'the'], [{ t: 'snack', hl: C.yellow }, 'line'], ['too.']], 80, 250, 76, t, 0.25);
+    pop(c, 935, 360, seg(t, 0.35, 0.5), () => {
+      const x = 690, y = 140, w = 490, h = 420;
+      card(c, x, y, w, h);
+      rr(c, x + 22, y + 22, w - 44, 220, 12); c.fillStyle = '#FFE9D6'; c.fill();
+      drawMascot(c, x + w / 2, y + 132, 0.86, { mouth: 'grin', lx: Math.sin(t * 2) * .6, blink: (t % 2.3) < .12 ? 1 : 0 });
+      txt(c, 'Kernel combo', x + 26, y + 286, { w: 800, size: 24, ls: '-0.5px' });
+      txt(c, 'Large salted popcorn + 2 colas', x + 26, y + 312, { w: 400, size: 14, col: '#666' });
+      txt(c, '₹390', x + 26, y + 380, { w: 800, size: 28 });
+      const added = t > 1.9;
+      const press = Math.sin(seg(t, 1.7, .2) * Math.PI);
+      c.save(); c.translate(x + w - 100, y + 368); c.scale(1 - press * .08, 1 - press * .08); c.translate(-(x + w - 100), -(y + 368));
+      pill(c, x + w - 176, y + 346, 152, 44, added ? C.green : C.red, null);
+      if (added) { check(c, x + w - 140, y + 368, 14, '#fff', 3.5); txt(c, 'Added', x + w - 92, y + 374, { w: 700, size: 16, col: '#fff', al: 'center' }); }
+      else txt(c, 'Add', x + w - 100, y + 374, { w: 700, size: 16, col: '#fff', al: 'center' });
+      c.restore();
+    });
+    bubble(c, 170, 560, 'hey… that’s me?!', seg(t, 1.0, 0.4), 'left');
+  }, badgeOpts: t => ({ shock: eOut(seg(t, 0.9, .3)), mouth: t > 0.9 ? 'o' : 'smile', lx: 1 }) },
+  { dur: 3.8, bg: C.dark, darkUI: true, label: '// 07 · entry', draw(c, t) {
+    headline(c, [['At', 'the', 'gate?'], ['Just'], [{ t: 'scan.', hl: C.red }]], 80, 250, 76, t, 0.25, '#fff');
+    c.save(); c.globalAlpha = eOut(seg(t, 1.0, .5));
+    txt(c, 'no printouts · no paper · no queue', 84, 520, { w: 400, size: 15, f: MONO, col: 'rgba(255,255,255,.5)' });
+    c.restore();
+    const pp = eOut(seg(t, 0.3, 0.6));
+    c.save(); c.translate(0, (1 - pp) * 700);
+    const sc = phone(c, 790, 60, 310, 600, true);
+    txt(c, 'Gate 2 · Scan ticket', sc.x + 24, sc.y + 76, { w: 700, size: 16, col: '#fff' });
+    const cnt = Math.floor(lerp(312, 318, seg(t, 2.1, .6)));
+    txt(c, `${cnt} / 412`, sc.x + sc.w - 24, sc.y + 76, { w: 400, size: 12, f: MONO, col: '#aaa', al: 'right' });
+    rr(c, sc.x + 24, sc.y + 90, sc.w - 48, 4, 2); c.fillStyle = '#333'; c.fill();
+    rr(c, sc.x + 24, sc.y + 90, (sc.w - 48) * cnt / 412, 4, 2); c.fillStyle = C.red; c.fill();
+    const fx = sc.x + 46, fy = sc.y + 140, fs = sc.w - 92;
+    const qp = eOut(seg(t, 0.7, 0.5));
+    c.save(); c.beginPath(); c.rect(fx - 10, fy - 10, fs + 20, fs + 20); c.clip();
+    qr(c, fx + 26, fy + 26 + (1 - qp) * 260, fs - 52, 99);
+    c.restore();
+    const ok = t > 2.05;
+    c.strokeStyle = ok ? C.green : '#fff'; c.lineWidth = 5; c.lineCap = 'round';
+    for (const [cx, cy, dx, dy] of [[fx, fy, 1, 1], [fx + fs, fy, -1, 1], [fx, fy + fs, 1, -1], [fx + fs, fy + fs, -1, -1]]) {
+      c.beginPath(); c.moveTo(cx, cy + dy * 30); c.lineTo(cx, cy); c.lineTo(cx + dx * 30, cy); c.stroke();
+    }
+    const sl = seg(t, 1.2, 0.8);
+    if (sl > 0 && sl < 1) { c.fillStyle = C.red; c.shadowColor = C.red; c.shadowBlur = 16; c.fillRect(fx + 8, fy + 8 + (fs - 16) * Math.sin(sl * Math.PI), fs - 16, 3); c.shadowBlur = 0; }
+    const vp = eOut(seg(t, 2.1, 0.4));
+    if (vp > 0) {
+      c.save(); c.globalAlpha = vp; c.translate(0, (1 - vp) * 30);
+      rr(c, sc.x + 20, sc.y + sc.h - 150, sc.w - 40, 120, 16); c.fillStyle = C.green; c.fill();
+      check(c, sc.x + 52, sc.y + sc.h - 110, 20, '#fff', 4);
+      txt(c, 'Valid ticket', sc.x + 76, sc.y + sc.h - 102, { w: 700, size: 20, col: '#fff' });
+      txt(c, 'ADMIT 2 · G7, G8 · SCREEN 3', sc.x + 40, sc.y + sc.h - 62, { w: 400, size: 11, f: MONO, col: 'rgba(255,255,255,.85)' });
+      c.restore();
+    }
+    c.restore();
+  }},
+  { dur: 4.6, bg: C.cream, label: '// see you at the show', badge: false, draw(c, t) {
+    tokens(c, t + 20, 11, 10);
+    const mp = seg(t, 0.15, 0.6);
+    pop(c, 640, 210, mp, () => drawMascot(c, 640, 210, 1.15, { hand: 'wave', wave: t * 1.4, mouth: 'grin', blink: (t % 2.6) > 2.45 ? 1 : 0 }));
+    const wp = eOut(seg(t, 0.5, 0.5));
+    c.save(); c.globalAlpha = wp; c.translate(0, (1 - wp) * 30);
+    txt(c, 'BookMyShow', 640, 430, { w: 800, size: 92, al: 'center', ls: '-3px' });
+    c.restore();
+    const lp = eOut(seg(t, 0.9, 0.45));
+    if (lp > 0) {
+      c.save(); c.globalAlpha = lp;
+      font(c, 600, 30); const a = 'Book now at ', b = 'bookmyshow.com';
+      const wa = c.measureText(a).width, wb = c.measureText(b).width, sx = 640 - (wa + wb + 12) / 2;
+      txt(c, a, sx, 500, { w: 600, size: 30 });
+      c.fillStyle = C.red; c.fillRect(sx + wa - 4, 470, (wb + 16) * eOut(seg(t, 1.1, .35)), 42);
+      txt(c, b, sx + wa + 4, 500, { w: 600, size: 30, col: '#fff' });
+      c.restore();
+    }
+    pop(c, 640, 568, seg(t, 1.4, 0.45), () => { pill(c, 640 - 110 + 4, 546 + 4, 220, 46, C.ink, null); pill(c, 640 - 110, 546, 220, 46, C.red); txt(c, 'Book tickets', 640, 575, { w: 700, size: 18, col: '#fff', al: 'center' }); });
+    c.save(); c.globalAlpha = eOut(seg(t, 1.8, .5));
+    txt(c, 'movies · events · plays · sports · all in one app', 640, 640, { w: 400, size: 13, f: MONO, col: '#777', al: 'center' });
+    c.restore();
+  }},
+];
+let acc = 0; for (const s of scenes) { s.start = acc; acc += s.dur; }
+const DURATION = acc;
+
+function drawScene(canvas, s, lt) {
+  const c = canvas.getContext('2d');
+  c.setTransform(S, 0, 0, S, 0, 0); c.filter = 'none'; c.globalAlpha = 1;
+  c.fillStyle = s.bg; c.fillRect(0, 0, W, H);
+  s.draw(c, lt);
+  chrome(c, s);
+  if (s.badge !== false) badge(c, lt, s.badgeOpts ? s.badgeOpts(lt) : {});
+}
+function render(t) {
+  GT = t;
+  let i = scenes.findIndex(s => t < s.start + s.dur); if (i < 0) i = scenes.length - 1;
+  const s = scenes[i], lt = t - s.start;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'none'; ctx.clearRect(0, 0, cv.width, cv.height);
+  if (i > 0 && lt < TR) {
+    const u = lt / TR, p = eIO(u);
+    drawScene(offA, scenes[i - 1], scenes[i - 1].dur);
+    drawScene(offB, s, lt);
+    ctx.filter = `blur(${(Math.sin(Math.PI * u) * 14).toFixed(2)}px)`;
+    ctx.drawImage(offA, -p * W * S, 0);
+    ctx.drawImage(offB, (1 - p) * W * S, 0);
+    ctx.filter = 'none';
+  } else {
+    drawScene(offB, s, lt); ctx.drawImage(offB, 0, 0);
+  }
+}
+window.DURATION = DURATION; window.FPS = FPS;
+window.renderFrame = (t, q = 0.93) => { render(t); return cv.toDataURL('image/jpeg', q); };
+window.ready = document.fonts.load('700 20px Inter').then(() => document.fonts.load('400 13px "DejaVu Sans Mono"')).then(() => true);
+// live preview when opened directly
+if (!new URLSearchParams(location.search).has('render')) {
+  const t0 = performance.now();
+  (function loop() { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); })();
+}
+</script></body></html>
