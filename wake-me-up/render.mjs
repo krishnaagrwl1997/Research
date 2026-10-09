@@ -1,5 +1,5 @@
 // Renders video.html frame by frame with headless Chromium and pipes the frames into ffmpeg.
-// Usage: node render.mjs out.mp4            -> full video
+// Usage: node render.mjs out.mp4 [--audio song.mp3 --start 47.09] -> full video
 //        node render.mjs --stills dir t1 t2  -> PNG stills at given seconds
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
@@ -20,7 +20,7 @@ if (args[0] === '--stills') {
   mkdirSync(args[1], { recursive: true });
   for (const t of args.slice(2)) writeFileSync(path.join(args[1], `t${(+t).toFixed(2)}.png`), await grab(+t, 'image/png'));
 } else {
-  const out = args[0] || 'wake-me-up.mp4';
+  const out = args[0] && !args[0].startsWith('--') ? args[0] : 'wake-me-up.mp4';
   const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '18', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   const n = Math.round(DURATION * FPS);
   for (let i = 0; i < n; i++) {
@@ -29,5 +29,14 @@ if (args[0] === '--stills') {
   }
   ff.stdin.end(); await new Promise(r => ff.on('close', r));
   console.log('wrote', out, n, 'frames');
+  // Optional soundtrack: --audio song.mp3 --start <seconds into the song where the video begins>
+  const ai = args.indexOf('--audio');
+  if (ai > -1) {
+    const start = args[args.indexOf('--start') + 1] || '0', tmp = out.replace(/\.mp4$/, '.silent.mp4');
+    const { renameSync, unlinkSync } = await import('node:fs'); renameSync(out, tmp);
+    const mux = spawn('ffmpeg', ['-y', '-v', 'error', '-i', tmp, '-ss', start, '-t', String(DURATION), '-i', args[ai + 1], '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-af', `afade=t=in:d=0.03,afade=t=out:st=${DURATION - 1.2}:d=1.2`, '-shortest', '-movflags', '+faststart', out], { stdio: 'inherit' });
+    await new Promise(r => mux.on('close', r)); unlinkSync(tmp);
+    console.log('added audio from', args[ai + 1], 'at', start + 's');
+  }
 }
 await browser.close();

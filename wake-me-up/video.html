@@ -247,7 +247,7 @@ function s3(g, bt) {
 }
 // S4 (8-12.5): thermal profile + orbit ring, "and i didn't know" -> "i was lost."
 function ring(g, bt, half) {
-  const p = eOut(seg(bt, 8.3, 9)), out = seg(bt, 10.6, 11.2); if (p <= 0 || out >= 1) return;
+  const p = eOut(seg(bt, 8.3, 9)), out = seg(bt, 11.6, 12.2); if (p <= 0 || out >= 1) return;
   g.save(); g.translate(660, 300); g.rotate(-.32 + Math.sin(bt * .8) * .05); g.strokeStyle = `rgba(255,255,255,${.9 * (1 - out)})`; g.lineWidth = 2.6;
   const a0 = half ? 0 : PI, len = PI * p;
   g.beginPath(); g.ellipse(0, 0, 215, 52, 0, a0, a0 + len); g.stroke();
@@ -257,26 +257,26 @@ function ring(g, bt, half) {
 function s4(g, bt) {
   dark(g);
   const blobP = seg(bt, 8, 9.5); g.save(); g.filter = 'blur(14px)'; g.fillStyle = `rgba(255,150,40,${.6 * (1 - seg(bt, 9, 10))})`; g.beginPath(); g.arc(90 + blobP * 40, 70 + blobP * 20, 26, 0, TAU); g.fill(); g.restore();
-  const drift = seg(bt, 8, 12.5);
+  const drift = seg(bt, 8, 13);
   ring(g, bt, false);
   g.save(); g.translate(-14 * drift, 6 * drift);
   thermal(g, headMask, 640, 330, 520);
   g.restore();
   ring(g, bt, true);
-  if (bt < 10) sentence(g, ['and', 'i', "didn't", 'know'], Math.ceil(seg(bt, 8.1, 9.3) * 4), 70, 372, 24, '#fff', 600, 'left');
-  else sentence(g, ['i', 'was', 'lost.'], Math.ceil(seg(bt, 10, 10.9) * 3), 70, 372, 24, '#fff', 600, 'left');
-  const flash = seg(bt, 11.9, 12.5); if (flash > 0) { g.fillStyle = `rgba(120,90,85,${flash * .45})`; g.fillRect(0, 0, W, H); }
+  if (bt < 11.2) sentence(g, ['and', 'i', "didn't", 'know'], Math.ceil(seg(bt, 8.1, 10) * 4), 70, 372, 24, '#fff', 600, 'left');
+  else sentence(g, ['i', 'was', 'lost.'], Math.ceil(seg(bt, 11.2, 12.1) * 3), 70, 372, 24, '#fff', 600, 'left');
+  const flash = seg(bt, 12.4, 13); if (flash > 0) { g.fillStyle = `rgba(120,90,85,${flash * .45})`; g.fillRect(0, 0, W, H); }
 }
 // S5 (12.5-13.5): the thermal frame breaks into chunky pixels
 const OFF = mk(), SMALL = mk();
 function s5(g, bt) {
-  const p = seg(bt, 12.5, 13.5), o = OFF.getContext('2d'); s4(o, 12.45 + p * .3);
+  const p = seg(bt, 13, 14), o = OFF.getContext('2d'); s4(o, 12.95 + p * .03);
   dark(g); g.fillStyle = '#2b2829'; g.fillRect(0, 0, W, H);
   const blk = Math.round(lerp(8, 44, eInOut(p))), sw = Math.ceil(W / blk), sh = Math.ceil(H / blk), s = SMALL.getContext('2d');
   reset(s); s.clearRect(0, 0, W, H); s.imageSmoothingEnabled = true;
   s.drawImage(OFF, 0, 0, sw, sh);
-  g.imageSmoothingEnabled = false; g.globalAlpha = 1 - seg(bt, 13.2, 13.5); g.drawImage(SMALL, 0, 0, sw, sh, 0, 0, sw * blk, sh * blk); g.imageSmoothingEnabled = true; g.globalAlpha = 1;
-  const pp = seg(bt, 13.25, 13.5); if (pp > 0) { g.globalAlpha = pp; g.drawImage(PAPER_TEX, 0, 0); g.globalAlpha = 1; }
+  g.imageSmoothingEnabled = false; g.globalAlpha = 1 - seg(bt, 13.7, 14); g.drawImage(SMALL, 0, 0, sw, sh, 0, 0, sw * blk, sh * blk); g.imageSmoothingEnabled = true; g.globalAlpha = 1;
+  const pp = seg(bt, 13.75, 14); if (pp > 0) { g.globalAlpha = pp; g.drawImage(PAPER_TEX, 0, 0); g.globalAlpha = 1; }
 }
 // ring of objects (S6 and S8)
 function drawRing(g, bt, rot, scale = 1, opt = {}) {
@@ -292,9 +292,9 @@ function drawRing(g, bt, rot, scale = 1, opt = {}) {
 }
 function s6(g, bt) {
   paper(g);
-  const sc = lerp(.82, 1, eOut(seg(bt, 13.5, 14.1)));
-  drawRing(g, bt, (bt - 13.5) * .32, sc, { glow: Math.sin(PI * seg(bt, 14.8, 16.3)) });
-  const p1 = seg(bt, 14.2, 15.2), p2 = seg(bt, 15.3, 16.3);
+  const sc = lerp(.82, 1, eOut(seg(bt, 14, 14.5)));
+  drawRing(g, bt, (bt - 14) * .32, sc, { glow: Math.sin(PI * seg(bt, 15, 16.4)) });
+  const p1 = seg(bt, 14.4, 15.3), p2 = seg(bt, 15.4, 16.3);
   if (p1 > 0 && p1 < 1) blob(g, lerp(120, 760, p1), lerp(60, 300, p1), 24, 2, .6, 1.8);
   if (p2 > 0 && p2 < 1) blob(g, lerp(820, 380, p2), lerp(120, 420, p2), 18, 9, -.4, 1.5);
   vignette(g, .28);
@@ -398,7 +398,7 @@ function post(g, frame) {
 function render(t, frame = Math.round(t * 24)) {
   const bt = t / B, g = ctx; reset(g);
   if (bt < 4) s1(g, bt); else if (bt < 7) s2(g, bt); else if (bt < 8) s3(g, bt);
-  else if (bt < 12.5) s4(g, bt); else if (bt < 13.5) s5(g, bt); else if (bt < 16.5) s6(g, bt);
+  else if (bt < 13) s4(g, bt); else if (bt < 14) s5(g, bt); else if (bt < 16.5) s6(g, bt);
   else if (bt < 24.5) s7(g, bt); else if (bt < 28) s8(g, bt); else if (bt < 33) s9(g, bt);
   else if (bt < 35.5) s10(g, bt); else s11(g, bt);
   post(g, frame);
