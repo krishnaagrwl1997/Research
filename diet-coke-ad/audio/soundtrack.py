@@ -78,6 +78,51 @@ def crack():
     hiss = hp(noise(0.9), 3500, 3) * env(0.9, 0.004, 0.22) * 0.55
     x = hiss.copy(); x[:len(pop)] += pop
     return x
+def can_open(snap_at=0.07):
+    """A ring-pull can opening, built from its physical parts: tab lift click, score-line snap
+    (broadband crack + thin-aluminium ring modes), the pressurised 'pssht', the tab settling
+    back, then a decaying shower of micro-bubble pops. A short room tail glues it together."""
+    d = snap_at + 2.4
+    x = np.zeros(int(d * SR))
+    def put(sig, at, g=1.0):
+        i = int(at * SR); j = min(len(x), i + len(sig)); x[i:j] += sig[:j - i] * g
+    def modes(freqs, dec, g):
+        t = t_(0.08)
+        return sum(np.sin(2 * np.pi * f * t + rng.random() * 6) * np.exp(-t / dc) * a for f, dc, a in zip(freqs, dec, g))
+    # 1. finger lifts the tab: a dry tick and a little metal creak
+    put(hp(noise(0.006), 2500) * env(0.006, 0.0002, 0.0012), 0, 0.45)
+    creak = bp(noise(snap_at), 900, 2600) * np.linspace(0.02, 0.12, int(snap_at * SR))
+    put(creak, 0)
+    # 2. the score breaks
+    put(hp(noise(0.004), 1200) * env(0.004, 0.0001, 0.0009), snap_at, 1.6)
+    put(modes([2870, 4310, 5990, 7420, 9810], [0.012, 0.009, 0.007, 0.005, 0.004], [0.5, 0.45, 0.35, 0.3, 0.2]), snap_at, 0.9)
+    tp = t_(0.03); put(np.sin(2 * np.pi * np.cumsum(170 - 2400 * tp) / SR) * np.exp(-tp / 0.008), snap_at, 0.35)  # small thump
+    # 3. pssht: pressure release, bright then darkening
+    dl = 0.75; n = int(dl * SR); tt = t_(dl)
+    bright = bp(noise(dl), 3200, 11000); dark = bp(noise(dl), 1400, 6000)
+    mixk = np.clip(tt / 0.35, 0, 1)
+    gas = (bright * (1 - mixk) + dark * mixk) * np.minimum(1, tt / 0.004) * (0.75 * np.exp(-tt / 0.045) + 0.35 * np.exp(-tt / 0.22))
+    put(gas, snap_at, 1.25)
+    # 4. tab drops back onto the lid
+    put(hp(noise(0.004), 2000) * env(0.004, 0.0002, 0.001), snap_at + 0.17, 0.5)
+    put(modes([3300, 5200, 8100], [0.006, 0.004, 0.003], [0.3, 0.2, 0.15]), snap_at + 0.17, 0.5)
+    # 5. fizz: Poisson shower of micro-bubble pops
+    t, end = 0.0, d - snap_at - 0.05
+    while t < end:
+        rate = 2200 * np.exp(-t / 0.45) + 260 * np.exp(-t / 1.4) + 30
+        t += rng.exponential(1 / rate)
+        f0 = 2800 + rng.random() * 9000; dc = 0.0004 + rng.random() * 0.0016
+        k = int(dc * 6 * SR); tk = np.arange(k) / SR
+        pop = np.sin(2 * np.pi * f0 * tk) * np.exp(-tk / dc) * min(1.0, rng.lognormal(-2.2, 0.6))
+        put(pop, snap_at + 0.02 + t, 0.55 * (0.4 + 0.6 * np.exp(-t / 1.2)))
+    hiss = hp(noise(end), 5500, 3) * np.exp(-t_(end) / 0.7)
+    put(hiss, snap_at + 0.03, 0.05)
+    # 6. small room
+    ir = rng.standard_normal(int(0.12 * SR)) * np.exp(-t_(0.12) / 0.025)
+    ir[0] = 6.0
+    wet = np.convolve(x, ir)[:len(x)]
+    return (x + 0.12 * wet / np.max(np.abs(ir))) * 0.9
+
 def fizz(d, g=0.25):
     x = hp(noise(d), 5000, 3)
     crackle = (rng.random(int(d * SR)) > 0.9993) * rng.standard_normal(int(d * SR)) * 3
@@ -106,7 +151,7 @@ for f in [0, 8, 24, 32]:
 drone = lp(saw(mtof(33), 1.6) + saw(mtof(45), 1.6, 0.004), 300) * np.linspace(0.05, 0.35, int(1.6 * SR))
 add(music, drone, 0)
 add(sfx, fizz(0.7, 0.2) * np.linspace(0, 1, int(0.7 * SR)) ** 2, fr(26))
-add(sfx, crack(), fr(45.5), 1.0)
+add(sfx, can_open(0.07), fr(46.5) - 0.07, 1.0)  # snap lands just before the hit
 def beep(): return np.sin(2 * np.pi * 988 * t_(0.09)) * env(0.09, 0.002, 0.05) * 0.25
 def plink(f0=1400): return sweep(f0 * 0.6, f0, 0.08, 6) * env(0.08, 0.001, 0.025) * 0.4
 for f in [0, 8, 24, 32]:
@@ -179,7 +224,7 @@ add(sfx, riser(0.6, 120, 900) * 0.8, fr(606))
 root, chord = PROG[0]
 add(music, stab(chord + [45 + 24], 2.0, 1.4) * 1.2, fr(624))
 add(music, bass_note(33, 1.5) * 1.3, fr(624))
-for f in range(624 + beat * 2, 708, beat):
+for f in range(624 + beat * 2, 684, beat):  # groove drops out so the can opening is heard
     k = (f - 624) // beat
     add(drums, kick(), fr(f), 0.8)
     if k % 2 == 1: add(drums, clap(), fr(f), 0.55)
@@ -187,7 +232,7 @@ for f in range(624 + beat * 2, 708, beat):
     add(music, bass_note(33 if k < 4 else 41, 0.19), fr(f), 0.8)
 for i, f in enumerate([630, 636, 648, 660, 664]):  # end-card text pops
     add(sfx, bloop(400 + 80 * i, 1200 + 120 * i) * 0.8, fr(f))
-add(sfx, crack() * 0.8, fr(696))  # second can opens as the card holds
+add(sfx, can_open(0.2), fr(696) - 0.2, 1.15)  # the hero can's tab: lift from 690, snap on 696
 add(sfx, boom(1.0) * 0.7, fr(708)); add(sfx, crash(1.0) * 0.6, fr(708))
 
 # ---------------- mix

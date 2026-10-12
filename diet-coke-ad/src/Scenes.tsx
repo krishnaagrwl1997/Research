@@ -1,8 +1,10 @@
 import React from 'react';
 import { random } from 'remotion';
+import { Img, staticFile } from 'remotion';
+import meta from '../public/3d/meta.json';
 import { CAN_RATIO, Can } from './Can';
 import { Bubbles, Center, Fill, Slam, SpeedLines } from './FX';
-import { Bottle, BottleCap, Crumple, Dice, Eye, HeartCharm, IVBag, Lips, Pack, Sparkle, Wordmark } from './Props';
+import { BottleCap, Dice, Eye, HeartCharm, IVBag, Lips, Pack, Sparkle, Wordmark } from './Props';
 import { BAR, BEAT, BODY, C, DISPLAY, H, SERIF, W, backOut, beatPulse, clamp, easeIn, easeInOut, easeOut, jitter, map, range } from './lib';
 
 type P = { f: number };
@@ -335,10 +337,7 @@ export const Glam: React.FC<P> = ({ f }) => {
           </div>
         ))}
         <div style={{ position: 'absolute', left: W / 2, top: H / 2, transform: `translate(-50%, -50%) rotate(${-22 + Math.sin(f * 0.08) * 6}deg) scale(${1 + 0.07 * p})`, filter: 'drop-shadow(20px 30px 30px rgba(80,0,20,.4))' }}>
-          <div style={{ position: 'relative', transform: 'skewX(-4deg) scaleX(1.12)' }}>
-            <Can h={640} spin={0.03 + Math.sin(f * 0.05) * 0.03} />
-            <Crumple w={640 * CAN_RATIO} h={640} seed="cr" />
-          </div>
+          <Can h={660} variant="crushed" />
         </div>
         {range(16).map((i) => {
           const tw = Math.abs(Math.sin(f * 0.25 + i * 1.3));
@@ -463,15 +462,14 @@ const CardProp: React.FC<{ kind: NonNullable<Card['prop']>; f: number }> = ({ ki
       return <Can h={1700} spin={f * 0.05} style={{ transform: 'rotate(90deg)' }} />;
     case 'crushed':
       return (
-        <div style={{ position: 'relative', transform: 'rotate(28deg) skewX(-4deg) scaleX(1.12)' }}>
-          <Can h={900} spin={0.04} />
-          <Crumple w={900 * CAN_RATIO} h={900} seed="cr2" />
+        <div style={{ transform: 'rotate(28deg)' }}>
+          <Can h={900} variant="crushed" />
         </div>
       );
     case 'wordmark':
       return <Wordmark size={340} coke={C.yellow} diet={C.yellow} paglu={C.yellow} />;
     case 'close':
-      return <Can h={2600} spin={0.05} style={{ transform: 'translateY(200px)' }} />;
+      return <Can h={1650} spin={0} style={{ transform: 'translateY(180px)' }} />;
     case 'pack':
       return <Pack w={600} lid={1} t={f} />;
   }
@@ -513,23 +511,16 @@ export const Strobe: React.FC<P> = ({ f }) => {
 
 // ---------------------------------------------------------------- 576–624 · hush: two bottles clink, then white-out
 export const Clink: React.FC<P> = ({ f }) => {
-  const meet = easeOut(clamp(f / 20));
-  const knock = f >= 20 ? Math.exp(-(f - 20) / 3) * Math.cos((f - 20) * 1.2) * 18 : 0;
   const text = 'how will i go back to normal cans when i know this exists?';
   const chars = Math.floor(map(f, [2, 24], [0, text.length]));
   const glow = map(f, [32, 48], [0, 1], easeIn);
   return (
     <Fill bg={C.paper}>
-      <Fill bg="radial-gradient(ellipse at 45% 60%, #ffffff 0, rgba(237,235,231,0) 60%)" />
-      <Grain opacity={0.08} />
-      <div style={{ position: 'absolute', left: W * 0.42 - (1 - meet) * 900 - knock, top: H * 0.58, transform: `translate(-50%, -50%) rotate(${16 - knock * 0.3}deg)` }}>
-        <Bottle h={980} id="bl" />
-      </div>
-      <div style={{ position: 'absolute', left: W * 0.42 + 270 + (1 - meet) * 900 + knock, top: H * 0.64, transform: `translate(-50%, -50%) rotate(${-14 + knock * 0.3}deg)` }}>
-        <Bottle h={980} id="br" />
-      </div>
+      {/* the bottle shot itself is a 3D render (render3d/), one image per frame */}
+      <Img src={staticFile(`3d/clink_${String(Math.min(47, f)).padStart(2, '0')}.jpg`)} style={{ position: 'absolute', inset: 0, width: W, height: H }} />
+      <Grain opacity={0.05} />
       {f >= 20 && f < 32 && (
-        <div style={{ position: 'absolute', left: W * 0.42 + 135, top: H * 0.58 - 400, transform: `translate(-50%, -50%) scale(${map(f, [20, 23, 32], [0.2, 1.4, 0])}) rotate(${f * 6}deg)` }}>
+        <div style={{ position: 'absolute', left: meta.clinkContact.x, top: meta.clinkContact.y, transform: `translate(-50%, -50%) scale(${map(f, [20, 23, 32], [0.2, 1.4, 0])}) rotate(${f * 6}deg)` }}>
           <Sparkle s={140} color={C.white} />
         </div>
       )}
@@ -575,7 +566,7 @@ export const Finale: React.FC<P> = ({ f }) => {
           filter: 'drop-shadow(30px 50px 50px rgba(0,0,0,.45))',
         }}
       >
-        <Can h={880} spin={-0.03 + f * 0.0005} />
+        <Can h={880} variant="open" openFrame={f - 66} />
       </div>
       <div style={{ position: 'absolute', left: 930, top: 120 }}>
         <div style={{ transform: `scale(${1 + 1.5 * (1 - reveal(3))}) rotate(-4deg)`, transformOrigin: 'left center', opacity: reveal(3) > 0 ? 1 : 0, filter: 'drop-shadow(10px 12px 0 rgba(0,0,0,.3))' }}>
