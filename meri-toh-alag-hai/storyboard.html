@@ -125,6 +125,73 @@ dd{margin:0;min-width:0}
 .prod{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:12px}
 .prod ol{margin:0;padding-left:20px;display:grid;gap:6px;max-width:80ch}
 @media (prefers-reduced-motion:no-preference){.frame{transition:transform .2s}.frame:hover{transform:translateY(-2px)}}
+/* animatic */
+.player{display:grid;gap:10px;max-width:960px;width:100%}
+.stage{position:relative;aspect-ratio:16/9;max-width:100%;container-type:inline-size;overflow:hidden;border-radius:6px;background:#1B0F1F;box-shadow:0 0 0 1px rgba(0,0,0,.2),0 12px 30px -12px rgba(42,15,46,.45)}
+.sframe{position:absolute;inset:0;border-radius:0}
+.sframe .cam,.sframe .beat{position:absolute;inset:0;transform-origin:50% 50%}
+.lw{position:absolute}
+.lw>.layer{position:absolute;inset:0;background-repeat:no-repeat}
+.ti{display:inline-block}
+.stage.paused *,.stage.paused *::before,.stage.paused *::after{animation-play-state:paused!important}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.controls button{font:inherit;font-weight:600;font-size:.9rem;padding:7px 16px;border-radius:99px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer}
+.controls button.ghost{background:transparent;color:var(--ink);padding:7px 12px}
+.controls button:focus-visible,.playfrom:focus-visible,.cbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.controls input[type=range]{flex:1 1 220px;accent-color:var(--accent);min-width:0}
+.controls .tc{min-width:92px}
+.nowrow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+#nowlyr{font-family:var(--f-baloo);font-weight:600;font-size:1.05rem}
+.flash{position:absolute;inset:0;background:#fff;animation:k-flash .22s ease-out both;pointer-events:none}
+.tr-wipe{animation:k-wipe .38s cubic-bezier(.6,0,.2,1) both}
+.playfrom{position:absolute;right:2.2cqw;top:2.2cqw;z-index:3;font:600 1.7cqw/1 var(--f-body);padding:.7cqw 1.4cqw;border-radius:99px;border:0;background:#1d0a1f;color:#fff;cursor:pointer;opacity:.85}
+.playfrom:hover{opacity:1}
+.shot.active .frame{box-shadow:0 0 0 3px var(--accent)}
+details.pr{border-top:1px dashed var(--line);padding-top:8px}
+details.pr summary{cursor:pointer;font-weight:600;font-size:.88rem;color:var(--accent)}
+.pblock{margin-top:10px;display:grid;gap:6px;min-width:0}
+.phead{display:flex;gap:8px;align-items:baseline;font-size:.85rem}
+.phead span{color:var(--muted);font-size:.75rem;font-family:var(--f-mono)}
+.cbtn{margin-left:auto;font:inherit;font-size:.75rem;padding:2px 10px;border-radius:99px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.pblock pre{margin:0;white-space:pre-wrap;font-family:var(--f-mono);font-size:.76rem;line-height:1.5;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;max-height:220px;overflow:auto}
+
+@keyframes k-cpush{from{transform:scale(1)}to{transform:scale(1.1)}}
+@keyframes k-cpull{from{transform:scale(1.18)}to{transform:scale(1)}}
+@keyframes k-cdrift{from{transform:scale(1.1) translateX(-3%)}to{transform:scale(1.1) translateX(3%)}}
+@keyframes k-ctilt{from{transform:scale(1.12) translateY(4%)}to{transform:scale(1.12) translateY(-4%)}}
+@keyframes k-cwhip{0%{transform:translateX(-55%);filter:blur(8px)}12%{transform:translateX(2%);filter:blur(0)}18%{transform:translateX(0)}100%{transform:scale(1.06)}}
+@keyframes k-beat{0%{transform:scale(1.045) translate(.7%,-.5%)}18%{transform:scale(1.015) translate(-.5%,.4%)}40%,100%{transform:none}}
+@keyframes k-flash{from{opacity:.95}to{opacity:0}}
+@keyframes k-wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes k-pop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes k-slam{0%{transform:scale(1.8);opacity:0}45%{transform:scale(.92);opacity:1}75%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+@keyframes k-wob{from{transform:rotate(-5deg) scale(1.04)}to{transform:rotate(5deg) scale(.97)}}
+@keyframes k-write{from{clip-path:inset(-20% 100% -20% 0)}to{clip-path:inset(-20% -5% -20% 0)}}
+@keyframes k-drip{from{transform:none;filter:none}to{transform:translateY(14%) scaleY(1.2) skewX(-4deg);filter:blur(.4px);opacity:.85}}
+@keyframes k-tip{from{transform:none}to{transform:rotate(14deg) translateY(18%)}}
+@keyframes k-stretch{from{letter-spacing:0}to{letter-spacing:.35em}}
+@keyframes k-fadeout{from{opacity:1}to{opacity:.35}}
+@keyframes k-bounce{0%{transform:translateY(-90%);opacity:0}45%{transform:translateY(12%);opacity:1}70%{transform:translateY(-6%)}100%{transform:none;opacity:1}}
+@keyframes k-shine{0%,100%{filter:brightness(1)}50%{filter:brightness(1.55) drop-shadow(0 0 .8cqw #fff6b0)}}
+@keyframes k-slideR{from{transform:translateX(40%);opacity:0}to{transform:none;opacity:1}}
+@keyframes k-fade{from{opacity:0}to{opacity:1}}
+@keyframes k-sway{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+.lw{transform-origin:50% 90%}
+@keyframes k-bob{from{transform:translateY(0)}to{transform:translateY(-2.5%)}}
+@keyframes k-breathe{from{transform:scale(1)}to{transform:scale(1.03)}}
+@keyframes k-swirl{from{transform:scale(1.12) rotate(-2deg)}to{transform:scale(1.18) rotate(2deg)}}
+@keyframes k-palm{0%{transform:scale(1.12)}25%{transform:scale(1.02)}100%{transform:scale(1)}}
+@keyframes k-tap{0%{transform:translate(1.5%,2.5%)}25%,100%{transform:none}}
+@keyframes k-freeze{from{filter:none}to{filter:hue-rotate(190deg) saturate(.75) brightness(1.08)}}
+@keyframes k-drop{0%{transform:translateY(-115%)}60%{transform:translateY(5%)}80%{transform:translateY(-2%)}100%{transform:none}}
+@keyframes k-swing{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+@keyframes k-paste{0%{transform:scale(1.5) rotate(-9deg);opacity:0}60%{transform:scale(.96);opacity:1}100%{transform:none;opacity:1}}
+@keyframes k-popin{0%{transform:scale(0);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes k-stamp{0%{transform:translate(-50%,-50%) rotate(-12deg) scale(2.3);opacity:0}60%{transform:translate(-50%,-50%) rotate(-12deg) scale(.95);opacity:1}100%{transform:translate(-50%,-50%) rotate(-12deg) scale(1);opacity:1}}
+@keyframes k-blink{0%{opacity:1}50%{opacity:0}}
+@keyframes k-fall{from{background-position:0 0}to{background-position:-1.6cqw 6cqw}}
+.sframe .layer{transition:none}
+@media (prefers-reduced-motion:reduce){.sframe .beat,.sframe .cam{animation:none!important}.flash{display:none}}
 </style>
 
 <div class="wrap">
@@ -159,6 +226,27 @@ dd{margin:0;min-width:0}
     </div>
     <p class="note">Every lyric gets a thin dark outline and a hard offset shadow. English subtitles sit small at the bottom.</p>
   </section>
+</section>
+
+<section class="hero" id="animatic">
+  <div class="sechead">
+    <p class="kicker">Animatic · synced to your song</p>
+    <h2>Watch it move</h2>
+    <p class="lede">A rough cut of the whole video with your track. It plays the planned camera moves, beat hits, lyric animations and transitions for every shot. The reference frames stand in for the final art until the Rani shots are generated; her own movement is in each shot's motion prompt below.</p>
+  </div>
+  <div class="player">
+    <div class="stage" id="stage"></div>
+    <div class="controls">
+      <button type="button" id="play" aria-label="Play">▶ Play</button>
+      <button type="button" class="ghost" id="prev" aria-label="Previous shot">⏮</button>
+      <button type="button" class="ghost" id="next" aria-label="Next shot">⏭</button>
+      <input type="range" id="seek" min="0" max="91.2" step="0.05" value="0" aria-label="Position in song">
+      <span class="tc" id="time">0:00 / 1:31</span>
+    </div>
+    <div class="nowrow"><span class="ref" id="shotlbl">Shot 01</span><span id="nowlyr"></span></div>
+    <p class="note" id="audnote" hidden>The song couldn't load here, so the animatic is running on a silent clock with the same timing.</p>
+  </div>
+  <audio id="song" src="audio/meri-toh-alag-hai.mp3" preload="auto"></audio>
 </section>
 
 <section class="hero" id="heroine">
@@ -441,40 +529,265 @@ const S = [
   cam:"The stamp slams with a frame shake, then a slow fade.", tx:"\"कैंसल\" stamps in red ink. \"कल मिलते हैं\" is handwritten."}
 ];
 
+const B = 60/114; // one beat at ~114 BPM
+const SONG_END = 91.2;
+// Per shot: cam move, beat shake, layer anims, text anims ("name@beat"), transition in, image prompt, motion prompt
+const MO = [
+ {cam:"push",lm:["breathe"],tm:["write@0","write@1.5"],tr:"cut",
+  ip:"Extreme close-up of Rani's face filling the right half of the frame, heart sunglasses over her eyes, one mehendi hand raised beside her face like taking an oath, empty pink space on the left.",
+  mp:"Rani raises her right hand into an oath pose, closes her eyes solemnly and gives one slow nod. Loose hair strands drift. Slow camera push-in toward her face. Calm, 3 seconds."},
+ {cam:"push",lm:["breathe"],tm:["on","on","slam@1"],tr:"none",
+  ip:"Same close-up of Rani, heart sunglasses tipped down her nose, caught mid-wink with a smirk, empty pink space on the left.",
+  mp:"She slides the heart sunglasses down her nose with one fingertip, looks straight into the lens and winks, then a tiny smirk. Quick camera bump in on the wink. 2 seconds."},
+ {cam:"pull",bt:1,lm:["palm"],tm:["slam@0"],tr:"flash",
+  ip:"Full-body Rani in the right third of the frame, mid-stride in flared jeans, mehendi palm thrust straight at the camera, hair and dupatta flying, pink background, empty space on the left.",
+  mp:"Rani spins on her heel toward the camera and thrusts her mehendi palm at the lens. Her hair and dupatta whip around with the spin. Fast zoom out from her palm to her full body with a slight fisheye. Energetic, 2 seconds."},
+ {cam:"tilt",lm:["bob"],tm:["pop@0","tip@3"],tr:"wipe",
+  ip:"Close-up of Rani lying on a pillow in her marigold sleep tee, heavy-lidded sleepy eyes, alarm clock beside her, face in the left half, flat blue background on the right.",
+  mp:"An alarm rings. Her eyes snap open and she lifts her head an inch, then her eyelids droop and she flops back into the pillow. Hair settles over her face. The camera drifts down with her. 4 seconds."},
+ {cam:"drift",lm:["swirl"],tm:["pop@0","stretch@2"],tr:"cut",
+  ip:"Wide shot of swirling violet and blue clouds, tiny Rani lying on one cloud like a bed and scrolling her phone, lots of empty sky in the centre.",
+  mp:"The clouds roll slowly from left to right. Rani's cloud floats gently; she yawns and scrolls with one lazy thumb. Very slow camera drift to the right. Dreamy and slow, 4 seconds."},
+ {cam:"still",lm:["sway"],tm:["pop@0","fadeout@2"],tr:"wipe",
+  ip:"Close-up of Rani's mehendi hand with neon-yellow nails holding a steaming cutting-chai glass, gold bangles, hand in the left third, flat orange background.",
+  mp:"Steam curls up from the chai. The hand lifts the glass, then stops as if distracted; neon nails drum on the glass and the bangles slide and jingle. Locked camera. 4 seconds."},
+ {cam:"push",lm:["freeze"],tm:["pop@0","drip@2"],tr:"cut",
+  ip:"The same hand and chai glass with the steam gone and frost forming on the glass, background shifting from orange to icy blue.",
+  mp:"Frost crawls up the glass from the bottom, the last steam fades, and the tea surface freezes over. The hand shivers once. Colours cool from orange to icy blue. Slow zoom into the glass. 4 seconds."},
+ {cam:"still",lm:["sway","none"],tm:["pop@0","slam@3"],tr:"wipe",
+  ip:"Split frame. The left half shows Dimaag: Rani drawn as a stern aunty version of herself in a blue block-printed dupatta, side-eye, wagging one finger. The right half is empty dark pink.",
+  mp:"The aunty wags her finger in rhythm, her eyes slide sideways in judgement, and her dupatta flutters. Held camera with a slight push. 4 seconds."},
+ {cam:"whip",lm:["none","bob"],tm:["pop@0","pop@1","bounce@3"],tr:"none",
+  ip:"Rani as Dil in the right half of the frame: carefree, heart sunglasses on, blowing a big pink bubblegum bubble.",
+  mp:"Rani blows a bubblegum bubble that swells and pops on the beat. She laughs and flips her hair. The camera whips in from the left. 4 seconds."},
+ {cam:"push",lm:["breathe"],tm:["pop@0","slideR@3"],tr:"wipe",
+  ip:"Rani whispering behind her hand into a friend's ear, both side-eyeing, printed dupattas, to-do papers in her other hand, figures in the left half, khadi paper background.",
+  mp:"Rani leans in and whispers behind her hand. Her friend's eyes widen, then roll. The to-do papers slip out of Rani's other hand and flutter off to the right. Slow push toward the whisper. 4 seconds."},
+ {cam:"push",lm:["popin"],tm:["pop@1","pop@1.5","slam@3","pop@4"],tr:"cut",
+  ip:"Full-body Rani posing for a vertical phone video under a ring light, peace sign, pink background.",
+  mp:"Rani hits three quick poses on the beat: peace sign, hair flip, palm to the lens. The ring light flickers and hearts float up. Handheld phone wobble. 4 seconds."},
+ {cam:"still",lm:["drop"],tm:[],tr:"flash",
+  ip:"A nimbu-mirchi charm (one lemon and dried red chillies on a black thread) hanging against black, halftone print texture.",
+  mp:"The charm drops in from the top on its thread, bounces and swings like a pendulum, chillies rattling. White flash on the downbeat. 2 seconds."},
+ {cam:"push",bt:1,lm:["breathe"],tm:["pop@0","slam@1","slam@2","slam@3"],tr:"flash",
+  ip:"Poster composition: Rani's face centred inside a halftone print with a nimbu-mirchi charm hanging above her head, marigold background, magenta border, space left and right for text.",
+  mp:"Halftone dots shimmer. The charm above her swings. Rani snaps her head to the camera on each beat with a defiant look. The camera shakes on every beat. 4 seconds."},
+ {cam:"push",lm:["breathe"],tm:["pop@0","pop@1","wobble@3"],tr:"cut",
+  ip:"Close-up of Rani's calm, innocent face in the right half, blue and violet clouds swirling behind her head.",
+  mp:"She blinks innocently and tilts her head. Then the clouds behind her spin into a chaotic whirl and phones, chillies and notification icons tumble out. Her eye twitches. Fast push-in. 4 seconds."},
+ {cam:"drift",bt:1,lm:["bob"],tm:["pop@0","wobble@1","pop@3","shine@4"],tr:"cut",
+  ip:"Rani in a red saree reclining royally on cushions among violet clouds, a hand fan in one hand, heart sunglasses on, in the right half.",
+  mp:"She crosses her eyes and sticks her tongue out for one beat, then snaps into a regal pose and fans herself slowly. Clouds drift. 3 seconds."},
+ {cam:"tilt",bt:1,lm:["breathe","popin@1"],tm:["pop@0","pop@1","shine@3"],tr:"cut",
+  ip:"Close-up of Rani in a red saree with a gold maang tikka, nath and jhumkas, chin raised, gold sparkles, in the right half. A domed chhatri pavilion inset at the top left.",
+  mp:"She raises her chin slowly while gold sparkles twinkle across her jewellery. Jhumkas swing and a glint sweeps across the maang tikka. Slow tilt up. 4 seconds."},
+ {cam:"push",bt:1,lm:["pasteup@0","pasteup@1","pasteup@2","pasteup@3","pasteup@4"],tm:["slam@0","slam@1","slam@2","slam@3","slam@4"],tr:"flash",
+  ip:"Rani in one fixed pose, hand on hip with the other palm out, generated five times: once in each reference style.",
+  mp:"Rani snaps into the palm-out pose with a hard head turn to the camera, hair whipping. Use the identical move in all five styles so the cuts match. 1 second each."},
+ {cam:"push",lm:["sway"],tm:["fade@0","slam@3","slam@4"],tr:"wipe",
+  ip:"Close-up of Rani's mehendi hand opening an empty wallet, gold bangles stacked on the wrist, in the left half, flat orange background.",
+  mp:"She flips the wallet open and a moth flutters out. Then she fans out four plan cards like a winning hand with a confident flick. Bangles jingle. 4 seconds."},
+ {cam:"drift",lm:["pasteup@0","pasteup@3"],tm:["pop@0","pop@3"],tr:"cut",
+  ip:"Scrapbook layout on light blue: two postcards, a city skyline and snowy mountains, with Rani's mehendi hand holding a passport stamp above them.",
+  mp:"She slams the passport stamp onto the first postcard, then the second, with a bounce each time. The postcards flutter and rotate slightly. The camera pans from left to right. 4 seconds."},
+ {cam:"push",lm:["palm"],tm:["pop@1","slam@3"],tr:"flash",
+  ip:"Rani's mehendi palm pushed toward the camera, filling the right half, her face behind it looking unimpressed, phone in the other hand, pink background.",
+  mp:"A message notification pops up. She glances, rolls her eyes and thrusts her palm at the lens; the palm rushes toward the camera. Hair swings. 4 seconds."},
+ {cam:"still",lm:["tap"],tm:["pop@0","pop@1","slam@4"],tr:"wipe",
+  ip:"Close-up of Rani's index finger with a neon-yellow nail tapping a phone showing a generic food-app cart with no logo, in the left half, flat orange background.",
+  mp:"Her finger taps the add button on every beat. The phone bounces with each tap and food icons pile up and spill over the edge. Locked camera with small bumps. 5 seconds."},
+ {cam:"push",lm:["bob","bob@0.5"],tm:["pop@0","shine@3"],tr:"cut",
+  ip:"Rani facing an ornate gold oval mirror with her reflection visible, pink background.",
+  mp:"She points at her reflection with a confident smile. The reflection blows a kiss back one beat late. A sparkle runs across the mirror. Slow over-the-shoulder push. 4 seconds."},
+ {cam:"drift",lm:["breathe"],tm:["pop@0","drip@3"],tr:"wipe",
+  ip:"Rani stepping out of a doorway into heavy rain, hair flattened, heart sunglasses fogged, shocked expression, cool blue palette, in the left half.",
+  mp:"She struts out in slow motion, then the rain hits and she freezes mid-step. Her hair puffs up and then droops, and her sunglasses fog over. Snap from slow motion to normal speed. 4 seconds."},
+ {cam:"pull",bt:1,lm:["pasteup@0","pasteup@1","pasteup@2","pasteup@3","pasteup@4"],tm:["slam@5","pop@1","pop@2"],tr:"flash",
+  ip:"Rani holding a stand-up comedy microphone under a spotlight, laughing, beside a cloud with a laughing face, paper-collage background.",
+  mp:"Rani grabs the mic and throws her head back laughing. The cloud laughs with her and wobbles. Paper collage pieces slap down around them on each beat. The camera zooms out. 4 seconds."},
+ {cam:"still",lm:["breathe"],tm:["write@0","write@3"],tr:"wipe",
+  ip:"A handwritten resolution note pinned on khadi paper with a red cancel stamp, and Rani asleep in bed in the background in her sleep tee.",
+  mp:"A rubber stamp slams down on the note and the ink splatters. Then Rani pulls the blanket over her head and snuggles back to sleep. Slow fade out. 3 seconds."}
+];
+const STYLE_PROMPT = {
+ 1:"Style: vintage Indian screen-print poster, two-tone magenta and purple halftone dots, thick black outlines, slightly misregistered colours, aged paper texture, marigold background, magenta border.",
+ 2:"Style: glossy semi-realistic comic illustration, clean ink lines, soft cel shading, glossy lips, soft pink gradient background, Y2K fashion.",
+ 3:"Style: bold flat vector illustration, saturated colours, orange-red skin tones, yellow eyeshadow, fine gold linework jewellery, swirling blue and violet cloud background.",
+ 4:"Style: naive Indian folk-art illustration, elongated face, large almond eyes with bright whites, block-printed fabric patterns, flat colours on textured khadi paper.",
+ 5:"Style: flat marker illustration, thick black outlines, flat fills with no shading, one solid bright orange background."
+};
+const MOTION_TAIL = " Keep Rani's face, outfit and mehendi consistent with the reference image. No text appears.";
+
+// animation library: name -> [[keyframes, duration ("D" = shot length, "B" = beats), easing, iterations, extra delay, direction]]
+const A = {
+ on:[], none:[],
+ pop:[["k-pop",.28,"cubic-bezier(.3,1.6,.5,1)",1,0]],
+ slam:[["k-slam",.32,"cubic-bezier(.2,.9,.3,1.2)",1,0]],
+ wobble:[["k-pop",.28,"ease-out",1,0],["k-wob","B1","ease-in-out","infinite",.28,"alternate"]],
+ write:[["k-write",1.1,"linear",1,0]],
+ drip:[["k-pop",.28,"ease-out",1,0],["k-drip",1.4,"ease-in",1,.5]],
+ tip:[["k-pop",.28,"ease-out",1,0],["k-tip",.6,"cubic-bezier(.5,0,.8,.5)",1,.5]],
+ stretch:[["k-pop",.28,"ease-out",1,0],["k-stretch",1.6,"ease-in-out",1,.3]],
+ fadeout:[["k-pop",.28,"ease-out",1,0],["k-fadeout",1,"ease",1,.8]],
+ bounce:[["k-bounce",.5,"ease-out",1,0]],
+ shine:[["k-pop",.28,"ease-out",1,0],["k-shine","B2","ease-in-out","infinite",.28]],
+ slideR:[["k-slideR",.45,"ease-out",1,0]],
+ fade:[["k-fade",.4,"ease",1,0]],
+ sway:[["k-sway","B2","ease-in-out","infinite",0,"alternate"]],
+ bob:[["k-bob","B1","ease-in-out","infinite",0,"alternate"]],
+ breathe:[["k-breathe","B2","ease-in-out","infinite",0,"alternate"]],
+ swirl:[["k-swirl","B4","ease-in-out","infinite",0,"alternate"]],
+ palm:[["k-palm","B1","ease-out","infinite",0]],
+ tap:[["k-tap","B1","ease-out","infinite",0]],
+ freeze:[["k-freeze","D","ease-in",1,0]],
+ drop:[["k-drop",.6,"ease-out",1,0],["k-swing","B2","ease-in-out","infinite",.6,"alternate"]],
+ pasteup:[["k-paste",.3,"cubic-bezier(.2,.9,.3,1.2)",1,0]],
+ popin:[["k-popin",.4,"cubic-bezier(.3,1.6,.5,1)",1,0]]
+};
+const CAM = {push:"k-cpush",pull:"k-cpull",drift:"k-cdrift",tilt:"k-ctilt",whip:"k-cwhip",still:""};
+const HANIM = {chat:["popin",1],stamp:["stamp",2],rec:["blink",0],rain:["fall",0]};
+
 const toPct = (v,max)=> (v/max*100).toFixed(2)+"%";
-function layer([r,x,y,w,h,size,pos,extra=""]){
-  return `<div class="layer" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%;background-image:url(refs/${r}.jpg);background-size:${size};background-position:${pos};${extra}"></div>`;
+const parseT = s => { const [a,b]=s.split("–"); const f=x=>{const [m,ss]=x.split(":");return +m*60+ +ss}; return [f(a),f(b)] };
+const STARTS = S.map(s=>parseT(s.t)[0]);
+const durOf = i => (i<S.length-1?STARTS[i+1]:SONG_END)-STARTS[i];
+const fmt = t => `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,"0")}`;
+
+// "name@beats" -> CSS animation string, given offset o into the shot and shot duration D
+function anim(spec,o,D){
+  if(!spec||spec==="none"||spec==="on") return "";
+  const [name,bt="0"]=spec.split("@"); const list=A[name]; if(!list||!list.length) return "";
+  const base=parseFloat(bt)*B;
+  return "animation:"+list.map(([k,d,e,it,add=0,dir="normal"])=>{
+    const dur = d==="D"?D:(typeof d==="string"?parseFloat(d.slice(1))*B:d);
+    return `${k} ${dur.toFixed(3)}s ${e} ${(base+add-o).toFixed(3)}s ${it} ${dir} both`;
+  }).join(",")+";";
 }
-function text([t,x,y,sz,f,c,sh,al="c",r=0]){
+function layer([r,x,y,w,h,size,pos,extra=""],spec,o,D){
+  return `<div class="lw" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%;${spec?anim(spec,o,D):""}"><div class="layer" style="background-image:url(refs/${r}.jpg);background-size:${size};background-position:${pos};${extra}"></div></div>`;
+}
+function text([t,x,y,sz,f,c,sh,al="c",r=0],spec,o,D){
   const tr = al==="c"?"-50%":al==="r"?"-100%":"0";
   const shadow = sh?`text-shadow:${(sz*.07).toFixed(2)}cqw ${(sz*.07).toFixed(2)}cqw 0 ${sh};`:"";
-  return `<div class="tx f-${f}" style="left:${toPct(x,160)};top:${toPct(y,90)};font-size:${sz}cqw;color:${c};${shadow}transform:translate(${tr},-50%) rotate(${r}deg)">${t}</div>`;
+  return `<div class="tx f-${f}" style="left:${toPct(x,160)};top:${toPct(y,90)};font-size:${sz}cqw;color:${c};${shadow}transform:translate(${tr},-50%) rotate(${r}deg)"><span class="ti" style="${spec?anim(spec,o,D):""}">${t}</span></div>`;
 }
-document.getElementById("map").innerHTML = MAP.map(([k,a,b])=>{
-  const f=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
-  return `<div style="flex:${b-a};background:${SEC[k].c}" title="${SEC[k].n} ${f(a)}–${f(b)}"><b>${SEC[k].n}</b><span>${f(a)}</span></div>`;
-}).join("");
+function frameInner(s,i,live,o=0){
+  const m=MO[i], D=durOf(i);
+  const L=s.im.map((l,j)=>layer(l,live?m.lm[j]:null,o,D)).join("");
+  const T=s.x.map((x,j)=>text(x,live?(m.tm[j]||"pop@"+j):null,o,D)).join("");
+  return {L,T,D};
+}
+
+document.getElementById("map").innerHTML = MAP.map(([k,a,b])=>`<div style="flex:${b-a};background:${SEC[k].c}" title="${SEC[k].n} ${fmt(a)}–${fmt(b)}"><b>${SEC[k].n}</b><span>${fmt(a)}</span></div>`).join("");
 document.getElementById("sw").innerHTML = PAL.map(([c,n])=>`<div class="sw"><i style="background:${c}"></i>${n}</div>`).join("");
 document.getElementById("refs").innerHTML = REFS.map(([n,name,use])=>`<figure><img src="refs/${n}.jpg" alt="Reference ${n}: ${name}"><figcaption><b>Ref ${n}</b> ${name}<span>${use}</span></figcaption></figure>`).join("");
-document.getElementById("board").innerHTML = S.map((s,i)=>`
+
+const MASTER = document.getElementById("mp").textContent.trim();
+function refNum(s){ const m=s.ref.match(/Ref (\d)/); return m?+m[1]:null }
+function imagePrompt(s,i){
+  const n=refNum(s);
+  const style = s.ref.startsWith("All") ? "Style: generate once in each of the five reference styles." : STYLE_PROMPT[n];
+  return `${MASTER}\n\n${style}\n\nShot ${String(i+1).padStart(2,"0")}: ${MO[i].ip}`;
+}
+const esc = t => t.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+document.getElementById("board").innerHTML = S.map((s,i)=>{
+  const {L,T}=frameInner(s,i,false);
+  return `
   <article class="shot">
     <div class="frame ${s.st}" style="background:${s.bg}">
-      ${s.im.map(layer).join("")}<div class="ht"></div>${s.h||""}
-      ${s.x.map(text).join("")}
+      ${L}<div class="ht"></div>${s.h||""}
+      ${T}
       ${s.sub?`<div class="sub">${s.sub}</div>`:""}
       <div class="safe"></div><div class="no">${String(i+1).padStart(2,"0")}</div>
+      <button type="button" class="playfrom" data-shot="${i}" aria-label="Play shot ${i+1} in the animatic">▶ Play</button>
     </div>
     <div class="meta">
       <div class="top"><span class="tc">${s.t}</span><span class="sec" style="background:${SEC[s.s].c}">${SEC[s.s].n}</span><span class="ref">${s.ref}</span></div>
       <p class="lyr">${s.ly}${s.en?`<small>${s.en}</small>`:""}</p>
       <dl><dt>Action</dt><dd>${s.a}</dd><dt>Camera</dt><dd>${s.cam}</dd><dt>Text</dt><dd>${s.tx}</dd></dl>
+      <details class="pr"><summary>Prompts for this shot</summary>
+        <div class="pblock"><div class="phead"><b>Image prompt</b> <span>start frame</span><button type="button" class="cbtn" data-copy="ip${i}">Copy</button></div><pre id="ip${i}">${esc(imagePrompt(s,i))}</pre></div>
+        <div class="pblock"><div class="phead"><b>Motion prompt</b> <span>image-to-video</span><button type="button" class="cbtn" data-copy="mo${i}">Copy</button></div><pre id="mo${i}">${esc(MO[i].mp+MOTION_TAIL)}</pre></div>
+      </details>
     </div>
-  </article>`).join("");
+  </article>`}).join("");
+
 const STY=[[1,"Halftone poster","Two-tone magenta and purple halftone print with a thick black outline and slightly offset colours. Skin is printed in orange and pink dots."],[2,"Glossy comic","Semi-realistic comic shading, glossy lips, soft pink rim light, clean ink lines. Her main look."],[3,"Bold vector","Flat saturated shapes, orange-red skin, yellow eyeshadow, fine gold linework, swirling clouds behind her."],[4,"Folk naive","Elongated face, big almond eyes with bright whites, a flat paper texture, block-printed fabric patterns."],[5,"Marker flat","Thick black marker outlines, flat fills with no shading, one loud background colour."]];
 document.getElementById("styles").innerHTML=STY.map(([n,name,d])=>`<figure><img src="refs/${n}.jpg" alt="Reference ${n}"><figcaption><b>Ref ${n} · ${name}</b>${d}</figcaption></figure>`).join("");
+
+function copyFrom(btn,el){
+  const t=el.textContent;
+  navigator.clipboard.writeText(t).then(()=>{btn.textContent="Copied";setTimeout(()=>btn.textContent="Copy",1500)})
+   .catch(()=>{const r=document.createRange();r.selectNodeContents(el);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);btn.textContent="Press Ctrl+C"});
+}
 const cp=document.getElementById("copyp");
-cp.addEventListener("click",()=>{const t=document.getElementById("mp").textContent;
-  navigator.clipboard.writeText(t).then(()=>{cp.textContent="Copied";setTimeout(()=>cp.textContent="Copy",1500)}).catch(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("mp"));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);cp.textContent="Press Ctrl+C"})});
+cp.addEventListener("click",()=>copyFrom(cp,document.getElementById("mp")));
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".cbtn"); if(b) copyFrom(b,document.getElementById(b.dataset.copy));
+  const p=e.target.closest(".playfrom"); if(p){ seekTo(STARTS[+p.dataset.shot]+.01); play(); document.getElementById("animatic").scrollIntoView({behavior:"smooth",block:"start"}); }
+});
+
+/* ---------- animatic ---------- */
+const stage=document.getElementById("stage"), audio=document.getElementById("song");
+const btn=document.getElementById("play"), seek=document.getElementById("seek"), tlab=document.getElementById("time"), slab=document.getElementById("shotlbl"), lyr=document.getElementById("nowlyr");
+let cur=-1, playing=false, useAudio=true, clockStart=0, pausedAt=0;
+audio.addEventListener("error",()=>{useAudio=false; document.getElementById("audnote").hidden=false});
+const now = () => useAudio ? audio.currentTime : (playing ? (performance.now()-clockStart)/1000 : pausedAt);
+const idxAt = t => { let i=0; while(i<S.length-1 && t>=STARTS[i+1]) i++; return i };
+
+function renderStage(i,o,withTr){
+  const s=S[i], m=MO[i];
+  const {L,T,D}=frameInner(s,i,true,o);
+  const camK=CAM[m.cam];
+  const camA = camK?`animation:${camK} ${D.toFixed(3)}s linear ${(-o).toFixed(3)}s 1 both;`:"";
+  const beatA = m.bt?`animation:k-beat ${B.toFixed(3)}s ease-out ${(-o).toFixed(3)}s infinite both;`:"";
+  const sh = (s.h||"").replace(/class="(chat|stamp|rec|rain)"/g,(all,c)=>{
+    const [n,bt]=HANIM[c]; const d=(bt*B-o).toFixed(3);
+    const k={popin:`k-popin .4s cubic-bezier(.3,1.6,.5,1) ${d}s 1 both`,stamp:`k-stamp .35s cubic-bezier(.2,.9,.3,1.2) ${d}s 1 both`,blink:`k-blink ${B.toFixed(3)}s steps(1) ${d}s infinite both`,fall:`k-fall .45s linear ${d}s infinite both`}[n];
+    return `${all} data-a="1" style2="animation:${k}"`;
+  });
+  const el=document.createElement("div");
+  el.className=`sframe frame ${s.st}`+(withTr&&m.tr==="wipe"?" tr-wipe":"");
+  el.style.background=s.bg;
+  el.innerHTML=`<div class="cam" style="${camA}"><div class="beat" style="${beatA}">${L}<div class="ht"></div>${sh}${T}</div></div>${s.sub?`<div class="sub">${s.sub}</div>`:""}${withTr&&m.tr==="flash"?'<div class="flash"></div>':""}`;
+  el.querySelectorAll("[data-a]").forEach(n=>{ n.style.animation=n.getAttribute("style2").slice(10) });
+  if(withTr&&m.tr==="wipe"){ stage.appendChild(el); setTimeout(()=>{ [...stage.children].forEach(c=>{ if(c!==el) c.remove() }) },400); }
+  else stage.replaceChildren(el);
+  stage.classList.toggle("paused",!playing);
+  cur=i; slab.textContent=`Shot ${String(i+1).padStart(2,"0")} · ${SEC[s.s].n}`; lyr.textContent=s.ly;
+  document.querySelectorAll(".shot.active").forEach(n=>n.classList.remove("active"));
+  document.querySelectorAll(".shot")[i]?.classList.add("active");
+}
+function seekTo(t){
+  t=Math.max(0,Math.min(SONG_END-.05,t));
+  if(useAudio){ try{ audio.currentTime=t }catch(e){} } else { pausedAt=t; clockStart=performance.now()-t*1000 }
+  const i=idxAt(t); renderStage(i,t-STARTS[i],false); ui(t);
+}
+function ui(t){ seek.value=t; tlab.textContent=`${fmt(t)} / ${fmt(SONG_END)}` }
+function play(){
+  playing=true; btn.textContent="❚❚ Pause"; btn.setAttribute("aria-label","Pause");
+  if(useAudio){ audio.play().catch(()=>{ useAudio=false; document.getElementById("audnote").hidden=false; clockStart=performance.now()-pausedAt*1000 }) }
+  else clockStart=performance.now()-pausedAt*1000;
+  stage.classList.remove("paused"); requestAnimationFrame(tick);
+}
+function pause(){
+  pausedAt=now(); playing=false; btn.textContent="▶ Play"; btn.setAttribute("aria-label","Play");
+  if(useAudio) audio.pause(); stage.classList.add("paused");
+}
+function tick(){
+  if(!playing) return;
+  const t=now();
+  if(t>=SONG_END-.02 || (useAudio && audio.ended)){ pause(); seekTo(0); return }
+  const i=idxAt(t); if(i!==cur) renderStage(i,t-STARTS[i],true);
+  ui(t); requestAnimationFrame(tick);
+}
+btn.addEventListener("click",()=> playing?pause():play());
+seek.addEventListener("input",()=>{ const t=+seek.value; if(!useAudio){ pausedAt=t; clockStart=performance.now()-t*1000 } seekTo(t) });
+document.getElementById("prev").addEventListener("click",()=>seekTo(STARTS[Math.max(0,cur-1)]+.01));
+document.getElementById("next").addEventListener("click",()=>seekTo(STARTS[Math.min(S.length-1,cur+1)]+.01));
+// resting state: shot 1 fully built, paused
+renderStage(0,durOf(0)-.05,false); ui(0);
+
 const safe=document.getElementById("safe");
 safe.addEventListener("change",()=>document.body.classList.toggle("show-safe",safe.checked));
 </script>
