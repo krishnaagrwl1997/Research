@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nature.house Homepage Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1F3D2B; --moss:#4F7A45; --fern:#8DB27A; --sand:#F5F0E6; --paper:#FFFDF8;
+  --bark:#5A4632; --ember:#D9703A; --ink:#1B241E; --muted:#5E6B61; --line:#E3DCCD;
+  --radius:18px; --shadow:0 10px 30px rgba(31,61,43,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* concept ribbon */
+.ribbon{background:var(--ink);color:#fff;font-size:13px;padding:8px 0}
+.ribbon .wrap{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.ribbon b{color:var(--fern)}
+.toggle{display:inline-flex;align-items:center;gap:8px;background:#ffffff1a;padding:4px 12px;border-radius:99px}
+.toggle i{width:28px;height:16px;border-radius:99px;background:var(--fern);position:relative;transition:.2s}
+.toggle i:after{content:"";position:absolute;top:2px;left:14px;width:12px;height:12px;border-radius:50%;background:#fff;transition:.2s}
+body.no-notes .toggle i{background:#ffffff40}
+body.no-notes .toggle i:after{left:2px}
+
+/* header */
+header.site{position:sticky;top:0;z-index:20;background:rgba(255,253,248,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.logo{font-family:Fraunces,serif;font-weight:600;font-size:22px;color:var(--forest);display:flex;align-items:center;gap:8px}
+.logo svg{width:26px;height:26px}
+nav.main{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+nav.main a:hover{color:var(--forest)}
+.hdr-actions{display:flex;gap:10px;align-items:center;font-size:14px}
+.pill{border:1px solid var(--line);border-radius:99px;padding:8px 14px;background:#fff}
+.pill.dark{background:var(--forest);color:#fff;border-color:var(--forest)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;color:#fff;min-height:620px;display:flex;align-items:flex-end}
+.hero-bg{position:absolute;inset:0}
+.hero-bg svg{width:100%;height:100%;display:block}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,30,20,.25),rgba(15,30,20,.1) 35%,rgba(15,30,20,.6))}
+.hero .wrap{text-shadow:0 2px 18px rgba(10,25,15,.45);position:relative;z-index:2;width:100%;padding-bottom:56px}
+.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.9;margin-bottom:12px}
+.hero h1{font-size:clamp(40px,6vw,72px);max-width:760px}
+.hero p.lead{font-size:19px;max-width:560px;margin:16px 0 28px;opacity:.95}
+
+.search{text-shadow:none;background:#fff;color:var(--ink);border-radius:22px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.4fr 1fr 1fr auto;padding:8px;gap:4px;max-width:920px}
+.field{padding:10px 16px;border-radius:14px;text-align:left}
+.field:hover{background:var(--sand)}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:.02em}
+.field span{font-size:15px;color:var(--muted)}
+.flex-chip{display:inline-block;margin-left:6px;font-size:11px;background:var(--sand);color:var(--forest);padding:1px 8px;border-radius:99px;font-weight:600}
+.go{background:var(--ember);color:#fff;border-radius:16px;padding:0 28px;font-weight:600;font-size:16px;display:flex;align-items:center;gap:8px}
+.go:hover{filter:brightness(1.05)}
+
+.chips{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(6px);color:#fff;padding:8px 14px;border-radius:99px;font-size:14px;display:flex;align-items:center;gap:6px}
+.chip.on{background:#fff;color:var(--forest)}
+
+/* trust */
+.trust{border-bottom:1px solid var(--line);background:var(--sand)}
+.trust .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:22px 24px}
+.trust div{display:flex;gap:12px;align-items:center;font-size:14px;color:var(--muted)}
+.trust b{display:block;color:var(--ink);font-size:15px}
+.ico{width:38px;height:38px;flex:none;border-radius:12px;background:#fff;display:grid;place-items:center;color:var(--moss)}
+.ico svg{width:20px;height:20px}
+
+section{padding:80px 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:28px}
+.sec-head h2{font-size:clamp(28px,3.4vw,40px)}
+.sec-head p{color:var(--muted);max-width:520px;margin-top:8px}
+.link{color:var(--moss);font-weight:600;white-space:nowrap}
+
+/* nature types */
+.types{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.type{border-radius:var(--radius);overflow:hidden;position:relative;aspect-ratio:3/4;color:#fff;transition:transform .2s}
+.type:hover{transform:translateY(-4px)}
+.type svg{position:absolute;inset:0;width:100%;height:100%}
+.type:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.5))}
+.type span{position:absolute;left:14px;bottom:12px;z-index:2;font-weight:600}
+.type small{display:block;font-weight:400;font-size:12px;opacity:.85}
+
+/* listings */
+.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filters button{border:1px solid var(--line);border-radius:99px;padding:7px 14px;font-size:14px;background:#fff}
+.filters button.on{background:var(--forest);color:#fff;border-color:var(--forest)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.card .img{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;position:relative}
+.card .img svg{width:100%;height:100%;display:block}
+.fav{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center}
+.badge{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.92);color:var(--forest);font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px}
+.card h3{font-family:Inter,sans-serif;font-size:16px;font-weight:600;margin-top:12px;display:flex;justify-content:space-between;gap:8px}
+.card h3 em{font-style:normal;font-weight:500;font-size:14px;white-space:nowrap}
+.card .meta{color:var(--muted);font-size:14px}
+.tags{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}
+.tag{font-size:12px;background:var(--sand);color:var(--bark);padding:3px 9px;border-radius:99px}
+.tag.seclusion{background:#E6EFE1;color:var(--forest);font-weight:600}
+.price{font-size:15px}
+.price b{font-size:17px}
+.price small{color:var(--muted)}
+.sample{font-size:12px;color:var(--muted);margin-top:16px}
+
+/* map */
+.mapblock{background:var(--forest);color:#fff;border-radius:28px;display:grid;grid-template-columns:1fr 1.3fr;overflow:hidden}
+.mapblock .txt{padding:48px}
+.mapblock h2{font-size:38px}
+.mapblock p{opacity:.85;margin:14px 0 24px}
+.mapblock ul{list-style:none;display:grid;gap:10px;margin-bottom:28px}
+.mapblock li{display:flex;gap:10px;align-items:center}
+.mapblock li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--fern)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--ember);color:#fff;border-radius:14px;padding:13px 22px;font-weight:600}
+.btn.light{background:#fff;color:var(--forest)}
+.mapart{position:relative;min-height:380px}
+.mapart svg{position:absolute;inset:0;width:100%;height:100%}
+
+/* impact */
+.impact{background:var(--sand)}
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.steps{display:grid;gap:16px;margin-top:24px}
+.step{display:flex;gap:16px;background:#fff;border-radius:16px;padding:18px;border:1px solid var(--line)}
+.step .n{width:34px;height:34px;flex:none;border-radius:50%;background:var(--forest);color:#fff;display:grid;place-items:center;font-weight:600}
+.step p{color:var(--muted);font-size:14px}
+.project{background:#fff;border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
+.project .img{aspect-ratio:16/10;position:relative}
+.project .img svg{width:100%;height:100%;display:block}
+.project .body{padding:24px}
+.project .kicker{font-size:12px;font-weight:600;color:var(--moss);text-transform:uppercase;letter-spacing:.08em}
+.project h3{font-size:24px;margin:6px 0 8px}
+.bar{height:10px;background:var(--sand);border-radius:99px;overflow:hidden;margin:16px 0 6px}
+.bar i{display:block;height:100%;width:64%;background:linear-gradient(90deg,var(--moss),var(--fern))}
+.partners{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;font-size:13px;color:var(--muted)}
+.partners span{border:1px dashed #C9BFA9;border-radius:10px;padding:6px 12px}
+
+/* seasons */
+.seasons{display:grid;grid-template-columns:2fr 1fr 1fr;gap:18px}
+.season{border-radius:var(--radius);overflow:hidden;position:relative;min-height:280px;color:#fff;padding:24px;display:flex;flex-direction:column;justify-content:flex-end}
+.season svg{position:absolute;inset:0;width:100%;height:100%}
+.season:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.55))}
+.season *:not(svg):not(svg *){position:relative;z-index:2}
+.season h3{font-size:26px}
+.season p{opacity:.9;font-size:14px;margin-top:4px}
+
+/* host */
+.host{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;border:1px solid var(--line);border-radius:28px;padding:48px;background:#fff}
+.host h2{font-size:34px}
+.host p{color:var(--muted);margin:12px 0 24px}
+.host .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.host .stats div{background:var(--sand);border-radius:16px;padding:18px}
+.host .stats b{font-family:Fraunces,serif;font-size:22px;display:block;color:var(--forest)}
+
+footer{background:var(--ink);color:#C9D2CB;padding:56px 0 28px;font-size:14px}
+footer .cols{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:32px}
+footer h4{color:#fff;margin-bottom:12px;font-size:14px}
+footer li{list-style:none;margin:6px 0}
+footer .legal{border-top:1px solid #ffffff22;margin-top:40px;padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+/* annotations */
+.note{position:relative}
+.pin{position:absolute;z-index:30;width:28px;height:28px;border-radius:50%;background:var(--ember);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(217,112,58,.3);cursor:help}
+.pin .tip{display:none;position:absolute;top:34px;left:-8px;width:280px;background:var(--ink);color:#fff;font-weight:400;font-size:13px;line-height:1.45;padding:12px 14px;border-radius:12px;box-shadow:var(--shadow);text-align:left}
+.pin:hover .tip,.pin:focus .tip{display:block}
+.pin .tip b{color:var(--fern);display:block;margin-bottom:4px}
+body.no-notes .pin{display:none}
+
+.rationale{background:#EFEAE0;border-top:4px solid var(--ember)}
+.rationale h2{font-size:32px;margin-bottom:6px}
+.rationale .intro{color:var(--muted);max-width:720px;margin-bottom:28px}
+.rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.r{background:#fff;border-radius:16px;padding:20px;display:flex;gap:14px}
+.r .n{width:28px;height:28px;flex:none;border-radius:50%;background:var(--ember);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.r h3{font-family:Inter,sans-serif;font-size:16px;margin-bottom:4px}
+.r p{font-size:14px;color:var(--muted)}
+.r .kpi{font-size:12px;color:var(--moss);font-weight:600;margin-top:6px}
+.verify{margin-top:28px;background:#fff;border:1px dashed var(--ember);border-radius:16px;padding:20px;font-size:14px;color:var(--muted)}
+.verify b{color:var(--ink)}
+
+/* mobile sticky search */
+body.past-hero .msearch{opacity:1;pointer-events:auto;transform:none}
+.msearch{display:none}
+
+@media (max-width:980px){
+  nav.main{display:none}
+  .search{grid-template-columns:1fr 1fr}
+  .search .field:first-child{grid-column:1/-1}
+  .go{grid-column:1/-1;justify-content:center;padding:14px}
+  .trust .wrap{grid-template-columns:1fr 1fr}
+  .types{grid-template-columns:repeat(3,1fr)}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .mapblock,.impact-grid,.host{grid-template-columns:1fr}
+  .seasons{grid-template-columns:1fr 1fr}
+  .seasons .season:first-child{grid-column:1/-1}
+  footer .cols{grid-template-columns:1fr 1fr}
+  .rgrid{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  .hdr-actions .pill:not(.dark){display:none}
+  .hero{min-height:560px}
+  .hero .wrap{padding-top:40px;padding-bottom:40px}
+  .hero p.lead{font-size:16px}
+  .search{grid-template-columns:1fr}
+  .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;margin-right:-16px}
+  .chip{white-space:nowrap}
+  .trust .wrap{grid-template-columns:1fr;padding:18px 16px}
+  section{padding:56px 0}
+  .sec-head{flex-direction:column;align-items:flex-start}
+  .types{grid-template-columns:repeat(2,1fr)}
+  .cards{grid-template-columns:1fr}
+  .mapblock .txt,.host{padding:28px}
+  .seasons{grid-template-columns:1fr}
+  .host .stats{grid-template-columns:1fr}
+  footer .cols{grid-template-columns:1fr}
+  .pin .tip{width:220px}
+  .msearch{display:flex;opacity:0;pointer-events:none;transform:translateY(20px);transition:.25s;position:fixed;left:16px;right:16px;bottom:16px;z-index:40;background:#fff;border-radius:99px;box-shadow:var(--shadow);padding:10px 10px 10px 18px;align-items:center;gap:10px;font-size:14px;border:1px solid var(--line)}
+  .msearch span{flex:1;color:var(--muted)}
+  .msearch b{display:block;color:var(--ink)}
+  .msearch button{background:var(--ember);color:#fff;border-radius:99px;padding:10px 16px;font-weight:600}
+}
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="wrap">
+    <span><b>Redesign concept</b> · Independent proposal, not affiliated with Nature.house / Natuurhuisje. Listings, prices and project data are illustrative.</span>
+    <button class="toggle" id="noteToggle" aria-pressed="true"><i></i> Design notes</button>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 32 32" fill="none"><path d="M16 3 4 14v15h24V14L16 3Z" fill="#1F3D2B"/><path d="M16 9l-6 9h3l-4 6h14l-4-6h3l-6-9Z" fill="#8DB27A"/></svg>
+      nature.house
+    </a>
+    <nav class="main">
+      <a href="#types">Find by nature</a>
+      <a href="#map">Map</a>
+      <a href="#impact">Our nature projects</a>
+      <a href="#host">List your home</a>
+    </nav>
+    <div class="hdr-actions">
+      <a class="pill" href="#">EN · €</a>
+      <a class="pill" href="#">♡ Saved</a>
+      <a class="pill dark" href="#">Log in</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero note" style="padding:0">
+  <div class="hero-bg" data-scene="hero"></div>
+  <div class="wrap">
+    <div class="eyebrow">Holiday homes in nature since 2009</div>
+    <h1>Stay where nature is your nearest neighbour.</h1>
+    <p class="lead">Cabins, farmhouses and tiny homes in forests, by the water and far from the crowds. Every stay gives something back to the nature around it.</p>
+
+    <div class="search note" role="search">
+      <span class="pin" tabindex="0" style="top:-14px;left:-14px">1<span class="tip"><b>Search first, above the fold</b>One clear search bar with three fields. "Where" defaults to "Anywhere in nature" so people who don't have a destination yet aren't stuck.</span></span>
+      <button class="field"><label>Where</label><span>Anywhere in nature</span></button>
+      <button class="field"><label>When</label><span>Add dates</span><span class="flex-chip">Flexible</span></button>
+      <button class="field"><label>Who</label><span>2 guests · 1 dog</span></button>
+      <button class="go">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        Search
+      </button>
+    </div>
+
+    <div class="chips note">
+      <span class="pin" tabindex="0" style="top:-12px;left:-34px">2<span class="tip"><b>Search by type of nature, not just place</b>The core of the brand. Chips let people start from the feeling they want (forest, water, dark skies) and still apply to any destination search.</span></span>
+      <button class="chip on">🌲 Forest</button>
+      <button class="chip">🌊 By the water</button>
+      <button class="chip">⛰️ Mountains</button>
+      <button class="chip">🏖️ Dunes &amp; coast</button>
+      <button class="chip">✨ Dark skies</button>
+      <button class="chip">🏡 No neighbours in sight</button>
+      <button class="chip">🐕 Dog-friendly</button>
+    </div>
+  </div>
+</section>
+
+<div class="trust note">
+  <span class="pin" tabindex="0" style="top:10px;left:10px">3<span class="tip"><b>Reassurance right under the search</b>Four short trust points: what's different, the nature promise, guest reviews and booking safety. Real figures from Nature.house slot in here.</span></span>
+  <div class="wrap">
+    <div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 13h5l-3 5h12l-3-5h5L12 2Z"/><path d="M12 18v4"/></svg></span><span><b>Only homes in nature</b>No holiday parks, every home checked</span></div>
+    <div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11Z"/></svg></span><span><b>Every stay gives back</b>Part of each booking funds local nature</span></div>
+    <div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 2.6 5.5 6 .8-4.4 4.2 1.1 6L12 16.8 6.7 19.5l1.1-6L3.4 9.3l6-.8L12 3Z"/></svg></span><span><b>Real guest reviews</b>Only from people who stayed</span></div>
+    <div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><span><b>Book safely</b>Clear total price, no surprises</span></div>
+  </div>
+</div>
+
+<section id="types">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>What kind of quiet are you after?</h2>
+        <p>Start from the landscape. We'll find the homes.</p>
+      </div>
+      <a class="link" href="#">All nature types →</a>
+    </div>
+    <div class="types note">
+      <span class="pin" tabindex="0" style="top:-12px;left:-12px">4<span class="tip"><b>Browse by landscape</b>Large image tiles for people who are still dreaming rather than searching. Each tile opens the results with that nature filter already on.</span></span>
+      <a class="type" href="#"><div data-scene="forest"></div><span>Forest<small>Cabins under the trees</small></span></a>
+      <a class="type" href="#"><div data-scene="lake"></div><span>By the water<small>Lakes, rivers, fens</small></span></a>
+      <a class="type" href="#"><div data-scene="coast"></div><span>Dunes &amp; coast<small>Sea air, long walks</small></span></a>
+      <a class="type" href="#"><div data-scene="mountain"></div><span>Mountains<small>Views and trails</small></span></a>
+      <a class="type" href="#"><div data-scene="heath"></div><span>Heath &amp; meadow<small>Open skies, wildlife</small></span></a>
+      <a class="type" href="#"><div data-scene="night"></div><span>Dark skies<small>Stargazing stays</small></span></a>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>Free this weekend, close to home</h2>
+        <p>Based on your location. Change it anytime.</p>
+      </div>
+      <a class="link" href="#">See all available →</a>
+    </div>
+    <div class="filters note">
+      <span class="pin" tabindex="0" style="top:-12px;left:-34px">5<span class="tip"><b>Show what's available now</b>The homepage shows homes free this weekend, not a generic selection. Quick date tabs lower the effort for short, last-minute trips.</span></span>
+      <button class="on">This weekend</button>
+      <button>Next weekend</button>
+      <button>Autumn break</button>
+      <button>A week in November</button>
+    </div>
+    <div class="cards note" id="cards">
+      <span class="pin" tabindex="0" style="top:-12px;left:-12px">6<span class="tip"><b>Seclusion as a headline feature</b>"Nearest neighbour 600 m" is the number nature.house guests actually care about. Show it on every card, together with the total price for the stay, not just the nightly rate.</span></span>
+    </div>
+    <p class="sample">Sample listings for illustration only.</p>
+  </div>
+</section>
+
+<section id="map" style="padding-top:0">
+  <div class="wrap">
+    <div class="mapblock note">
+      <span class="pin" tabindex="0" style="top:14px;left:14px">7<span class="tip"><b>The map as a way to explore</b>In nature trips, location is the whole point. Promote the map from a secondary toggle to a main entry point, with layers for forests, water, and walking and cycling routes.</span></span>
+      <div class="txt">
+        <h2>Explore on the map</h2>
+        <p>See exactly where each home sits: how close the forest is, how far the next house is, and what you can reach on foot.</p>
+        <ul>
+          <li>Forest, water and protected-area layers</li>
+          <li>Walking &amp; cycling routes from the door</li>
+          <li>Draw an area, see only homes inside it</li>
+        </ul>
+        <a class="btn" href="#">Open the map</a>
+      </div>
+      <div class="mapart"><div data-scene="map"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="impact" id="impact">
+  <div class="wrap impact-grid note">
+    <span class="pin" tabindex="0" style="top:-14px;left:10px">8<span class="tip"><b>Make the impact concrete</b>The nature-project promise is Nature.house's biggest difference from Airbnb and Booking, but it's easy to miss. Show it as a named project near the guest's stay, with progress, instead of as a footer line.</span></span>
+    <div>
+      <div class="eyebrow" style="color:var(--moss)">Your stay gives back</div>
+      <h2 style="font-size:clamp(30px,3.6vw,44px)">Every booking helps protect the nature you came for.</h2>
+      <div class="steps">
+        <div class="step"><span class="n">1</span><div><b>You book a stay</b><p>Nothing extra to pay. The contribution comes from our side.</p></div></div>
+        <div class="step"><span class="n">2</span><div><b>Part of it goes to local nature</b><p>We work with nature organisations to fund projects close to our homes.</p></div></div>
+        <div class="step"><span class="n">3</span><div><b>See the project near you</b><p>Your booking confirmation shows the project your stay supports.</p></div></div>
+      </div>
+      <div class="partners"><span>Partner logo</span><span>Partner logo</span><span>Partner logo</span></div>
+    </div>
+    <div class="project">
+      <div class="img"><div data-scene="wetland"></div></div>
+      <div class="body">
+        <div class="kicker">Project near the Veluwe · Example</div>
+        <h3>Restoring heathland for sand lizards and nightjars</h3>
+        <p style="color:var(--muted);font-size:14px">An example of how a supported project could be presented: where it is, what it does and how far along it is.</p>
+        <div class="bar"><i></i></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>64% funded</span><span>Example figures</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>Ideas for the season</h2>
+        <p>Autumn is for forest walks, mushrooms and the first fire of the year.</p>
+      </div>
+    </div>
+    <div class="seasons note">
+      <span class="pin" tabindex="0" style="top:-12px;left:-12px">9<span class="tip"><b>Seasonal ideas linked to bookable homes</b>Content from the magazine or blog connects straight to available homes, so inspiration leads to a booking, not a dead-end article.</span></span>
+      <a class="season" href="#"><div data-scene="autumn"></div><h3>Homes with a wood stove</h3><p>Cosy cabins for long autumn evenings</p></a>
+      <a class="season" href="#"><div data-scene="night"></div><h3>Stargazing weekends</h3><p>Far from city lights</p></a>
+      <a class="season" href="#"><div data-scene="lake"></div><h3>Bring the dog</h3><p>Fenced gardens, forest on the doorstep</p></a>
+    </div>
+  </div>
+</section>
+
+<section id="host" style="padding-top:0">
+  <div class="wrap">
+    <div class="host note">
+      <span class="pin" tabindex="0" style="top:-14px;left:-14px">10<span class="tip"><b>A separate path for hosts</b>Hosts get one clear section and a link in the header, so the guest journey above stays uncluttered.</span></span>
+      <div>
+        <h2>Own a home in nature?</h2>
+        <p>Reach guests who travel for peace and quiet, and who respect the place they stay in.</p>
+        <a class="btn" href="#" style="background:var(--forest)">List your home</a>
+      </div>
+      <div class="stats">
+        <div><b>Nature lovers</b>Guests who come for the landscape</div>
+        <div><b>Your calendar</b>Sync with other channels</div>
+        <div><b>Local support</b>A team that knows your region</div>
+        <div><b>Gives back</b>Your home helps fund nature</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div><div class="logo" style="color:#fff">nature.house</div><p style="margin-top:10px;max-width:280px">Holiday homes in nature. Concept footer for illustration.</p></div>
+      <div><h4>Discover</h4><ul><li>Forest</li><li>By the water</li><li>Dark skies</li><li>Map</li></ul></div>
+      <div><h4>Nature.house</h4><ul><li>About us</li><li>Nature projects</li><li>Magazine</li><li>Careers</li></ul></div>
+      <div><h4>Help</h4><ul><li>Help centre</li><li>Cancellation</li><li>List your home</li><li>Contact</li></ul></div>
+    </div>
+    <div class="legal"><span>Redesign concept, not an official Nature.house page.</span><span>EN · €</span></div>
+  </div>
+</footer>
+
+<section class="rationale">
+  <div class="wrap">
+    <h2>Concept notes</h2>
+    <p class="intro">This page redesigns the homepage around three goals: help people who don't have a destination yet, make seclusion and nature the main search criteria, and turn the nature-project promise into something guests can see. The numbers match the pins on the page.</p>
+    <div class="rgrid">
+      <div class="r"><span class="n">1</span><div><h3>Search-first hero</h3><p>Three fields, with "Anywhere in nature" and flexible dates as defaults.</p><div class="kpi">Measure: share of visits that search</div></div></div>
+      <div class="r"><span class="n">2</span><div><h3>Nature-type chips</h3><p>Start from forest, water or dark skies instead of a town name.</p><div class="kpi">Measure: searches using a nature filter</div></div></div>
+      <div class="r"><span class="n">3</span><div><h3>Trust strip</h3><p>Four reassurances directly under the search, including a clear total price.</p><div class="kpi">Measure: bounce rate on the homepage</div></div></div>
+      <div class="r"><span class="n">4</span><div><h3>Browse by landscape</h3><p>Image tiles for people still choosing what kind of trip they want.</p><div class="kpi">Measure: clicks from tiles to results</div></div></div>
+      <div class="r"><span class="n">5</span><div><h3>Available-now listings</h3><p>Homes free this weekend near the visitor, with quick date tabs.</p><div class="kpi">Measure: last-minute bookings</div></div></div>
+      <div class="r"><span class="n">6</span><div><h3>"Nearest neighbour" on cards</h3><p>Make seclusion something you can see and compare, and show the total stay price.</p><div class="kpi">Measure: click-through from cards</div></div></div>
+      <div class="r"><span class="n">7</span><div><h3>Map as a main entry point</h3><p>Nature layers and draw-to-search, because location is the product.</p><div class="kpi">Measure: map sessions that lead to a booking</div></div></div>
+      <div class="r"><span class="n">8</span><div><h3>Visible impact</h3><p>A named project near the stay, with progress, instead of a line in the footer.</p><div class="kpi">Measure: booking rate, repeat guests</div></div></div>
+      <div class="r"><span class="n">9</span><div><h3>Seasonal ideas linked to homes</h3><p>Every inspiration block ends in bookable homes.</p><div class="kpi">Measure: content-to-booking path</div></div></div>
+      <div class="r"><span class="n">10</span><div><h3>Clear host path</h3><p>One host section and a header link, kept apart from the guest flow.</p><div class="kpi">Measure: host sign-ups</div></div></div>
+    </div>
+    <div class="verify"><b>Check against the live site before sharing:</b> this concept was made without access to nature.house, so compare it with the current homepage and adjust. Confirm the current home count, the exact nature-project contribution model and partner names (sources from 2020–2023 disagree), brand colours and logo, and whether listings already show a seclusion or distance measure.</div>
+  </div>
+</section>
+
+<div class="msearch"><span><b>Anywhere in nature</b>Add dates · 2 guests</span><button>Search</button></div>
+
+<script>
+// Illustrated landscape scenes (no external images)
+const P = {
+  hero:    {sky:["#F6C99A","#9EC3C6"], sun:"#FFE7B8", layers:["#7FA37A","#4F7A45","#2F5537","#1F3D2B"], trees:3, cabin:true},
+  forest:  {sky:["#CFE3D1","#8DB27A"], sun:"#F7F1D5", layers:["#5E8A55","#3E6A42","#24472F"], trees:3},
+  lake:    {sky:["#DCEAF0","#A8CBD8"], sun:"#FFFFFF", layers:["#7FA37A","#4F7A45"], water:"#6E9FB3", trees:1},
+  coast:   {sky:["#FBE6C6","#BFD9E2"], sun:"#FFF4D6", layers:["#E8D3A6","#D6BC86"], water:"#7FB0C0", dunes:true},
+  mountain:{sky:["#E4ECF2","#AFC4D6"], sun:"#FFFFFF", layers:["#9DB0BF","#6E8597","#4F7A45"], peaks:true},
+  heath:   {sky:["#F4D9C6","#D9B4C9"], sun:"#FFE9D0", layers:["#B48BA8","#8E6E8C","#5E7A4A"]},
+  night:   {sky:["#0F1D2E","#2C4566"], sun:"#F5F1DC", layers:["#26394A","#1A2A38","#101C26"], stars:true, trees:2, cabin:true},
+  autumn:  {sky:["#F6D2A8","#E4A06E"], sun:"#FFE7C2", layers:["#C9773C","#9C5A2C","#5A3A22"], trees:2, cabin:true},
+  wetland: {sky:["#E6EED9","#B8CFA4"], sun:"#FFFFFF", layers:["#A7BE7E","#7E9A5A","#5E7A4A"], water:"#8FB3B0"}
+};
+function rnd(s){return()=> (s=(s*9301+49297)%233280)/233280}
+function scene(key,seed=1){
+  const c=P[key]; if(!c) return "";
+  const r=rnd(seed*7+key.length*13), W=800,H=600, id="g"+key+seed;
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.sky[0]}"/><stop offset="1" stop-color="${c.sky[1]}"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#${id})"/>`;
+  if(c.stars) for(let i=0;i<70;i++) s+=`<circle cx="${r()*W}" cy="${r()*H*.55}" r="${r()*1.6+.3}" fill="#fff" opacity="${r()*.7+.3}"/>`;
+  s+=`<circle cx="${W*(.62+r()*.2)}" cy="${H*.24}" r="${c.stars?26:48}" fill="${c.sun}" opacity=".95"/>`;
+  if(c.peaks){
+    s+=`<path d="M0 ${H*.62} L${W*.18} ${H*.3} L${W*.32} ${H*.5} L${W*.5} ${H*.22} L${W*.7} ${H*.48} L${W*.84} ${H*.32} L${W} ${H*.55} V${H} H0Z" fill="${c.layers[0]}"/>`;
+    s+=`<path d="M${W*.43} ${H*.3} L${W*.5} ${H*.22} L${W*.57} ${H*.31} L${W*.52} ${H*.29} L${W*.49} ${H*.33}Z" fill="#fff" opacity=".85"/>`;
+  }
+  const n=c.layers.length;
+  c.layers.forEach((col,i)=>{
+    const base=H*(.48+i*(.42/n)), amp=30+r()*40;
+    let d=`M0 ${base}`;
+    for(let x=0;x<=W;x+=100) d+=` Q${x+50} ${base-amp*(r()-.3)} ${x+100} ${base+(r()-.5)*amp}`;
+    if(c.dunes) d=`M0 ${base} C${W*.25} ${base-80} ${W*.45} ${base+40} ${W*.7} ${base-50} S${W} ${base-20} ${W} ${base}`;
+    s+=`<path d="${d} V${H} H0Z" fill="${col}"/>`;
+    if(c.water && i===0) s+=`<rect x="0" y="${H*.66}" width="${W}" height="${H*.34}" fill="${c.water}"/><g opacity=".5" stroke="#fff" stroke-width="2">${[0,1,2,3].map(k=>`<line x1="${80+k*170}" y1="${H*.74+k*22}" x2="${150+k*170}" y2="${H*.74+k*22}"/>`).join("")}</g>`;
+    if(c.trees && i>=n-c.trees){
+      const count=6+Math.floor(r()*6);
+      for(let t=0;t<count;t++){
+        const tx=r()*W, ty=base+10+r()*30, th=40+i*22+r()*30, tw=th*.42;
+        s+=`<path d="M${tx} ${ty-th} L${tx+tw/2} ${ty} L${tx-tw/2} ${ty}Z" fill="${col}" style="filter:brightness(.82)"/>`;
+      }
+    }
+  });
+  if(c.cabin){
+    const cx=W*.28, cy=H*.8;
+    s+=`<rect x="${cx-34}" y="${cy-30}" width="68" height="44" fill="#6B4A2E"/><path d="M${cx-44} ${cy-28} L${cx} ${cy-64} L${cx+44} ${cy-28}Z" fill="#3B2A1C"/><rect x="${cx-10}" y="${cy-18}" width="18" height="16" fill="#FFD27A"/><rect x="${cx+16}" y="${cy-62}" width="8" height="20" fill="#3B2A1C"/>`;
+  }
+  return s+"</svg>";
+}
+function mapArt(){
+  const W=800,H=520;
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><rect width="${W}" height="${H}" fill="#E9E4D4"/>`;
+  s+=`<path d="M0 120 C150 60 260 200 420 140 S700 40 800 110 V0 H0Z" fill="#B9D3C0"/>`;
+  s+=`<path d="M60 300 C140 220 300 260 340 340 S260 480 140 470 20 380 60 300Z" fill="#9DBE8E"/>`;
+  s+=`<path d="M480 260 C560 200 720 240 740 330 S640 470 540 440 420 330 480 260Z" fill="#9DBE8E"/>`;
+  s+=`<path d="M380 0 C400 120 360 220 420 320 S520 460 500 520" stroke="#8FB7C9" stroke-width="14" fill="none"/>`;
+  s+=`<path d="M0 420 L180 380 L320 420 L520 360 L800 400" stroke="#fff" stroke-width="4" stroke-dasharray="10 8" fill="none"/>`;
+  [[170,330,"€612"],[250,400,"€480"],[560,300,"€735"],[640,380,"€395"],[470,180,"€520"],[120,180,"€690"]].forEach(([x,y,p],i)=>{
+    const on=i===2;
+    s+=`<g><rect x="${x-34}" y="${y-16}" width="68" height="30" rx="15" fill="${on?"#1F3D2B":"#fff"}" stroke="#1F3D2B" stroke-opacity=".15"/><text x="${x}" y="${y+4}" text-anchor="middle" font-family="Inter" font-size="14" font-weight="600" fill="${on?"#fff":"#1F3D2B"}">${p}</text></g>`;
+  });
+  return s+`</svg>`;
+}
+document.querySelectorAll("[data-scene]").forEach((el,i)=>{
+  el.innerHTML = el.dataset.scene==="map" ? mapArt() : scene(el.dataset.scene,i+1);
+  el.style.cssText+=";position:absolute;inset:0";
+});
+
+// Sample listings
+const L=[
+  {name:"Forest cabin near Kootwijk", place:"Gelderland, NL", scene:"forest", tags:["Wood stove","Dogs welcome"], nb:"Nearest neighbour 600 m", price:412, nights:2, rating:"4.9", badge:"Free this weekend"},
+  {name:"Farmhouse by the river Ourthe", place:"Ardennes, BE", scene:"lake", tags:["River access","Sauna"], nb:"Nearest neighbour 350 m", price:536, nights:2, rating:"4.8", badge:"Free this weekend"},
+  {name:"Tiny house in the dunes", place:"Zeeland, NL", scene:"coast", tags:["Sea 900 m","Bikes included"], nb:"Nearest neighbour 200 m", price:298, nights:2, rating:"4.7", badge:"New"},
+  {name:"Stargazing lodge in the Eifel", place:"Rhineland-Palatinate, DE", scene:"night", tags:["Dark-sky park","Hot tub"], nb:"Nearest neighbour 1.2 km", price:620, nights:2, rating:"5.0", badge:"Free this weekend"}
+];
+const cards=document.getElementById("cards");
+L.forEach((l,i)=>{
+  const a=document.createElement("a"); a.className="card"; a.href="#";
+  a.innerHTML=`<div class="img">${scene(l.scene,i+11)}<span class="badge">${l.badge}</span><span class="fav">♡</span></div>
+  <h3>${l.name}<em>★ ${l.rating}</em></h3>
+  <div class="meta">${l.place}</div>
+  <div class="tags"><span class="tag seclusion">${l.nb}</span>${l.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+  <div class="price"><b>€${l.price}</b> <small>total · ${l.nights} nights, incl. fees</small></div>`;
+  cards.appendChild(a);
+});
+
+// Chip + filter toggles
+document.querySelectorAll(".chips .chip, .filters button").forEach(b=>b.addEventListener("click",()=>{
+  b.parentElement.querySelectorAll(b.tagName+"."+(b.className.split(" ")[0]||"")).forEach(x=>x!==b&&x.classList.remove("on"));
+  b.parentElement.querySelectorAll("button").forEach(x=>x!==b&&x.classList.remove("on"));
+  b.classList.add("on");
+}));
+
+// Show compact search once the hero search scrolls away (mobile)
+const heroSearch=document.querySelector(".search");
+new IntersectionObserver(([e])=>document.body.classList.toggle("past-hero",!e.isIntersecting&&e.boundingClientRect.top<0)).observe(heroSearch);
+
+// Notes toggle
+const t=document.getElementById("noteToggle");
+t.addEventListener("click",()=>{const off=document.body.classList.toggle("no-notes");t.setAttribute("aria-pressed",String(!off));});
+</script>
+</body>
+</html>
