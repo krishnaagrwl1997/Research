@@ -132,6 +132,7 @@ dd{margin:0;min-width:0}
 .sframe .cam,.sframe .beat{position:absolute;inset:0;transform-origin:50% 50%}
 .lw{position:absolute}
 .lw>.layer{position:absolute;inset:0;background-repeat:no-repeat}
+.lm>.layer{position:absolute;inset:0;background-repeat:no-repeat}
 .ti{display:inline-block}
 .stage.paused *,.stage.paused *::before,.stage.paused *::after{animation-play-state:paused!important}
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
@@ -169,7 +170,7 @@ details.pr summary{cursor:pointer;font-weight:600;font-size:.88rem;color:var(--a
 @keyframes k-write{from{clip-path:inset(-20% 100% -20% 0)}to{clip-path:inset(-20% -5% -20% 0)}}
 @keyframes k-drip{from{transform:none;filter:none}to{transform:translateY(14%) scaleY(1.2) skewX(-4deg);filter:blur(.4px);opacity:.85}}
 @keyframes k-tip{from{transform:none}to{transform:rotate(14deg) translateY(18%)}}
-@keyframes k-stretch{from{letter-spacing:0}to{letter-spacing:.35em}}
+@keyframes k-stretch{from{transform:scaleX(1)}to{transform:scaleX(1.45)}}
 @keyframes k-fadeout{from{opacity:1}to{opacity:.35}}
 @keyframes k-bounce{0%{transform:translateY(-90%);opacity:0}45%{transform:translateY(12%);opacity:1}70%{transform:translateY(-6%)}100%{transform:none;opacity:1}}
 @keyframes k-shine{0%,100%{filter:brightness(1)}50%{filter:brightness(1.55) drop-shadow(0 0 .8cqw #fff6b0)}}
@@ -191,6 +192,40 @@ details.pr summary{cursor:pointer;font-weight:600;font-size:.88rem;color:var(--a
 @keyframes k-blink{0%{opacity:1}50%{opacity:0}}
 @keyframes k-fall{from{background-position:0 0}to{background-position:-1.6cqw 6cqw}}
 .sframe .layer{transition:none}
+/* lyric-video motion language */
+.lm{position:absolute;inset:0;transform-origin:50% 90%}
+.cfl{position:absolute;inset:0;pointer-events:none}
+.cf{position:absolute}
+.cfi svg{display:block;width:100%;height:auto;filter:drop-shadow(.25cqw .25cqw 0 rgba(30,8,30,.25))}
+.snap{position:absolute;inset:0}
+.snap>div{position:absolute;inset:0;opacity:0}
+.kal{position:absolute;left:50%;top:50%;width:190cqw;height:190cqw;margin:-95cqw 0 0 -95cqw}
+.kgrid{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);width:100%;height:100%}
+.kt{background-repeat:no-repeat}
+.kring{position:absolute;left:50%;top:50%;width:56cqw;height:56cqw;margin:-28cqw 0 0 -28cqw;border:1.4cqw solid rgba(255,255,255,.75);border-radius:50%;pointer-events:none}
+.steam{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.st1{fill:none;stroke:rgba(255,255,255,.6);stroke-width:5;stroke-linecap:round;stroke-dasharray:100 100}
+.st2{fill:none;stroke:#fff;stroke-width:1.2;stroke-linecap:round;stroke-dasharray:3 7}
+.wa,.w,.wv{display:inline-block}
+.cloudtag{background:#1C2F6B;padding:.28em .75em .18em;border-radius:1.4em;box-shadow:.6cqw .6cqw 0 rgba(0,0,0,.25)}
+.tr-in{animation:k-sin .42s cubic-bezier(.6,0,.2,1) both}
+.tr-out{animation:k-sout .42s cubic-bezier(.6,0,.2,1) both}
+@keyframes k-sin{from{transform:translateX(100%)}to{transform:none}}
+@keyframes k-sout{from{transform:none}to{transform:translateX(-100%)}}
+@keyframes k-enR{from{transform:translateX(120%)}to{transform:none}}
+@keyframes k-enL{from{transform:translateX(-120%)}to{transform:none}}
+@keyframes k-enU{from{transform:translateY(-120%)}to{transform:none}}
+@keyframes k-float{0%{transform:translate(0,0) rotate(var(--r))}50%{transform:translate(3cqw,-4cqw) rotate(calc(var(--r) + 160deg))}100%{transform:translate(0,0) rotate(calc(var(--r) + 360deg))}}
+@keyframes k-pulse{0%{transform:scale(1.25)}35%,100%{transform:scale(1)}}
+@keyframes k-q4{0%{opacity:1}25%,100%{opacity:0}}
+@keyframes k-q3{0%{opacity:1}33.33%,100%{opacity:0}}
+@keyframes k-kspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes k-ring{0%{transform:scale(.15);opacity:1}100%{transform:scale(1.9);opacity:0}}
+@keyframes k-draw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@keyframes k-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-20}}
+@keyframes k-wave{from{transform:translateY(.07em) rotate(-3deg)}to{transform:translateY(-.07em) rotate(3deg)}}
+@media (prefers-reduced-motion:reduce){.cf,.cfi,.kal,.kring,.snap>div,.wv{animation:none!important}}
+
 @media (prefers-reduced-motion:reduce){.sframe .beat,.sframe .cam{animation:none!important}.flash{display:none}}
 </style>
 
@@ -232,7 +267,7 @@ details.pr summary{cursor:pointer;font-weight:600;font-size:.88rem;color:var(--a
   <div class="sechead">
     <p class="kicker">Animatic · synced to your song</p>
     <h2>Watch it move</h2>
-    <p class="lede">A rough cut of the whole video with your track. It plays the planned camera moves, beat hits, lyric animations and transitions for every shot. The reference frames stand in for the final art until the Rani shots are generated; her own movement is in each shot's motion prompt below.</p>
+    <p class="lede">A rough cut of the whole video with your track. It plays the planned camera moves, beat hits, lyric animations and transitions for every shot, in the playful lyric-video style: floating confetti, lyrics that build word by word and wave like flags, chai-steam ribbons, beat colour snaps, slide-ins and kaleidoscope drops. The reference frames stand in for the final art until the Rani shots are generated; her own movement is in each shot's motion prompt below.</p>
   </div>
   <div class="player">
     <div class="stage" id="stage"></div>
@@ -318,6 +353,16 @@ details.pr summary{cursor:pointer;font-weight:600;font-size:.88rem;color:var(--a
       <h3>4 · Lyrics, camera and cuts</h3>
       <p>Do all text, camera moves and transitions in CapCut, After Effects or Premiere, cut to the beat. Never ask the AI video tool for text.</p>
     </section>
+  </div>
+
+  <h3 class="h3">Motion language</h3>
+  <div class="agrid">
+    <section><h3>Floating confetti</h3><p>Nimbu-mirchis, chillies, hearts, chai glasses, marigolds and sparkles drift behind every shot and pulse on the beat. They tie the five styles together.</p></section>
+    <section><h3>Lyrics that move</h3><p>Lines build one word per half-beat, then keep waving like a flag. Big lines arc like banners, and in the rain shot the words sit on cloud tags.</p></section>
+    <section><h3>Steam ribbons</h3><p>A ribbon of chai steam draws itself across the frame and the lyric rides along it (shots 6, 7 and 10).</p></section>
+    <section><h3>Colour snaps</h3><p>In the chorus, Rani stays put while the background snaps to a new reference colour on every beat, which keeps the energy up without cuts.</p></section>
+    <section><h3>Slides, not cuts</h3><p>Verse shots slide in from the side and characters enter from the edge of the frame, so the video flows like one long moving poster.</p></section>
+    <section><h3>Kaleidoscope drops</h3><p>The instrumental break (shot 12) and the slow cloud line (shot 5) turn into spinning mirrored mandalas with rings pulsing out on the beat.</p></section>
   </div>
 
   <h3 class="h3">Motion library</h3>
@@ -660,7 +705,7 @@ function anim(spec,o,D){
   const base=parseFloat(bt)*B;
   return "animation:"+list.map(([k,d,e,it,add=0,dir="normal"])=>{
     const dur = d==="D"?D:(typeof d==="string"?parseFloat(d.slice(1))*B:d);
-    return `${k} ${dur.toFixed(3)}s ${e} ${(base+add-o).toFixed(3)}s ${it} ${dir} both`;
+    return `${k} ${dur.toFixed(3)}s ${e} ${(base+add-o).toFixed(3)}s ${it} ${dir} ${add>0?"forwards":"both"}`;
   }).join(",")+";";
 }
 function layer([r,x,y,w,h,size,pos,extra=""],spec,o,D){
@@ -727,6 +772,98 @@ document.addEventListener("click",e=>{
   const p=e.target.closest(".playfrom"); if(p){ seekTo(STARTS[+p.dataset.shot]+.01); play(); document.getElementById("animatic").scrollIntoView({behavior:"smooth",block:"start"}); }
 });
 
+/* ---------- lyric-video motion language ---------- */
+// per-shot additions: en = layer entrances, snap = beat colour snaps, kal = kaleidoscope, steam = ribbon path, arc = text index -> arc degrees, cloud = text on cloud tags, cf = confetti kinds (false = none)
+const FUN = {
+ 0:{cf:["heart","spark","marigold"]},
+ 1:{cf:["heart","spark","marigold"]},
+ 2:{en:["R"],snap:["#F9A8C6","#FF5BA8","#F9A8C6","#E3F13A"]},
+ 3:{tr:"slide",tm:["build@0","tip@3"],cf:["spark","marigold"]},
+ 4:{kal:[3,"320%","95% 6%"],tm:["build@0","stretch@2"],cf:["spark"]},
+ 5:{tr:"slide",en:["L"],steam:"M34 62 C44 34 60 24 82 30 S 122 48 152 20",tm:["build@0","fadeout@2"],cf:["chai","marigold","spark"]},
+ 6:{steam:"M30 52 C44 30 64 22 84 30 S 126 46 150 22",tm:["build@0","drip@2"],cf:["spark"]},
+ 7:{tm:["build@0","slam@3"],cf:["chilli","spark"]},
+ 8:{tm:["pop@0","build@1","bounce@3"],cf:["heart","spark"]},
+ 9:{tr:"slide",en:["L"],steam:"M62 44 C80 30 94 50 112 36 S 140 44 156 30",tm:["build@0","slideR@3"],cf:["marigold","spark"]},
+ 10:{tm:["build@1","build@1.5","slam@3","build@4"],cf:["heart","spark"]},
+ 11:{kal:[1,"260%","48% 30%"],cf:false},
+ 12:{snap:["#E58D0F","#D21D6C","#255BDF","#1F9D55"],arc:{0:6,1:7},cf:["chilli","lemon","marigold"]},
+ 13:{tm:["build@0","build@1","wobble@3"],snap:["#255BDF","#9860FF","#255BDF","#E2338E"],cf:["chilli","spark"]},
+ 14:{snap:["#9860FF","#E2338E","#255BDF","#F5A21B"],cf:["spark","marigold"]},
+ 15:{en:["R",""],arc:{2:7},snap:["#E5332A","#D21D6C","#E5332A","#F5A21B"],cf:["spark","marigold"]},
+ 16:{cf:false},
+ 17:{tr:"slide",en:["L"],tm:["build@0","slam@3","slam@4"],cf:["lemon","spark"]},
+ 18:{arc:{0:6,1:6},cf:["heart","spark"]},
+ 19:{en:["R"],snap:["#F9A8C6","#FF5BA8","#F9A8C6","#E3F13A"],tm:["build@1","slam@3"],cf:["heart","spark"]},
+ 20:{tr:"slide",tm:["build@0","build@1","slam@4"],cf:["chai","lemon","chilli"]},
+ 21:{tm:["build@0","shine@3"],cf:["heart","spark"]},
+ 22:{tr:"slide",cloud:[0,1],tm:["build@0","drip@3"],cf:false},
+ 23:{snap:["#5B1E7A","#255BDF","#D21D6C","#1F9D55"],arc:{0:5},cf:["chilli","lemon","heart"]},
+ 24:{cf:["marigold","spark"]}
+};
+Object.entries(FUN).forEach(([i,f])=>Object.assign(MO[i],f));
+
+const MOTIFS = {
+ marigold:'<svg viewBox="0 0 24 24"><g fill="#F59E0B">'+[0,45,90,135,180,225,270,315].map(a=>`<ellipse cx="12" cy="5" rx="3" ry="4.5" transform="rotate(${a} 12 12)"/>`).join("")+'</g><circle cx="12" cy="12" r="4" fill="#E2338E"/><circle cx="12" cy="12" r="1.6" fill="#2A9D8F"/></svg>',
+ chilli:'<svg viewBox="0 0 24 24"><path d="M5 6 C9 8 13 14 20 20 C12 19 7 13 5 6Z" fill="#D7263D"/><path d="M5 6 l-2 -3" stroke="#1F9D55" stroke-width="2.4" stroke-linecap="round"/></svg>',
+ lemon:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="6.5" fill="#F5C82E"/><ellipse cx="9.5" cy="10" rx="3" ry="2" fill="#FBE38A"/></svg>',
+ heart:'<svg viewBox="0 0 24 24"><path d="M12 21 C4 15 2 11 2 8 a5 5 0 0 1 10 -1 a5 5 0 0 1 10 1 c0 3 -2 7 -10 13Z" fill="#FF5BA8"/></svg>',
+ spark:'<svg viewBox="0 0 24 24"><path d="M12 1 Q13 11 23 12 Q13 13 12 23 Q11 13 1 12 Q11 11 12 1Z" fill="#FFF6C9"/></svg>',
+ chai:'<svg viewBox="0 0 24 24"><path d="M6 6 h12 l-1.5 15 h-9Z" fill="#fff" fill-opacity=".75"/><path d="M7 10 h10 l-1 10 h-8Z" fill="#C69C72"/></svg>'
+};
+function rnd(seed){ let s=seed*7919+104729; return ()=>{ s=(s*9301+49297)%233280; return s/233280 } }
+function confetti(i,o,kinds){
+  const r=rnd(i+3); let h="";
+  for(let k=0;k<14;k++){
+    const x=r()*100,y=r()*100,sz=2.6+r()*3.4,dur=5+r()*6,ph=r()*dur,rot=Math.round(r()*360);
+    h+=`<div class="cf" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${sz.toFixed(2)}cqw;--r:${rot}deg;animation:k-float ${dur.toFixed(2)}s ease-in-out ${(-ph-o).toFixed(3)}s infinite both"><div class="cfi" style="animation:k-pulse ${B.toFixed(3)}s ease-out ${(-o).toFixed(3)}s infinite both">${MOTIFS[kinds[k%kinds.length]]}</div></div>`;
+  }
+  return `<div class="cfl">${h}</div>`;
+}
+function snapBg(cols,o){
+  const n=cols.length;
+  return `<div class="snap">${cols.map((c,k)=>`<div style="background:${c};animation:k-q${n} ${(n*B).toFixed(3)}s step-end ${(k*B-o).toFixed(3)}s infinite"></div>`).join("")}</div>`;
+}
+function kaleido([ref,size,pos],o){
+  let t=""; for(let r=0;r<6;r++) for(let c=0;c<6;c++) t+=`<div class="kt" style="background-image:url(refs/${ref}.jpg);background-size:${size};background-position:${pos};transform:scale(${c%2?-1:1},${r%2?-1:1})"></div>`;
+  return `<div class="kal" style="animation:k-kspin ${(16*B).toFixed(3)}s linear ${(-o).toFixed(3)}s infinite both"><div class="kgrid">${t}</div></div>`+
+    [0,1].map(k=>`<div class="kring" style="animation:k-ring ${(2*B).toFixed(3)}s ease-out ${(k*B-o).toFixed(3)}s infinite both"></div>`).join("");
+}
+function steamRibbon(d,o){
+  return `<svg class="steam" viewBox="0 0 160 90" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" pathLength="100" class="st1" style="animation:k-draw 1.1s ease-out ${(-o).toFixed(3)}s 1 both"/><path d="${d}" pathLength="100" class="st2" style="animation:k-flow ${(2*B).toFixed(3)}s linear ${(-o).toFixed(3)}s infinite both"/></svg>`;
+}
+function wordsHTML(t,base,step,o,arc){
+  const ws=t.split(" "), mid=(ws.length-1)/2;
+  return ws.map((w,k)=>{
+    const rot=arc?(k-mid)*arc:0, dy=arc?((k-mid)**2)*Math.abs(arc)*.03:0;
+    const d0=base+k*step;
+    return `<span class="wa" style="transform:translateY(${dy.toFixed(2)}em) rotate(${rot.toFixed(1)}deg)"><span class="w" style="animation:k-pop .3s cubic-bezier(.3,1.6,.5,1) ${(d0-o).toFixed(3)}s 1 both"><span class="wv" style="animation:k-wave ${(2*B).toFixed(3)}s ease-in-out ${(-o-k*.2).toFixed(3)}s infinite alternate both">${w}</span></span></span>`;
+  }).join(" ");
+}
+function layerLive([r,x,y,w,h,size,pos,extra=""],spec,en,o,D){
+  const enA=en?`animation:k-en${en} .5s cubic-bezier(.2,.9,.3,1.1) ${(-o).toFixed(3)}s 1 both;`:"";
+  return `<div class="lw" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%;${enA}"><div class="lm" style="${spec?anim(spec,o,D):""}"><div class="layer" style="background-image:url(refs/${r}.jpg);background-size:${size};background-position:${pos};${extra}"></div></div></div>`;
+}
+function textLive([t,x,y,sz,f,c,sh,al="c",r=0],spec,o,D,j,m){
+  const tr=al==="c"?"-50%":al==="r"?"-100%":"0";
+  const shadow=sh?`text-shadow:${(sz*.07).toFixed(2)}cqw ${(sz*.07).toFixed(2)}cqw 0 ${sh};`:"";
+  const [name,bt="0"]=(spec||"pop@0").split("@");
+  const split=["pop","build","wave"].includes(name);
+  const inner=split?wordsHTML(t,parseFloat(bt)*B,name==="build"?B/2:.12,o,m.arc&&m.arc[j]):`<span class="ti" style="${anim(spec,o,D)}">${t}</span>`;
+  const cls=m.cloud&&m.cloud.includes(j)?" cloudtag":"";
+  return `<div class="tx f-${f}${cls}" style="left:${toPct(x,160)};top:${toPct(y,90)};font-size:${sz}cqw;color:${c};${shadow}transform:translate(${tr},-50%) rotate(${r}deg)">${inner}</div>`;
+}
+const CFK={intro:["heart","spark","marigold"],v1:["chai","marigold","spark"],pre:["heart","chilli","spark"],drop:["chilli","lemon"],ch:["chilli","lemon","marigold","heart"],v2:["heart","spark","chilli","chai"],out:["marigold","spark"]};
+function liveContent(s,i,o){
+  const m=MO[i], D=durOf(i);
+  const bg=m.snap?snapBg(m.snap,o):"";
+  const cf=m.cf===false?"":confetti(i,o,m.cf||CFK[s.s]);
+  const L=m.kal?kaleido(m.kal,o):s.im.map((l,j)=>layerLive(l,m.lm[j],m.en&&m.en[j],o,D)).join("");
+  const st=m.steam?steamRibbon(m.steam,o):"";
+  const T=s.x.map((x,j)=>textLive(x,m.tm[j]||"pop@"+j,o,D,j,m)).join("");
+  return {html:bg+cf+L+'<div class="ht"></div>'+st, T, D};
+}
+
 /* ---------- animatic ---------- */
 const stage=document.getElementById("stage"), audio=document.getElementById("song");
 const btn=document.getElementById("play"), seek=document.getElementById("seek"), tlab=document.getElementById("time"), slab=document.getElementById("shotlbl"), lyr=document.getElementById("nowlyr");
@@ -737,7 +874,7 @@ const idxAt = t => { let i=0; while(i<S.length-1 && t>=STARTS[i+1]) i++; return 
 
 function renderStage(i,o,withTr){
   const s=S[i], m=MO[i];
-  const {L,T,D}=frameInner(s,i,true,o);
+  const {html:L,T,D}=liveContent(s,i,o);
   const camK=CAM[m.cam];
   const camA = camK?`animation:${camK} ${D.toFixed(3)}s linear ${(-o).toFixed(3)}s 1 both;`:"";
   const beatA = m.bt?`animation:k-beat ${B.toFixed(3)}s ease-out ${(-o).toFixed(3)}s infinite both;`:"";
@@ -749,9 +886,10 @@ function renderStage(i,o,withTr){
   const el=document.createElement("div");
   el.className=`sframe frame ${s.st}`+(withTr&&m.tr==="wipe"?" tr-wipe":"");
   el.style.background=s.bg;
-  el.innerHTML=`<div class="cam" style="${camA}"><div class="beat" style="${beatA}">${L}<div class="ht"></div>${sh}${T}</div></div>${s.sub?`<div class="sub">${s.sub}</div>`:""}${withTr&&m.tr==="flash"?'<div class="flash"></div>':""}`;
+  el.innerHTML=`<div class="cam" style="${camA}"><div class="beat" style="${beatA}">${L}${sh}${T}</div></div>${s.sub?`<div class="sub">${s.sub}</div>`:""}${withTr&&m.tr==="flash"?'<div class="flash"></div>':""}`;
   el.querySelectorAll("[data-a]").forEach(n=>{ n.style.animation=n.getAttribute("style2").slice(10) });
-  if(withTr&&m.tr==="wipe"){ stage.appendChild(el); setTimeout(()=>{ [...stage.children].forEach(c=>{ if(c!==el) c.remove() }) },400); }
+  if(withTr&&m.tr==="slide"){ [...stage.children].forEach(c=>c.classList.add("tr-out")); el.classList.add("tr-in"); stage.appendChild(el); setTimeout(()=>{ [...stage.children].forEach(c=>{ if(c!==el) c.remove() }) },450); }
+  else if(withTr&&m.tr==="wipe"){ stage.appendChild(el); setTimeout(()=>{ [...stage.children].forEach(c=>{ if(c!==el) c.remove() }) },400); }
   else stage.replaceChildren(el);
   stage.classList.toggle("paused",!playing);
   cur=i; slab.textContent=`Shot ${String(i+1).padStart(2,"0")} · ${SEC[s.s].n}`; lyr.textContent=s.ly;
