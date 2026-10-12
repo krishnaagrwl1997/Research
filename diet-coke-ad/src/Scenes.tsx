@@ -1,6 +1,6 @@
 import React from 'react';
 import { random } from 'remotion';
-import { Can } from './Can';
+import { CAN_RATIO, Can } from './Can';
 import { Bubbles, Center, Fill, Slam, SpeedLines } from './FX';
 import { Bottle, BottleCap, Crumple, Dice, Eye, HeartCharm, IVBag, Lips, Pack, Sparkle, Wordmark } from './Props';
 import { BAR, BEAT, BODY, C, DISPLAY, H, SERIF, W, backOut, beatPulse, clamp, easeIn, easeInOut, easeOut, jitter, map, range } from './lib';
@@ -259,7 +259,7 @@ export const PackScene: React.FC<P> = ({ f }) => {
   const n = GRID[k - 2];
   const cellH = H / n;
   const canH = cellH * 0.84;
-  const cellW = canH * 0.42 * 1.55;
+  const cellW = canH * CAN_RATIO * 1.35;
   const cols = Math.ceil(W / cellW) + 1;
   const left = (W - cols * cellW) / 2;
   const cr = (n - 1) / 2;
@@ -337,7 +337,7 @@ export const Glam: React.FC<P> = ({ f }) => {
         <div style={{ position: 'absolute', left: W / 2, top: H / 2, transform: `translate(-50%, -50%) rotate(${-22 + Math.sin(f * 0.08) * 6}deg) scale(${1 + 0.07 * p})`, filter: 'drop-shadow(20px 30px 30px rgba(80,0,20,.4))' }}>
           <div style={{ position: 'relative', transform: 'skewX(-4deg) scaleX(1.12)' }}>
             <Can h={640} spin={0.03 + Math.sin(f * 0.05) * 0.03} />
-            <Crumple w={640 * 0.42} h={640} seed="cr" />
+            <Crumple w={640 * CAN_RATIO} h={640} seed="cr" />
           </div>
         </div>
         {range(16).map((i) => {
@@ -465,7 +465,7 @@ const CardProp: React.FC<{ kind: NonNullable<Card['prop']>; f: number }> = ({ ki
       return (
         <div style={{ position: 'relative', transform: 'rotate(28deg) skewX(-4deg) scaleX(1.12)' }}>
           <Can h={900} spin={0.04} />
-          <Crumple w={900 * 0.42} h={900} seed="cr2" />
+          <Crumple w={900 * CAN_RATIO} h={900} seed="cr2" />
         </div>
       );
     case 'wordmark':
@@ -523,10 +523,10 @@ export const Clink: React.FC<P> = ({ f }) => {
       <Fill bg="radial-gradient(ellipse at 45% 60%, #ffffff 0, rgba(237,235,231,0) 60%)" />
       <Grain opacity={0.08} />
       <div style={{ position: 'absolute', left: W * 0.42 - (1 - meet) * 900 - knock, top: H * 0.58, transform: `translate(-50%, -50%) rotate(${16 - knock * 0.3}deg)` }}>
-        <Bottle h={980} />
+        <Bottle h={980} id="bl" />
       </div>
       <div style={{ position: 'absolute', left: W * 0.42 + 270 + (1 - meet) * 900 + knock, top: H * 0.64, transform: `translate(-50%, -50%) rotate(${-14 + knock * 0.3}deg)` }}>
-        <Bottle h={980} />
+        <Bottle h={980} id="br" />
       </div>
       {f >= 20 && f < 32 && (
         <div style={{ position: 'absolute', left: W * 0.42 + 135, top: H * 0.58 - 400, transform: `translate(-50%, -50%) scale(${map(f, [20, 23, 32], [0.2, 1.4, 0])}) rotate(${f * 6}deg)` }}>
@@ -575,7 +575,7 @@ export const Finale: React.FC<P> = ({ f }) => {
           filter: 'drop-shadow(30px 50px 50px rgba(0,0,0,.45))',
         }}
       >
-        <Can h={880} spin={0.02 + f * 0.0008} />
+        <Can h={880} spin={-0.03 + f * 0.0005} />
       </div>
       <div style={{ position: 'absolute', left: 930, top: 120 }}>
         <div style={{ transform: `scale(${1 + 1.5 * (1 - reveal(3))}) rotate(-4deg)`, transformOrigin: 'left center', opacity: reveal(3) > 0 ? 1 : 0, filter: 'drop-shadow(10px 12px 0 rgba(0,0,0,.3))' }}>

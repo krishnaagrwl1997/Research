@@ -199,30 +199,106 @@ export const Dice: React.FC<{ s: number }> = ({ s }) => {
   );
 };
 
-// A generic glass bottle with a silver label (deliberately not the contour bottle shape).
-export const Bottle: React.FC<{ h: number }> = ({ h }) => {
+// Glass bottle as in the reference: clear glass, cola below the shoulder, crimped crown cap,
+// silver wrap label with red type.
+export const Bottle: React.FC<{ h: number; id?: string }> = ({ h, id = 'b' }) => {
   const w = h * 0.3;
+  // viewBox 100 × 340, centre x = 50
+  const glass =
+    'M35 30 L65 30 L65 38 Q 66 56 70 70 Q 78 92 88 112 Q 92 124 92 140 L92 312 Q 92 334 74 337 L26 337 Q 8 334 8 312 L8 140 Q 8 124 12 112 Q 22 92 30 70 Q 34 56 35 38 Z';
+  const crimp = Array.from({ length: 15 }, (_, i) => `${30 + i * (40 / 14)},${i % 2 ? 27 : 31}`).join(' ');
   return (
     <div style={{ position: 'relative', width: w, height: h }}>
-      <svg width={w} height={h} viewBox="0 0 90 300" style={{ position: 'absolute', inset: 0 }}>
+      <svg width={w} height={h} viewBox="0 0 100 340" style={{ position: 'absolute', inset: 0, overflow: 'visible' }}>
         <defs>
-          <linearGradient id="glass" x1="0" x2="1">
-            <stop offset="0" stopColor="#1a0603" />
-            <stop offset="0.25" stopColor="#4a1a0a" />
-            <stop offset="0.35" stopColor="#8a4a2a" />
-            <stop offset="0.5" stopColor="#2c0d05" />
-            <stop offset="1" stopColor="#120402" />
+          <clipPath id={`${id}glass`}>
+            <path d={glass} />
+          </clipPath>
+          <linearGradient id={`${id}cola`} x1="0" x2="1">
+            <stop offset="0" stopColor="#120302" />
+            <stop offset="0.18" stopColor="#3a0e06" />
+            <stop offset="0.3" stopColor="#6e2410" />
+            <stop offset="0.42" stopColor="#240704" />
+            <stop offset="0.8" stopColor="#1a0503" />
+            <stop offset="1" stopColor="#4a1408" />
+          </linearGradient>
+          <linearGradient id={`${id}label`} x1="0" x2="1">
+            <stop offset="0" stopColor="#9aa0a6" />
+            <stop offset="0.15" stopColor="#eef0f2" />
+            <stop offset="0.3" stopColor="#ffffff" />
+            <stop offset="0.7" stopColor="#e3e6e9" />
+            <stop offset="0.9" stopColor="#b9bec4" />
+            <stop offset="1" stopColor="#868c92" />
+          </linearGradient>
+          <linearGradient id={`${id}cap`} x1="0" x2="1">
+            <stop offset="0" stopColor="#8d949b" />
+            <stop offset="0.35" stopColor="#ffffff" />
+            <stop offset="0.7" stopColor="#d5d9de" />
+            <stop offset="1" stopColor="#7d848b" />
           </linearGradient>
         </defs>
-        <rect x="33" y="0" width="24" height="14" rx="3" fill="#d5d9de" />
-        <path d="M35 14 L55 14 L56 70 Q 80 100 82 140 L82 290 Q 82 300 70 300 L20 300 Q 8 300 8 290 L8 140 Q 10 100 34 70 Z" fill="url(#glass)" />
-        <path d="M38 20 L42 20 L42 70 Q 22 100 20 140 L20 280 L15 280 L15 140 Q 18 95 38 68 Z" fill="#fff" opacity="0.25" />
-        <rect x="8" y="150" width="74" height="80" fill="#e4e7ea" />
-        <rect x="8" y="150" width="74" height="80" fill="url(#glass)" opacity="0.15" />
+        {/* glass */}
+        <path d={glass} fill="rgba(215,225,220,.28)" stroke="rgba(60,70,65,.45)" strokeWidth="1" />
+        <g clipPath={`url(#${id}glass)`}>
+          <rect x="0" y="84" width="100" height="260" fill={`url(#${id}cola)`} />
+          <path d="M0 84 Q 50 81 100 84 L100 88 Q 50 85 0 88 Z" fill="#8a4a2a" opacity="0.9" />
+          {/* glass highlights */}
+          <path d="M38 36 L41 36 Q 40 64 28 96 Q 19 118 18 140 L18 320 L14 318 L14 140 Q 15 116 25 92 Q 37 62 38 36 Z" fill="#fff" opacity="0.55" />
+          <rect x="80" y="150" width="3" height="160" fill="#fff" opacity="0.35" />
+          <rect x="56" y="34" width="2" height="40" fill="#fff" opacity="0.6" />
+          <rect x="24" y="250" width="2" height="60" fill="#fff" opacity="0.25" />
+        </g>
+        {/* lip bead + crown cap */}
+        <rect x="33" y="28" width="34" height="7" rx="3" fill="rgba(220,230,225,.6)" stroke="rgba(60,70,65,.4)" strokeWidth="0.8" />
+        <path d="M30 12 Q 30 8 34 8 L66 8 Q 70 8 70 12 L70 27 L30 27 Z" fill={`url(#${id}cap)`} />
+        <polygon points={`30,26 ${crimp} 70,26`} fill={`url(#${id}cap)`} stroke="#7d848b" strokeWidth="0.5" />
+        {Array.from({ length: 14 }, (_, i) => (
+          <line key={i} x1={32 + i * 2.75} y1="11" x2={32 + i * 2.75} y2="29" stroke="#6d737a" strokeWidth="0.7" opacity="0.8" />
+        ))}
+        <ellipse cx="50" cy="9" rx="19" ry="3" fill="#f7f8f9" stroke="#aab0b7" strokeWidth="0.5" />
+        {/* label band */}
+        <rect x="8" y="160" width="84" height="88" fill={`url(#${id}label)`} />
+        <rect x="8" y="160" width="84" height="88" fill="none" stroke="rgba(0,0,0,.12)" strokeWidth="0.6" />
       </svg>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: h * 0.52, textAlign: 'center' }}>
-        <Wordmark size={h * 0.07} />
-        <div style={{ fontFamily: BODY, fontWeight: 800, fontSize: h * 0.022, color: C.red, marginTop: h * 0.005 }}>NO SUGAR · NO CALORIES</div>
+      <div style={{ position: 'absolute', left: w * 0.1, width: w * 0.8, top: (h * 162) / 340, height: (h * 84) / 340, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, top: h * 0.005, display: 'flex', justifyContent: 'center' }}>
+          <Wordmark size={w * 0.3} coke={C.red} diet={C.red} dietScale={0.4} />
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            left: w * 0.12,
+            top: h * 0.135,
+            fontFamily: BODY,
+            fontWeight: 800,
+            fontSize: w * 0.055,
+            lineHeight: 1.15,
+            color: C.red,
+            transform: 'rotate(8deg)',
+            textAlign: 'center',
+          }}
+        >
+          NO SUGAR
+          <br />
+          NO CALORIES
+          <br />
+          CRISP TASTE
+        </div>
+        <div style={{ position: 'absolute', left: w * 0.015, top: h * 0.02, writingMode: 'vertical-rl', transform: 'rotate(180deg)', fontFamily: BODY, fontWeight: 800, fontSize: w * 0.04, color: C.red }}>
+          RECYCLE ME
+        </div>
+        <div style={{ position: 'absolute', left: w * 0.07, top: h * 0.17, width: w * 0.06, height: w * 0.06, border: `1px solid ${C.ink}`, background: '#fff' }}>
+          <div style={{ margin: '20%', width: '60%', height: '60%', borderRadius: '50%', background: '#1e9e3a' }} />
+        </div>
+        {/* cylinder shading over the print */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            mixBlendMode: 'multiply',
+            background: 'linear-gradient(90deg, #8d939a 0%, #f2f3f5 14%, #ffffff 30%, #ffffff 65%, #d5d9dd 85%, #8d939a 100%)',
+          }}
+        />
       </div>
     </div>
   );
@@ -238,7 +314,7 @@ export const Pack: React.FC<{ w: number; lid: number; t: number }> = ({ w, lid, 
       <div style={{ position: 'absolute', left: w * 0.05, top: lidH * 0.35, width: w * 0.9, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: w * 0.01 }}>
         {range(10).map((i) => (
           <div key={i} style={{ transform: `translateY(${Math.max(0, lid - 0.5) * -w * 0.12 * (0.6 + random(`pk${i}`) * 0.8) + Math.sin(t * 0.4 + i) * 3}px)` }}>
-            <Can h={w * 0.42} spin={0.05 + i * 0.07} />
+            <Can h={w * 0.34} spin={0.02 + i * 0.03} />
           </div>
         ))}
       </div>

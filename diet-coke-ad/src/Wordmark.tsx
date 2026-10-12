@@ -8,8 +8,9 @@ export const Wordmark: React.FC<{
   coke?: string;
   diet?: string;
   paglu?: string | false;
+  dietScale?: number;
   style?: React.CSSProperties;
-}> = ({ size, coke = C.red, diet = C.ink, paglu = false, style }) => (
+}> = ({ size, coke = C.red, diet = C.ink, paglu = false, dietScale = 0.5, style }) => (
   <div style={{ position: 'relative', display: 'inline-block', lineHeight: 1, paddingTop: size * 0.3, ...style }}>
     <div style={{ fontFamily: SERIF, fontWeight: 900, fontSize: size, letterSpacing: -size * 0.035, color: coke, lineHeight: 0.9 }}>Coke</div>
     <div
@@ -18,7 +19,7 @@ export const Wordmark: React.FC<{
         right: -size * 0.02,
         top: size * 0.04,
         fontFamily: SCRIPT,
-        fontSize: size * 0.5,
+        fontSize: size * dietScale,
         color: diet,
         transform: 'rotate(-7deg)',
       }}

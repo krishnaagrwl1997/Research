@@ -3,7 +3,7 @@
 A 24-second, 1920×1080, 30fps ad built in [Remotion](https://www.remotion.dev/). Every frame is
 code: the can, IV bag, eyes, lips, charms, bottles and type are drawn with CSS/SVG. The soundtrack
 (music and sound effects) is synthesized in Python and timed to the same frame grid.
-Not affiliated with The Coca-Cola Company. The wordmark is set in stock fonts (Playfair Display +
+Not affiliated with The Coca-Cola Company. The can and bottle are drawn to match the packaging in the mood board; the wordmark is set in stock fonts (Playfair Display +
 Yellowtail), not the real logo. Swap in official artwork only if you have the rights.
 
 Output: `diet-coke-paglu.mp4`
