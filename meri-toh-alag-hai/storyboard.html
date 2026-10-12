@@ -73,6 +73,29 @@ header .lede{max-width:68ch;font-size:1.05rem}
 .refs figcaption{font-size:.72rem;line-height:1.3}
 .refs figcaption span{display:block;color:var(--muted)}
 .look .refbox{grid-column:1/-1}
+.hero{display:grid;gap:18px}
+.sechead{display:grid;gap:8px}
+.hero .lede{max-width:72ch;font-size:1rem}
+.hgrid,.agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.hgrid section,.agrid section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px;align-content:start;min-width:0}
+.hgrid h3,.agrid h3,.h3{margin:0;font-size:.78rem;font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.hgrid ul{margin:0;padding-left:18px;display:grid;gap:5px;font-size:.92rem}
+.agrid p{font-size:.92rem}
+.styles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.styles figure{margin:0;display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0}
+.styles img{width:72px;aspect-ratio:4/5;object-fit:cover;border-radius:4px}
+.styles figcaption{font-size:.84rem;line-height:1.4;min-width:0}
+.styles figcaption b{display:block;font-size:.88rem}
+.prompt{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.prompt pre{margin:0;white-space:pre-wrap;font-family:var(--f-mono);font-size:.82rem;line-height:1.55;padding-right:70px}
+.prompt button{position:absolute;top:10px;right:10px;font:inherit;font-size:.8rem;padding:4px 12px;border-radius:99px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.prompt button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:560px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+
 .frame::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.35;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 .frame.halftone .ht{position:absolute;inset:0;background-image:radial-gradient(rgba(60,0,40,.22) 18%,transparent 22%);background-size:1.1cqw 1.1cqw;pointer-events:none}
@@ -138,6 +161,96 @@ dd{margin:0;min-width:0}
   </section>
 </section>
 
+<section class="hero" id="heroine">
+  <div class="sechead">
+    <p class="kicker">Character sheet</p>
+    <h2>Rani · रानी</h2>
+    <p class="lede">Short for <i>maharani</i>. She's an original character who borrows motifs from the references without copying any of their women. She has to look like the same girl in all five styles, so her identity rests on a few fixed traits that survive any style change.</p>
+  </div>
+  <div class="hgrid">
+    <section>
+      <h3>Fixed traits (never change)</h3>
+      <ul>
+        <li><b>Face:</b> early 20s, warm medium-brown skin, thick straight brows, heavy-lidded eyes with a sharp winged liner, deep berry lips, a small red bindi, a tiny gold nose stud on the left</li>
+        <li><b>Hair:</b> long, wavy and black with a side part. One thin braid on the left, tied with a red-and-gold <i>paranda</i> tassel</li>
+        <li><b>Heart sunglasses:</b> pink, heart-shaped, usually pushed up on her head</li>
+        <li><b>Hands:</b> bridal-style mehendi on both hands, neon-yellow almond nails, a gold bangle stack on the left wrist only</li>
+        <li><b>Charm:</b> a tiny nimbu-mirchi charm hanging from her phone</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Outfits</h3>
+      <ul>
+        <li><b>Main (most shots):</b> a hot-pink cropped blouse with marigold paisley, a green-and-red bandhani dupatta over one shoulder, flared dark denim with white embroidered hems, red juttis</li>
+        <li><b>Sleep (shots 4–5, 25):</b> an oversized marigold tee printed "कल से", striped pyjamas, sunglasses still on her head</li>
+        <li><b>Maharani (shots 15–16):</b> a red saree with a wide gold border, a statement maang tikka, jhumkas, the same bangles</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Expressions and poses</h3>
+      <ul>
+        <li><b>Seedhi shakal:</b> wide innocent eyes, a tiny smile</li>
+        <li><b>Side-eye:</b> lids half down, eyes to the side, lips pressed</li>
+        <li><b>Wink:</b> one eye shut, sunglasses tipped down</li>
+        <li><b>Smug:</b> chin up, one brow raised</li>
+        <li><b>Drenched:</b> mouth open, hair flattened, sunglasses fogged</li>
+        <li><b>Signature poses:</b> palm to camera, holding a chai glass with her pinky out, pointing, arms crossed</li>
+      </ul>
+    </section>
+  </div>
+
+  <h3 class="h3">Rani in each reference style</h3>
+  <div class="styles" id="styles"></div>
+
+  <h3 class="h3">Master prompt</h3>
+  <p class="note">Paste this at the start of every image prompt, then add one style line from above and the shot's action. Generate a turnaround sheet first (front, three-quarter, side, back, plus close-ups of her hands), then pass it as the character reference image in every later generation.</p>
+  <div class="prompt"><button type="button" id="copyp">Copy</button><pre id="mp">Rani, an original Indian woman in her early 20s, warm medium-brown skin, thick straight eyebrows, heavy-lidded eyes with sharp winged eyeliner, deep berry lips, small red bindi, tiny gold nose stud on the left nostril, long wavy black hair with a side part and one thin braid on the left tied with a red-and-gold paranda tassel, pink heart-shaped sunglasses pushed up on her head, bridal mehendi on both hands, neon-yellow almond-shaped nails, stack of gold bangles on the left wrist only. Wearing a hot-pink cropped blouse with marigold paisley print, a green-and-red bandhani dupatta over one shoulder, flared dark denim jeans with white embroidered hems, red juttis. Confident, playful, cheeky attitude. 16:9 frame, character placed off-centre with empty flat-colour space for text. No text, no letters, no logos.</pre></div>
+</section>
+
+<section class="hero" id="animation">
+  <div class="sechead">
+    <p class="kicker">Motion plan</p>
+    <h2>How it moves</h2>
+    <p class="lede">The look is a printed poster coming to life rather than smooth cartoon animation. Small, punchy movements, everything cut to the beat, and the text does most of the dancing. The track is about <b>114 BPM</b> (my estimate), so one beat lasts about 0.53 seconds, or 12–13 frames at 24 fps.</p>
+  </div>
+  <div class="agrid">
+    <section>
+      <h3>1 · Make the stills</h3>
+      <p>Generate every shot as a still image using the master prompt plus that shot's style line. Keep her off-centre so there's space for the lyrics. Ask for no text in the image.</p>
+    </section>
+    <section>
+      <h3>2 · Animate the character</h3>
+      <p>Put each still through an image-to-video tool (for example Kling, Runway or Veo) for 3–5 second clips. Ask for small movements only: a blink, a wink, hair sway, the palm pushing forward, the chai glass tilting. Big movements break her face.</p>
+    </section>
+    <section>
+      <h3>3 · Add the poster feel</h3>
+      <p>In the editor, export or conform the clips to 12 fps (animating "on twos"), which gives a hand-made, stop-motion feel. Add a paper-grain overlay and a halftone overlay on every shot, and a slight 1–2 pixel jitter so it looks printed.</p>
+    </section>
+    <section>
+      <h3>4 · Lyrics, camera and cuts</h3>
+      <p>Do all text, camera moves and transitions in CapCut, After Effects or Premiere, cut to the beat. Never ask the AI video tool for text.</p>
+    </section>
+  </div>
+
+  <h3 class="h3">Motion library</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Move</th><th>Where</th><th>How to build it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Word pop</b></td><td>Verse lyrics</td><td>Each word scales 0 → 110 → 100% over 4 frames, on the syllable</td></tr>
+      <tr><td><b>Slam</b></td><td>"कल से", "पक्का", every "अलग"</td><td>Scale 140 → 95 → 100% in 3 frames, a 6-frame screen shake and a 1-frame white flash</td></tr>
+      <tr><td><b>Wobble</b></td><td>"लफड़ा", "क्या बवाल"</td><td>Wiggle the rotation ±4° and scale ±3% for 8 frames, then settle</td></tr>
+      <tr><td><b>Melt and drip</b></td><td>"ठंडी", "बवाल"</td><td>A turbulent displacement that animates downward, with the colour shifting to icy blue</td></tr>
+      <tr><td><b>Stamp</b></td><td>"कैंसल", outro</td><td>Drop in at 200% with motion blur, hit 100% on the beat, then a 4-frame shake and an ink-splatter texture</td></tr>
+      <tr><td><b>Handwrite</b></td><td>Intro and outro</td><td>Trace the Kalam text with a stroke reveal over about 1 second</td></tr>
+      <tr><td><b>Push-in</b></td><td>Face close-ups</td><td>A slow scale of 100 → 108% across the whole shot</td></tr>
+      <tr><td><b>Whip pan</b></td><td>Dimaag → Dil split</td><td>Move about 120% sideways in 4 frames with directional blur</td></tr>
+      <tr><td><b>Style switch</b></td><td>Each "alag" (shots 13, 17)</td><td>A hard cut on the beat, a 2-frame white flash, and a halftone-dot wipe into the next reference style</td></tr>
+      <tr><td><b>Paper tear</b></td><td>Between song sections</td><td>A torn-paper matte wipe, 8 frames, with the next section's colour underneath</td></tr>
+      <tr><td><b>Paste-up</b></td><td>Collage shot 24</td><td>Each tile drops in with a slight rotation and a hard shadow, one per beat</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
 <section style="display:grid;gap:18px">
   <div class="bar">
     <h2>Shots</h2>
@@ -151,7 +264,7 @@ dd{margin:0;min-width:0}
   <ol>
     <li><b>Add lyrics in the edit</b> (CapCut, After Effects or Premiere), never in AI-generated frames. AI image tools still get Devanagari wrong.</li>
     <li><b>These frames use other artists' work.</b> The references are for direction only, and ref 4 carries the artist's "imani.prnt" watermark. For the published video, make original art in these styles, or get each artist's permission and credit them.</li>
-    <li><b>One heroine or many.</b> The references show different women. If you want one consistent heroine, base her on ref 2 (closest to the song's attitude) and redraw her in each reference's style.</li>
+    <li><b>One heroine.</b> Rani appears in every shot. Use the master prompt and the turnaround sheet for every generation, so she stays the same girl across all five styles.</li>
     <li><b>The outro is very short.</b> The track ends at about 1:31 and the spoken outro gets roughly 3 seconds. Consider adding a 3–4 second tail of room tone or a beat loop so the "cancel" stamp and the end card have room to breathe.</li>
     <li><b>Food-delivery app (shot 21):</b> show a generic orange app with no real logo, so the video doesn't use another brand's marks.</li>
     <li><b>Shorts and Reels:</b> keep the chorus shots (13–17) centred so they crop cleanly to 9:16.</li>
@@ -357,6 +470,11 @@ document.getElementById("board").innerHTML = S.map((s,i)=>`
       <dl><dt>Action</dt><dd>${s.a}</dd><dt>Camera</dt><dd>${s.cam}</dd><dt>Text</dt><dd>${s.tx}</dd></dl>
     </div>
   </article>`).join("");
+const STY=[[1,"Halftone poster","Two-tone magenta and purple halftone print with a thick black outline and slightly offset colours. Skin is printed in orange and pink dots."],[2,"Glossy comic","Semi-realistic comic shading, glossy lips, soft pink rim light, clean ink lines. Her main look."],[3,"Bold vector","Flat saturated shapes, orange-red skin, yellow eyeshadow, fine gold linework, swirling clouds behind her."],[4,"Folk naive","Elongated face, big almond eyes with bright whites, a flat paper texture, block-printed fabric patterns."],[5,"Marker flat","Thick black marker outlines, flat fills with no shading, one loud background colour."]];
+document.getElementById("styles").innerHTML=STY.map(([n,name,d])=>`<figure><img src="refs/${n}.jpg" alt="Reference ${n}"><figcaption><b>Ref ${n} · ${name}</b>${d}</figcaption></figure>`).join("");
+const cp=document.getElementById("copyp");
+cp.addEventListener("click",()=>{const t=document.getElementById("mp").textContent;
+  navigator.clipboard.writeText(t).then(()=>{cp.textContent="Copied";setTimeout(()=>cp.textContent="Copy",1500)}).catch(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("mp"));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);cp.textContent="Press Ctrl+C"})});
 const safe=document.getElementById("safe");
 safe.addEventListener("change",()=>document.body.classList.toggle("show-safe",safe.checked));
 </script>
