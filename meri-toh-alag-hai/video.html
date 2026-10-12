@@ -1,0 +1,517 @@
+<title>Meri Toh Alag Hai Video</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Rozha+One&family=Yatra+One&family=Kalam:wght@700&family=Hind:wght@500;600&display=swap">
+<style>
+/* Layout: one 16:9 stage, everything drawn per frame by the motion engine */
+:root{--bg:#140816;--ink:#F8E7EF;--accent:#FF5BA8;--f-baloo:"Baloo 2","Hind",system-ui,sans-serif;--f-rozha:"Rozha One",Georgia,serif;--f-yatra:"Yatra One",Georgia,serif;--f-kalam:"Kalam","Comic Sans MS",cursive;--f-body:"Hind",system-ui,sans-serif;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);padding-inline:16px;padding-block:24px;display:grid;gap:12px;justify-items:center}
+#stage{position:relative;width:min(100%,1100px);aspect-ratio:16/9;container-type:inline-size;overflow:hidden;background:#000;border-radius:6px}
+.layer0{position:absolute;inset:0;overflow:hidden}
+.cam{position:absolute;inset:0;transform-origin:50% 50%}
+.cfl{position:absolute;inset:0}
+.cf{position:absolute}
+.cf svg{display:block;width:100%;height:auto;filter:drop-shadow(.25cqw .25cqw 0 rgba(30,8,30,.25))}
+.card{position:absolute;transform-origin:50% 60%}
+.card .art{position:absolute;inset:0;background-repeat:no-repeat;transform-origin:50% 50%}
+.card{overflow:hidden}
+.card.sticker{outline:.75cqw solid #FFF8EC;box-shadow:1.4cqw 1.4cqw 0 .75cqw rgba(30,8,30,.35);border-radius:.4cqw}
+.kal{position:absolute;left:50%;top:50%;width:190cqw;height:190cqw;margin:-95cqw 0 0 -95cqw}
+.kgrid{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);width:100%;height:100%}
+.kt{background-repeat:no-repeat}
+.kring{position:absolute;left:50%;top:50%;width:56cqw;height:56cqw;margin:-28cqw 0 0 -28cqw;border:1.4cqw solid rgba(255,255,255,.75);border-radius:50%}
+.full{position:absolute;inset:-4%;background-repeat:no-repeat}
+.ht{position:absolute;inset:0;pointer-events:none}
+.ht.halftone{background-image:radial-gradient(rgba(60,0,40,.18) 18%,transparent 22%);background-size:1.1cqw 1.1cqw}
+.ht.folk{background:repeating-linear-gradient(0deg,rgba(90,60,20,.06) 0 1px,transparent 1px 3px)}
+.steam{position:absolute;inset:0;width:100%;height:100%}
+.st1{fill:none;stroke:rgba(255,255,255,.6);stroke-width:5;stroke-linecap:round;stroke-dasharray:100 100}
+.st2{fill:none;stroke:#fff;stroke-width:1.2;stroke-linecap:round;stroke-dasharray:3 7}
+.tx{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;line-height:1.1;-webkit-text-stroke:.14cqw #2A0F2E;paint-order:stroke fill;text-align:center}
+.f-baloo{font-family:var(--f-baloo);font-weight:800}.f-rozha{font-family:var(--f-rozha)}.f-yatra{font-family:var(--f-yatra)}
+.f-kalam{font-family:var(--f-kalam);font-weight:700;-webkit-text-stroke:0}
+.wa,.w,.wv{display:inline-block}
+.wa{margin:0 .07em}
+.w{transform-origin:50% 70%}
+.w.chip{background:#1C2F6B;padding:.12em .34em .02em;border-radius:.35em;box-shadow:.5cqw .5cqw 0 rgba(0,0,0,.28);margin:0 .05em}
+.sub{position:absolute;left:50%;bottom:6.5%;font-family:var(--f-body);font-weight:600;font-size:1.8cqw;color:#fff;background:rgba(30,8,30,.66);padding:.25cqw 1.2cqw;border-radius:.6cqw;white-space:nowrap}
+.flashov{position:absolute;inset:0;background:#fff;pointer-events:none}
+.wipe{position:absolute;inset:-10% -20%;pointer-events:none;box-shadow:0 0 0 2cqw rgba(255,255,255,.0)}
+.fadeblk{position:absolute;inset:0;background:#000}
+.rain{position:absolute;inset:0;background:repeating-linear-gradient(105deg,transparent 0 1.6cqw,rgba(220,235,255,.45) 1.6cqw 1.75cqw)}
+.chat{position:absolute;font-family:var(--f-body);font-weight:600;font-size:2.6cqw;color:#2A0F2E;background:#fff;padding:1cqw 2.2cqw;border-radius:1.6cqw 1.6cqw 1.6cqw .2cqw;box-shadow:.6cqw .6cqw 0 rgba(30,8,30,.3);transform-origin:0 100%}
+.chat span{color:#2F9BEA;font-size:2cqw;margin-left:.6cqw}
+.rec{position:absolute;font-family:monospace;font-size:1.4cqw;color:#fff;background:#FF2A2A;padding:.1cqw .6cqw;border-radius:.4cqw}
+.stamp{position:absolute;font-family:var(--f-rozha);font-size:7cqw;line-height:1.1;color:#D7263D;border:.6cqw solid #D7263D;outline:.25cqw solid #D7263D;outline-offset:.5cqw;padding:0 2cqw;background:rgba(255,246,236,.92)}
+.badge{position:absolute;left:50%;top:47%;width:44cqw;height:44cqw;border-radius:50%;background:#FFF3C4;box-shadow:0 0 0 1.2cqw #D21D6C,0 0 0 2cqw #2A0F2E,1.6cqw 1.6cqw 0 2cqw rgba(0,0,0,.3);display:grid;place-content:center;justify-items:center;text-align:center;line-height:1}
+.badge .b1{font-size:5.6cqw;color:#2E4FA8}
+.badge .b2{font-size:11cqw;color:#D7263D;text-shadow:.7cqw .7cqw 0 #5B1E7A}
+.badge .b3{font-family:var(--f-body);font-weight:600;font-size:1.9cqw;letter-spacing:.2em;color:#2A0F2E;margin-top:1cqw}
+.badge .b3.f-kalam{font-family:var(--f-kalam);font-size:3.4cqw;letter-spacing:0}
+.controls{display:flex;gap:10px;align-items:center;width:min(100%,1100px);flex-wrap:wrap}
+.controls button{font:600 .95rem var(--f-body);padding:7px 18px;border-radius:99px;border:0;background:var(--accent);color:#1d0a1f;cursor:pointer}
+.controls button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.controls input{flex:1 1 200px;accent-color:var(--accent);min-width:0}
+.controls span{font-family:monospace;font-size:.85rem}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="boil0" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="boil1" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="10"/><feDisplacementMap in="SourceGraphic" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="boil2" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="17"/><feDisplacementMap in="SourceGraphic" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="boil3" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="24"/><feDisplacementMap in="SourceGraphic" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="boil4" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="31"/><feDisplacementMap in="SourceGraphic" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="boil5" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="38"/><feDisplacementMap in="SourceGraphic" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>
+<div id="stage" role="img" aria-label="Meri Toh Alag Hai music video"></div>
+<div class="controls"><button type="button" id="play">▶ Play</button><input type="range" id="seek" min="0" max="91.2" step="0.01" value="0" aria-label="Position"><span id="time">0:00</span></div>
+<audio id="song" src="audio/meri-toh-alag-hai.mp3" preload="auto"></audio>
+<script>
+const PANEL = "box-shadow:.8cqw .8cqw 0 rgba(30,8,30,.35)";
+const S = [
+ {t:"0:00–0:02",s:"intro",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,52,0,48,100,"240%","40% 17%"]],
+  x:[["आज से",46,32,6,"kalam","#2A0F2E"],["सुधर जाऊँगी…",46,50,6,"kalam","#2A0F2E"]],
+  sub:"From today, I'll behave…", ly:"आज से सुधर जाऊँगी…", en:"Spoken: \"From today, I'll behave…\"",
+  a:"Ref 2's face, cropped tight on the heart sunglasses and pout. The resolution writes itself in the empty pink space.",
+  cam:"Slow push in on her face.", tx:"Handwriting writes itself on, letter by letter."},
+ {t:"0:02–0:04",s:"intro",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,52,0,48,100,"240%","40% 17%"]],
+  x:[["आज से",46,26,6,"kalam","#2A0F2E"],["सुधर जाऊँगी…",46,42,6,"kalam","#2A0F2E"],["पक्का।",46,62,9,"baloo","#D7263D","#2A0F2E","c",-6]],
+  sub:"Promise.", ly:"पक्का।", en:"\"Promise.\"",
+  a:"Same close-up. She lowers the sunglasses and winks.",
+  cam:"Held shot with a small bump on the stamp.", tx:"\"पक्का\" stamps in at 120% size and settles to 100%."},
+ {t:"0:04–0:06",s:"intro",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,60,0,37.5,100,"cover","50% 50%"]],
+  x:[["कल से।",50,42,15,"rozha","#D7263D","#5B1E7A","c",-6]],
+  sub:"From tomorrow.", ly:"कल से। 💅", en:"\"From tomorrow.\"",
+  a:"Pull out to ref 2's full pose: the mehendi palm thrust at the camera, as if saying no to self-improvement.",
+  cam:"A hard cut on the beat, with a quick zoom out to the full figure.", tx:"\"कल से\" slams in big, with one sparkle on the full stop."},
+ {t:"0:06–0:10",s:"v1",ref:"Ref 3",st:"",bg:"#255BDF",
+  im:[[3,0,0,52,100,"175%","55% 38%"]],
+  x:[["सुबह उठी,",118,30,6.4,"baloo","#FFF3C4","#2A0F2E"],["फिर सो गई",118,50,6.4,"baloo","#FFF3C4","#2A0F2E","c",8]],
+  sub:"Woke up in the morning, then fell asleep again", ly:"सुबह उठी, फिर सो गई", en:"Woke up in the morning, then fell asleep again",
+  a:"Ref 3's face, cropped on her heavy-lidded eyes, which already look sleepy. Her eyes open, then drift shut again.",
+  cam:"A slow drift down as she nods off.", tx:"\"सो गई\" tips over sideways as if it's falling asleep."},
+ {t:"0:10–0:14",s:"v1",ref:"Ref 3",st:"",bg:"#255BDF",
+  im:[[3,0,0,100,100,"250%","95% 8%"]],
+  x:[["ज़िंदगी मेरी",80,34,7.4,"baloo","#FFF3C4","#2A0F2E"],["स्लो  गई",80,56,11,"rozha","#F5C82E","#2A0F2E"]],
+  sub:"My life went slow", ly:"ज़िंदगी मेरी स्लो गई", en:"My life went slow",
+  a:"A full-frame crop of ref 3's swirling violet clouds, drifting very slowly.",
+  cam:"A slow left-to-right drift.", tx:"The letters of \"स्लो\" stretch apart in slow motion."},
+ {t:"0:14–0:18",s:"v1",ref:"Ref 5",st:"",bg:"#FE7318",
+  im:[[5,6,0,31.6,100,"cover","50% 50%"]],
+  x:[["चाय बनाई,",112,30,7.4,"baloo","#FFF3C4","#2A0F2E"],["भूल गई",112,52,9.4,"rozha","#E3F13A","#2A0F2E"]],
+  sub:"Made chai, forgot about it", ly:"चाय बनाई, भूल गई", en:"Made chai, forgot about it",
+  a:"Ref 5 in full: the mehendi hand with neon nails holding the cutting-chai glass on flat orange.",
+  cam:"A locked frame. The hand sways slightly in time with the beat.", tx:"\"भूल गई\" fades to 40% opacity, like it's being forgotten."},
+ {t:"0:18–0:22",s:"v1",ref:"Ref 5",st:"",bg:"linear-gradient(90deg,#FE7318,#9CC9F0)",
+  im:[[5,0,0,50,100,"150%","25% 78%","filter:hue-rotate(190deg) saturate(.75) brightness(1.08)"]],
+  x:[["ख़ुद की ही चाय",114,30,6,"baloo","#FFF3C4","#2A0F2E"],["ठंडी हो गई",114,52,8,"rozha","#DFF4FF","#1C3F8F"]],
+  sub:"My own chai went cold", ly:"ख़ुद की ही चाय ठंडी हो गई", en:"My own chai went cold",
+  a:"Close crop on ref 5's glass. The colours slide from warm orange to icy blue as the chai goes cold.",
+  cam:"A slow zoom into the glass.", tx:"\"ठंडी\" turns icy blue and grows small icicles."},
+ {t:"0:22–0:26",s:"pre",ref:"Ref 4 + Ref 2",st:"folk",bg:"linear-gradient(90deg,#E3C69B 50%,#F9A8C6 50%)",
+  im:[[4,0,0,50,100,"200%","18% 42%"],[2,50,0,50,100,"230%","40% 17%","filter:grayscale(.7) brightness(.55)"]],
+  x:[["दिमाग बोले,",40,16,5.6,"baloo","#2E4FA8","#fff"],["“थोड़ा संभल”",40,66,6.4,"rozha","#2A0F2E","#F5C82E"]],
+  sub:"My brain says, \"Get it together a little\"", ly:"दिमाग बोले, \"थोड़ा संभल\"", en:"My brain says, \"Get it together a little\"",
+  a:"A split screen. On the left, \"Dimaag\" (her brain) is ref 4's woman in the blue dupatta with a side-eye. On the right, \"Dil\" (her heart, ref 2) waits in the dark.",
+  cam:"Both halves held. The left half is lit.", tx:"The words appear one at a time in a stern, steady rhythm."},
+ {t:"0:26–0:30",s:"pre",ref:"Ref 4 + Ref 2",st:"y2k",bg:"linear-gradient(90deg,#E3C69B 50%,#F9A8C6 50%)",
+  im:[[4,0,0,50,100,"200%","18% 42%","filter:grayscale(.6) brightness(.55)"],[2,50,0,50,100,"230%","40% 17%"]],
+  x:[["दिल बोले,",120,16,5.6,"baloo","#D3136F","#fff"],["“छोड़ ना,",120,30,5.6,"baloo","#2A0F2E","#fff"],["क्या बवाल!”",120,66,7,"rozha","#E3F13A","#5B1E7A","c",-4]],
+  sub:"My heart says, \"Let it go, what's the fuss!\"", ly:"दिल बोले, \"छोड़ ना, क्या बवाल!\"", en:"My heart says, \"Let it go, what's the fuss!\"",
+  a:"The lights swap. Ref 2's face lights up on the right and blows a bubblegum bubble. The aunty on the left goes dark.",
+  cam:"A whip pan from left to right.", tx:"\"क्या बवाल!\" bounces in the way a bubble pops."},
+ {t:"0:30–0:34",s:"pre",ref:"Ref 4",st:"folk",bg:"#E3C69B",
+  im:[[4,4,0,45,100,"cover","50% 50%"]],
+  x:[["कल की टेंशन",116,30,6,"baloo","#2E4FA8","#fff"],["कल पे डाली",116,52,7,"yatra","#D7263D","#2A0F2E"]],
+  sub:"Dumped tomorrow's tension on tomorrow", ly:"कल की टेंशन कल पे डाली", en:"Dumped tomorrow's tension on tomorrow",
+  a:"Ref 4 in full: the two women whispering. The joke is that she's gossiping her worries off to tomorrow.",
+  cam:"A slow push toward the whisper.", tx:"The second half of the line slides in like it's being whispered."},
+ {t:"0:34–0:38",s:"pre",ref:"Ref 2",st:"y2k",bg:"#9860FF",
+  im:[[2,41,6,18,88,"cover","45% 25%","border-radius:2cqw;box-shadow:0 0 0 1.1cqw #151018,1.4cqw 1.4cqw 0 1.1cqw rgba(30,8,30,.35)"]],
+  h:'<div class="rec" style="left:53%;top:10%">REC</div>',
+  x:[["आज की",32,42,7.4,"baloo","#FFF3C4","#2A0F2E"],["मैंने",32,60,7.4,"baloo","#FFF3C4","#2A0F2E"],["रील",128,38,10,"rozha","#E3F13A","#2A0F2E"],["बना ली",128,60,7.4,"baloo","#FFF3C4","#2A0F2E"]],
+  sub:"And made today into a reel", ly:"आज की मैंने रील बना ली", en:"And made today into a reel",
+  a:"Ref 2's full pose appears inside a vertical phone screen in the middle of the wide frame, with a red REC dot.",
+  cam:"The phone zooms in from the centre of the frame.", tx:"The text sits on both sides of the phone, as if the reel's caption had spilled out."},
+ {t:"0:38–0:40",s:"drop",ref:"Ref 1",st:"halftone",bg:"#1B0F1F",
+  im:[[1,34,0,32,100,"260%","48% 30%"]],
+  x:[], sub:"", ly:"(instrumental break)", en:"",
+  a:"Blackout, then ref 1's nimbu-mirchi charm drops in on its string and swings.",
+  cam:"A drop with a bounce, then a white flash on the downbeat.", tx:"No text, to give the eyes a beat of rest before the chorus."},
+ {t:"0:40–0:44",s:"ch",ref:"Ref 1",st:"halftone",bg:"#E58D0F",
+  im:[[1,32,10,36,80,"cover","50% 50%",PANEL]],
+  x:[["मेरी तो",34,26,6,"baloo","#D7263D","#5B1E7A"],["अलग है,",34,44,7.4,"baloo","#D7263D","#5B1E7A"],["अलग है,",126,28,7.4,"rozha","#D21D6C","#5B1E7A"],["अलग!",126,58,9,"yatra","#D7263D","#5B1E7A"]],
+  sub:"Mine's different, different, different!", ly:"मेरी तो अलग है, अलग है, अलग!", en:"Mine's different, different, different!",
+  a:"Ref 1's \"no buri nazar\" poster sits in the centre like a framed print. Each \"अलग\" slams in around it.",
+  cam:"A screen shake on each \"alag\".", tx:"Each \"अलग\" appears in a different font and colour: Baloo, then Rozha, then Yatra."},
+ {t:"0:44–0:48",s:"ch",ref:"Ref 3",st:"",bg:"#255BDF",
+  im:[[3,50,0,50,100,"180%","55% 38%"]],
+  x:[["सीधी सी शकल,",46,22,5.4,"baloo","#FFF3C4","#2A0F2E"],["पर दिमाग में",46,40,5.4,"baloo","#FFF3C4","#2A0F2E"],["लफड़ा!",46,62,10,"rozha","#F5C82E","#D7263D","c",-6]],
+  sub:"Innocent face, but chaos in my head!", ly:"सीधी सी शकल, पर दिमाग में लफड़ा!", en:"Innocent face, but chaos in my head!",
+  a:"Ref 3's calm face. On \"lafda\", the cloud swirls behind her spin faster, as if her head is overflowing.",
+  cam:"A slow push, then a fast shake on \"lafda\".", tx:"\"लफड़ा\" wobbles like jelly."},
+ {t:"0:48–0:51",s:"ch",ref:"Ref 3",st:"",bg:"#9860FF",
+  im:[[3,60,10,36,80,"cover","50% 50%",PANEL]],
+  x:[["थोड़ी सी",52,18,6.4,"baloo","#FFF3C4","#2A0F2E"],["क्रेज़ी,",52,33,8,"rozha","#E3F13A","#2A0F2E","c",-6],["थोड़ी",52,50,6.4,"baloo","#FFF3C4","#2A0F2E"],["नवाबी",52,66,8,"yatra","#F5C82E","#5B1E7A"]],
+  sub:"A little crazy, a little royal", ly:"थोड़ी सी क्रेज़ी, थोड़ी नवाबी", en:"A little crazy, a little royal",
+  a:"Ref 3 in full as a framed portrait among violet clouds: the royal half of the line.",
+  cam:"A hard cut between two crops, right on the comma.", tx:"\"क्रेज़ी\" is tilted. \"नवाबी\" sits level in gold, like a nameplate."},
+ {t:"0:51–0:55",s:"ch",ref:"Ref 3",st:"",bg:"#E5332A",
+  im:[[3,50,0,50,100,"170%","50% 22%"],[3,6,6,16,32,"400%","96% 83%",PANEL]],
+  x:[["ख़ुद की ही",48,44,5.6,"baloo","#FFF3C4","#2A0F2E"],["दुनिया की",48,56,5.6,"baloo","#FFF3C4","#2A0F2E"],["मैं महारानी!",48,70,6,"yatra","#F5C82E","#5B1E7A"]],
+  sub:"I'm the queen of my own world!", ly:"ख़ुद की ही दुनिया की मैं महारानी!", en:"I'm the queen of my own world!",
+  a:"Ref 3 cropped on her gold maang tikka, nath and jewellery. Ref 3's chhatri inset pops in at the top left as her palace.",
+  cam:"A slow tilt up to her headpiece, with sparkles.", tx:"\"महारानी\" gets a gold-foil shine that sweeps across it."},
+ {t:"0:55–0:58",s:"ch",ref:"All five refs",st:"",bg:"#1B0F1F",
+  im:[[1,0,0,20,100,"cover","50% 50%"],[2,20,0,20,100,"cover","40% 30%"],[3,40,0,20,100,"cover","55% 40%"],[4,60,0,20,100,"cover","50% 45%"],[5,80,0,20,100,"cover","45% 70%"]],
+  x:[["अलग",16,16,6,"baloo","#D7263D","#2A0F2E"],["अलग",48,16,6,"rozha","#D21D6C","#fff"],["अलग",80,16,6,"yatra","#F5C82E","#2A0F2E"],["अलग",112,16,6,"kalam","#2A0F2E"],["अलग",144,16,6,"baloo","#E3F13A","#2A0F2E"]],
+  sub:"Different, different, different!", ly:"अलग है, अलग है, अलग! / सीधी सी शकल…", en:"Chorus repeat",
+  a:"The style switch: one reference per beat, full-frame. The storyboard shows all five side by side; in the edit they play one after another.",
+  cam:"One cut per beat.", tx:"The font of \"अलग\" changes with each reference."},
+ {t:"0:58–1:02",s:"v2",ref:"Ref 5",st:"",bg:"#FE7318",
+  im:[[5,0,0,52,100,"150%","75% 80%"]],
+  x:[["पैसे कम,",116,24,6,"baloo","#FFF3C4","#2A0F2E"],["पर प्लान्स",116,44,6.4,"rozha","#E3F13A","#2A0F2E"],["हैं चार",116,62,8.4,"rozha","#E3F13A","#2A0F2E"]],
+  sub:"Little money, but four plans", ly:"पैसे कम, पर प्लान्स हैं चार", en:"Little money, but four plans",
+  a:"Ref 5 cropped on the gold bangles and rings: she has no money but is dripping in gold anyway.",
+  cam:"A small push on the bangles.", tx:"\"पैसे कम\" is small and sad. \"हैं चार\" is big and confident."},
+ {t:"1:02–1:06",s:"v2",ref:"Ref 3",st:"",bg:"#9CC3F5",
+  im:[[3,8,24,34,56,"380%","96% 83%","border:1cqw solid #fff;transform:rotate(-6deg);"+PANEL],[3,56,26,34,56,"260%","95% 6%","border:1cqw solid #fff;transform:rotate(5deg);"+PANEL]],
+  x:[["एक दिन लंदन,",40,12,5.4,"baloo","#D7263D","#fff"],["एक दिन पहाड़",116,12,5.4,"baloo","#1F9D55","#fff"]],
+  sub:"One day London, one day the mountains", ly:"एक दिन लंदन, एक दिन पहाड़", en:"One day London, one day the mountains",
+  a:"A scrapbook of two postcards cut from ref 3: the chhatri inset and the cloud sky. Each gets a passport stamp.",
+  cam:"A pan from left to right across the scrapbook.", tx:"Each half of the line lands with its postcard."},
+ {t:"1:06–1:10",s:"v2",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,48,0,52,100,"200%","88% 12%"]],
+  h:'<div class="chat" style="left:8%;top:10%">hey 🙂 <span>✓✓</span></div>',
+  x:[["एक्स का मैसेज?",44,54,5.4,"baloo","#2A0F2E","#fff"],["सीन पे छोड़",44,68,7,"rozha","#2F5BEA","#fff"]],
+  sub:"A message from my ex? Left on seen", ly:"एक्स का मैसेज? सीन पे छोड़", en:"A message from my ex? Left on seen",
+  a:"Ref 2's mehendi palm, cropped huge: \"talk to the hand\" straight to the camera while the ex's message sits on blue ticks. This is also the thumbnail.",
+  cam:"The palm pushes toward the lens.", tx:"\"सीन\" gets a blue double tick."},
+ {t:"1:10–1:16",s:"v2",ref:"Ref 5",st:"",bg:"#FE7318",
+  im:[[5,0,0,50,100,"160%","15% 55%"]],
+  x:[["स्विगी पे",116,20,6,"baloo","#FFF3C4","#2A0F2E"],["कार्ट में",116,36,6,"baloo","#FFF3C4","#2A0F2E"],["दस चीज़ें और!",116,60,5.8,"rozha","#E3F13A","#2A0F2E"]],
+  sub:"Ten more things in the food-app cart!", ly:"स्विगी पे कार्ट में दस चीज़ें और!", en:"Ten more things in the food-app cart!",
+  a:"Ref 5 cropped on the pointing finger and neon nail, tapping \"add\" again and again on a generic food-app screen (no real logo).",
+  cam:"Static. A tap lands on every hi-hat.", tx:"A counter badge ticks from 1 to 10 beside the text."},
+ {t:"1:16–1:20",s:"v2",ref:"Ref 2",st:"y2k",bg:"#E2338E",
+  im:[[2,4,8,36,84,"230%","40% 17%",PANEL],[2,58,6,32,88,"230%","40% 17%","transform:scaleX(-1);border-radius:50%;box-shadow:0 0 0 1.4cqw #F2C230,1cqw 1cqw 0 1.4cqw rgba(30,8,30,.35)"]],
+  x:[["मिरर में बोली,",80,12,5,"baloo","#FFF3C4","#5B1E7A"],["“तू है कमाल”",80,70,6.6,"yatra","#F5C82E","#5B1E7A"]],
+  sub:"Told the mirror, \"You're amazing\"", ly:"मिरर में बोली, \"तू है कमाल\"", en:"Told the mirror, \"You're amazing\"",
+  a:"Ref 2's face on the left, and the same face flipped inside a gold oval mirror on the right. Her reflection blows a kiss back.",
+  cam:"Over the shoulder into the mirror.", tx:"\"कमाल\" sparkles once."},
+ {t:"1:20–1:24",s:"v2",ref:"Ref 3",st:"",bg:"#2E4FA8",
+  im:[[3,0,0,50,100,"170%","55% 38%","filter:saturate(.6) hue-rotate(-15deg) brightness(.85)"]],
+  h:'<div class="rain"></div>',
+  x:[["बाहर निकली तो",116,30,5.2,"baloo","#FFF3C4","#1B0F1F"],["बारिश का बवाल",114,50,5.4,"rozha","#DFF4FF","#1B0F1F"]],
+  sub:"Stepped outside into a rainstorm", ly:"बाहर निकली तो बारिश का बवाल", en:"Stepped outside into a rainstorm",
+  a:"Ref 3's face, colours washed out and cooled, with rain streaking across the whole frame. Her look turns from proud to drenched.",
+  cam:"Strut in slow motion, then snap to normal speed when the rain hits.", tx:"\"बवाल\" melts and drips down the frame."},
+ {t:"1:24–1:28",s:"v2",ref:"All five refs",st:"halftone",bg:"#5B1E7A",
+  im:[[1,4,10,20,46,"cover","50% 50%","transform:rotate(-6deg);"+PANEL],[3,38,6,22,56,"cover","55% 40%","transform:rotate(-2deg);"+PANEL],[2,20,42,18,48,"cover","40% 30%","transform:rotate(5deg);"+PANEL],[4,62,10,20,48,"cover","50% 45%","transform:rotate(4deg);"+PANEL],[5,82,34,14,58,"cover","50% 70%","transform:rotate(-5deg);"+PANEL]],
+  x:[["को-क्रिएटर!",80,16,7.4,"rozha","#E3F13A","#D7263D","c",-4],["किस्मत मेरी",80,54,5.4,"baloo","#FFF3C4","#2A0F2E"],["फ़ुल-टाइम कॉमेडियन",80,68,5,"baloo","#F5C82E","#2A0F2E"]],
+  sub:"Fate's a comedian, and I co-write the jokes", ly:"किस्मत मेरी फ़ुल-टाइम कॉमेडियन / मैं भी हूँ थोड़ी उसकी को-क्रिएटर!", en:"My luck is a full-time comedian, and I'm a bit of its co-creator!",
+  a:"The climax collage: all five references pasted together like a zine spread, each one slapped on with the beat.",
+  cam:"Fast cuts with a zoom out to reveal the collage.", tx:"\"को-क्रिएटर\" lands as a big signboard word."},
+ {t:"1:28–1:31",s:"out",ref:"Ref 1 + Ref 4",st:"folk",bg:"#E3C69B",
+  im:[[1,8,10,36,80,"cover","50% 50%",PANEL]],
+  h:'<div class="stamp" style="left:26%;top:50%">कैंसल</div>',
+  x:[["सुधरने का प्लान",112,30,5.4,"kalam","#2A0F2E"],["कल मिलते हैं।",112,52,6,"kalam","#2A0F2E"]],
+  sub:"Self-improvement plan: cancelled. See you tomorrow.", ly:"सुधरने का प्लान कैंसल। कल मिलते हैं।", en:"Spoken: \"Self-improvement plan cancelled. See you tomorrow.\"",
+  a:"Ref 1's poster on ref 4's khadi paper. A red rubber stamp slams \"कैंसल\" across it, then cut back to shot 1 so the video loops.",
+  cam:"The stamp slams with a frame shake, then a slow fade.", tx:"\"कैंसल\" stamps in red ink. \"कल मिलते हैं\" is handwritten."}
+];
+
+
+/* ===== Motion engine: every frame is a pure function of song time t ===== */
+const B = 27.3/52;            // seconds per beat (~114.3 BPM), measured from the vocal grid
+const GRID0 = 40.5;           // chorus downbeat, anchors the beat grid
+const END = 91.2;
+const PALS = {ch:["#E58D0F","#D21D6C","#255BDF","#1F9D55"], warm:["#FE7318","#E2338E","#F5A21B","#D7263D"], cool:["#255BDF","#9860FF","#2F5BEA","#E2338E"]};
+
+// Lyric lines, timed to the vocals. sc = scene (storyboard shot) used for the visuals.
+const LINES = [
+ {a:0.0, b:3.2, txt:"आज से सुधर जाऊँगी…", en:"From today, I'll behave…", sc:0, zone:"L", font:"kalam", col:"#2A0F2E", pre:"type", tr:"none", cam:"push"},
+ {a:3.2, b:5.0, txt:"पक्का।", en:"Promise.", sc:1, zone:"L", font:"baloo", col:"#D7263D", sh:"#2A0F2E", pre:"slam", tr:"zoom", cam:"push", base:11},
+ {a:5.0, b:6.1, txt:"कल से।", en:"From tomorrow.", sc:2, zone:"L", font:"rozha", col:"#D7263D", sh:"#5B1E7A", pre:"slam", tr:"flash", cam:"pull", base:14},
+ {kind:"title", a:6.1, b:13.2},
+ {a:13.2, b:17.4, txt:"सुबह उठी, फिर सो गई", en:"Woke up in the morning, then fell asleep again", sc:3, zone:"R", pre:"rise", tr:"wipe", cam:"tilt", fx:"tip"},
+ {a:17.4, b:21.6, txt:"ज़िंदगी मेरी स्लो गई", en:"My life went slow", sc:4, zone:"C", kal:[3,"320%","95% 6%"], kalSpeed:.25, pre:"slow", tr:"iris", cam:"none", col:"#FFF3C4", hl:"#F5C82E"},
+ {a:21.6, b:25.8, txt:"चाय बनाई, भूल गई", en:"Made chai, forgot about it", sc:5, zone:"R", pre:"ribbon", steam:true, tr:"wipe", cam:"push", fx:"forget"},
+ {a:25.8, b:30.0, txt:"ख़ुद की ही चाय ठंडी हो गई", en:"My own chai went cold", sc:6, zone:"R", sh:"#1C3F8F", pre:"rise", tr:"zoom", cam:"push", fx:"freeze"},
+ {kind:"gap", a:30.0, b:32.1, kal:[5,"240%","30% 72%"]},
+ {a:32.1, b:34.2, txt:"दिमाग बोले, “थोड़ा संभल”", en:"My brain says, \"Get it together a little\"", sc:7, zone:"L", col:"#2E4FA8", sh:"#fff", pre:"stack", tr:"wipe", cam:"push"},
+ {a:34.2, b:36.3, txt:"दिल बोले, “छोड़ ना, क्या बवाल!”", en:"My heart says, \"Let it go, what's the fuss!\"", sc:8, zone:"R", col:"#D3136F", sh:"#fff", pre:"bounce", tr:"slide", cam:"push"},
+ {a:36.3, b:38.4, txt:"कल की टेंशन कल पे डाली", en:"Dumped tomorrow's tension on tomorrow", sc:9, zone:"R", col:"#2E4FA8", sh:"#fff", pre:"ribbon", steam:true, tr:"wipe", cam:"push"},
+ {a:38.4, b:40.5, txt:"आज की मैंने रील बना ली", en:"And made today into a reel", sc:10, zone:"LR", pre:"pop", tr:"zoom", cam:"push", split:2},
+ {a:40.5, b:42.6, txt:"मेरी तो अलग है, अलग है, अलग!", en:"Mine's different, different, different!", sc:12, zone:"LR", font:"rozha", col:"#D7263D", sh:"#5B1E7A", hl:"#FFFFFF", pre:"slam", tr:"flash", snap:"ch", beat:1},
+ {a:42.6, b:44.7, txt:"सीधी सी शकल, पर दिमाग में लफड़ा!", en:"Innocent face, but chaos in my head!", sc:13, zone:"L", pre:"zoom", tr:"flash", snap:"cool", beat:1, fx:"wobbleLast"},
+ {a:44.7, b:46.8, txt:"थोड़ी सी क्रेज़ी, थोड़ी नवाबी", en:"A little crazy, a little royal", sc:14, zone:"L", font:"yatra", col:"#F5C82E", sh:"#5B1E7A", hl:"#FFFFFF", pre:"bounce", tr:"flash", snap:"cool", beat:1},
+ {a:46.8, b:48.9, txt:"ख़ुद की ही दुनिया की मैं महारानी!", en:"I'm the queen of my own world!", sc:15, zone:"L", font:"yatra", col:"#F5C82E", sh:"#5B1E7A", hl:"#FFFFFF", pre:"arc", tr:"flash", snap:"warm", beat:1},
+ {a:48.9, b:51.0, txt:"अलग है, अलग है, अलग!", en:"Different, different, different!", sc:16, zone:"C", font:"rozha", col:"#FFFFFF", sh:"#D7263D", hl:"#E3F13A", pre:"slam", tr:"flash", beat:1, chip:true},
+ {a:51.0, b:53.1, txt:"सीधी सी शकल, पर दिमाग में लफड़ा!", en:"Innocent face, but chaos in my head!", sc:13, alt:true, zone:"R", pre:"slam", tr:"zoom", snap:"ch", beat:1, fx:"wobbleLast"},
+ {kind:"drop", a:53.1, b:59.4},
+ {a:59.4, b:61.5, txt:"पैसे कम, पर प्लान्स हैं चार", en:"Little money, but four plans", sc:17, zone:"R", pre:"rise", tr:"wipe", cam:"push"},
+ {a:61.5, b:63.6, txt:"एक दिन लंदन, एक दिन पहाड़", en:"One day London, one day the mountains", sc:18, zone:"T", col:"#D7263D", sh:"#fff", pre:"bounce", tr:"slide", cam:"pan"},
+ {a:63.6, b:65.7, txt:"एक्स का मैसेज? सीन पे छोड़", en:"A message from my ex? Left on seen", sc:19, zone:"L", col:"#2A0F2E", sh:"#fff", hl:"#2F5BEA", pre:"pop", tr:"zoom", cam:"push"},
+ {a:65.7, b:67.8, txt:"स्विगी पे कार्ट में दस चीज़ें और!", en:"Ten more things in the food-app cart!", sc:20, zone:"R", pre:"stack", tr:"wipe", cam:"push", beat:1},
+ {a:67.8, b:69.9, txt:"मिरर में बोली, “तू है कमाल”", en:"Told the mirror, \"You're amazing\"", sc:21, zone:"TB", font:"yatra", col:"#F5C82E", sh:"#5B1E7A", hl:"#FFFFFF", pre:"arc", tr:"iris", cam:"push"},
+ {a:69.9, b:72.0, txt:"बाहर निकली तो बारिश का बवाल", en:"Stepped outside into a rainstorm", sc:22, zone:"R", col:"#DFF4FF", sh:"#1B0F1F", pre:"drip", tr:"wipe", cam:"pan", chip:true},
+ {a:72.0, b:74.1, txt:"किस्मत मेरी फ़ुल-टाइम कॉमेडियन", en:"My luck is a full-time comedian", sc:23, zone:"C", pre:"zoom", tr:"flash", beat:1, chip:true},
+ {a:74.1, b:77.5, txt:"मैं भी हूँ थोड़ी उसकी को-क्रिएटर!", en:"And I'm a bit of its co-creator!", sc:23, alt:true, zone:"C", font:"rozha", col:"#E3F13A", sh:"#D7263D", hl:"#FFFFFF", pre:"slam", tr:"zoom", beat:1, chip:true},
+ {a:77.5, b:80.2, txt:"सुधरने का प्लान कैंसल।", en:"Self-improvement plan: cancelled.", sc:24, zone:"R", font:"kalam", col:"#2A0F2E", hl:"#D7263D", pre:"type", tr:"wipe", cam:"push", stamp:true},
+ {a:80.2, b:81.8, txt:"कल मिलते हैं।", en:"See you tomorrow.", sc:0, zone:"L", font:"kalam", col:"#2A0F2E", hl:"#D3136F", pre:"type", tr:"iris", cam:"push"},
+ {kind:"end", a:81.8, b:END}
+];
+
+/* ---------- helpers ---------- */
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,p)=>a+(b-a)*p;
+const eOutBack=p=>{const c=1.9;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
+const eOutCubic=p=>1-Math.pow(1-p,3);
+const eInCubic=p=>p*p*p;
+const eOutBounce=p=>{const n=7.5625,d=2.75;if(p<1/d)return n*p*p;if(p<2/d)return n*(p-=1.5/d)*p+.75;if(p<2.5/d)return n*(p-=2.25/d)*p+.9375;return n*(p-=2.625/d)*p+.984375};
+const hash=(n)=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const beatPos=t=>(t-GRID0)/B;
+const beatFrac=t=>{const b=beatPos(t);return b-Math.floor(b)};
+const kick=t=>Math.exp(-beatFrac(t)*7);          // 1 on the beat, decays
+const P=(v)=>(v/160*100).toFixed(3)+"%";           // x units -> %
+const PY=(v)=>(v/90*100).toFixed(3)+"%";           // y units -> %
+const lineAt=t=>{for(let i=LINES.length-1;i>=0;i--) if(t>=LINES[i].a) return i; return 0};
+
+/* ---------- confetti ---------- */
+const MOTIFS = {
+ marigold:'<svg viewBox="0 0 24 24"><g fill="#F59E0B">'+[0,45,90,135,180,225,270,315].map(a=>`<ellipse cx="12" cy="5" rx="3" ry="4.5" transform="rotate(${a} 12 12)"/>`).join("")+'</g><circle cx="12" cy="12" r="4" fill="#E2338E"/><circle cx="12" cy="12" r="1.6" fill="#2A9D8F"/></svg>',
+ chilli:'<svg viewBox="0 0 24 24"><path d="M5 6 C9 8 13 14 20 20 C12 19 7 13 5 6Z" fill="#D7263D"/><path d="M5 6 l-2 -3" stroke="#1F9D55" stroke-width="2.4" stroke-linecap="round"/></svg>',
+ lemon:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="6.5" fill="#F5C82E"/><ellipse cx="9.5" cy="10" rx="3" ry="2" fill="#FBE38A"/></svg>',
+ heart:'<svg viewBox="0 0 24 24"><path d="M12 21 C4 15 2 11 2 8 a5 5 0 0 1 10 -1 a5 5 0 0 1 10 1 c0 3 -2 7 -10 13Z" fill="#FF5BA8"/></svg>',
+ spark:'<svg viewBox="0 0 24 24"><path d="M12 1 Q13 11 23 12 Q13 13 12 23 Q11 13 1 12 Q11 11 12 1Z" fill="#FFF6C9"/></svg>',
+ chai:'<svg viewBox="0 0 24 24"><path d="M6 6 h12 l-1.5 15 h-9Z" fill="#fff" fill-opacity=".8"/><path d="M7 10 h10 l-1 10 h-8Z" fill="#C69C72"/></svg>'
+};
+const KINDS=["marigold","chilli","heart","spark","lemon","chai"];
+function confetti(t,n=16,kinds=KINDS){
+  let h="", k=kick(t);
+  for(let i=0;i<n;i++){
+    const x=hash(i)*100+Math.sin(t*.35+i)*3, y=hash(i+40)*100+Math.cos(t*.3+i*1.7)*4;
+    const r=hash(i+80)*360+t*(hash(i+9)>.5?40:-40), sz=2.6+hash(i+20)*3.4, s=1+.35*k;
+    h+=`<div class="cf" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;width:${sz.toFixed(2)}cqw;transform:rotate(${r.toFixed(1)}deg) scale(${s.toFixed(3)})">${MOTIFS[kinds[i%kinds.length]]}</div>`;
+  }
+  return `<div class="cfl">${h}</div>`;
+}
+
+/* ---------- image cards ---------- */
+function cards(L,t,u,dur,next){
+  const s=S[L.sc]; if(!s) return "";
+  const k=kick(t), boil=`url(#boil${Math.floor(t*12)%6})`;
+  return s.im.map((l,j)=>{
+    let [r,x,y,w,h,size,pos,extra=""]=l;
+    // keep cards inside the frame so they read as collage stickers
+    const full = w>=99 && h>=99; const strip = w<=21 && h>=99;
+    if(!full && !strip){ const ix=3, iy=5; if(x<ix){w-=ix-x;x=ix} if(y<iy){h-=iy-y;y=iy} if(x+w>100-ix) w=100-ix-x; if(y+h>100-iy) h=100-iy-y; }
+    const cx=x+w/2, dir = cx<50?-1:1;
+    const tilt = strip||full?0:(hash(L.sc*7+j)-.5)*6;
+    // entrance / exit
+    const ein = clamp(u/.38), eout = next===L.sc?0:clamp((u-(dur-.18))/.18);
+    const enterX = (1-eOutBack(ein))*dir*120*(strip?0:1), enterY = strip?(1-eOutBack(clamp((u-j*B*.5)/.3)))*-110:0;
+    const exitX = eInCubic(eout)*dir*130;
+    const rot = tilt + (1-ein)*dir*14 + Math.sin(t*1.7+j)*1.2;
+    // beat squash and 12 fps hand-made jitter
+    const step=Math.floor(t*12), jx=(hash(step+j*31)-.5)*.5, jy=(hash(step+j*57)-.5)*.5;
+    const sq = (L.beat?1:.5)*k;
+    const sx=1+.035*sq, sy=1-.03*sq;
+    // ken burns on the art inside the card
+    const kb = L.cam==="pull"?1.15-.15*clamp(u/dur):1+.12*clamp(u/dur);
+    const pan = L.cam==="pan"?(clamp(u/dur)-.5)*-6:0;
+    let filt=boil;
+    if(L.fx==="freeze") filt+=` hue-rotate(${(190*clamp((u-.6)/2.4)).toFixed(0)}deg) saturate(${(1-.25*clamp((u-.6)/2.4)).toFixed(2)})`;
+    const flip = L.alt?"scaleX(-1)":"";
+    const sizeA = L.alt && size!=="cover" ? (parseFloat(size)*1.25)+"%" : size;
+    const sticker = full||strip?"":"sticker";
+    return `<div class="card ${sticker}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%;transform:translate(${(enterX+exitX+jx).toFixed(2)}%,${(enterY+jy).toFixed(2)}%) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)},${sy.toFixed(3)});filter:${filt}"><div class="art" style="background-image:url(refs/${r}.jpg);background-size:${sizeA};background-position:${pos};transform:${flip} scale(${kb.toFixed(3)}) translateX(${pan.toFixed(2)}%);${extra.replace(/transform:[^;]*;?/,"").replace(/box-shadow:[^;]*;?/,"")}"></div></div>`;
+  }).join("");
+}
+function kaleido(spec,t,speed=1){
+  const [ref,size,pos]=spec; let tl="";
+  for(let r=0;r<6;r++) for(let c=0;c<6;c++) tl+=`<div class="kt" style="background-image:url(refs/${ref}.jpg);background-size:${size};background-position:${pos};transform:scale(${c%2?-1:1},${r%2?-1:1})"></div>`;
+  const rings=[0,1].map(i=>{const p=((beatPos(t)+i*.5)%1+1)%1; return `<div class="kring" style="transform:scale(${(.15+1.8*p).toFixed(3)});opacity:${(1-p).toFixed(3)}"></div>`}).join("");
+  return `<div class="kal" style="transform:rotate(${(t*22*speed).toFixed(2)}deg) scale(${(1+.05*kick(t)).toFixed(3)})"><div class="kgrid">${tl}</div></div>${rings}`;
+}
+
+/* ---------- lyric text ---------- */
+const ZONE={L:{cx:46,w:62,yc:40,base:7.6},R:{cx:114,w:62,yc:40,base:7.6},C:{cx:80,w:118,yc:40,base:9},LR:{base:7.2},T:{cx:80,w:118,yc:16,base:6.2},TB:{cx:80,w:118,base:6.6}};
+const W_FACTOR=.5;
+function wrap(r,maxChars){ const out=[]; let cur=""; for(const w of r.split(" ")){ const n=cur?cur+" "+w:w; if(n.length>maxChars&&cur){out.push(cur);cur=w}else cur=n } if(cur) out.push(cur); return out }
+function rowsOf(txt,maxChars){ return txt.split(/(?<=[,?])\s+/).flatMap(r=>wrap(r,maxChars)) }
+const maxCharsFor=(w,base)=>Math.max(6,Math.floor(w/(W_FACTOR*1.6*base*.82)));
+function layoutRows(L){
+  const z=ZONE[L.zone], rows=rowsOf(L.txt, maxCharsFor(z.w||46, L.base||z.base));
+  const out=[];
+  if(L.zone==="LR"){
+    const all=L.txt.split(" "), cut=L.split||Math.ceil(all.length/2);
+    const groups = L.split ? [all.slice(0,cut).join(" "), all.slice(cut).join(" ")] : L.txt.split(/(?<=[,?])\s+/);
+    const mc=maxCharsFor(44,z.base);
+    groups.forEach((g,i)=>{ const side=i%2, rs=wrap(g,mc), sz=Math.min(z.base,...rs.map(r=>44/(r.length*W_FACTOR*1.6))), rh=sz*1.6*1.25;
+      const yc = groups.length>2 ? 22+i*21 : (side?52:30);
+      rs.forEach((r,k)=>out.push({r,cx:side?126:34,y:yc+(k-(rs.length-1)/2)*rh,sz})) });
+    return out;
+  }
+  if(L.zone==="TB"){ L.txt.split(/(?<=[,?])\s+/).forEach((r,i)=>{ let sz=Math.min(z.base,z.w/(r.length*W_FACTOR*1.6)); out.push({r,cx:80,y:i?72:13,sz}) }); return out }
+  let sz=Math.min(L.base||z.base, ...rows.map(r=>z.w/(r.length*W_FACTOR*1.6)));
+  const rh=sz*1.6*1.3, n=rows.length;
+  rows.forEach((r,i)=>out.push({r,cx:z.cx,y:z.yc+(i-(n-1)/2)*rh,sz}));
+  return out;
+}
+function wordTimes(L,words){
+  const span=(L.b-L.a)*(L.pre==="type"?.6:.72), w=words.map(x=>Math.max(2,x.length)), tot=w.reduce((a,b)=>a+b,0);
+  let c=0; return w.map(x=>{const tt=L.a+.02+span*(c/tot); c+=x; return tt});
+}
+function textLayer(L,t,u,dur){
+  const rows=layoutRows(L); const all=[]; rows.forEach((R,ri)=>R.r.split(" ").forEach(w=>all.push({w,ri})));
+  const wt=wordTimes(L,all.map(x=>x.w));
+  const col=L.col||"#FFF3C4", sh=L.sh===undefined?"#2A0F2E":L.sh, hl=L.hl||(col.toUpperCase()==="#FFF3C4"?"#E3F13A":"#FFFFFF");
+  const exitP=clamp((u-(dur-.2))/.2);
+  let html="", idx=0, shake=0;
+  rows.forEach((R,ri)=>{
+    const words=R.r.split(" "), n=words.length, mid=(n-1)/2;
+    let inner=words.map((w,k)=>{
+      const i=idx++, q=t-wt[i];
+      let tf="", op=1, clip="", c=col;
+      if(q<0){ op=0 }
+      const p=clamp(q/.24);
+      switch(L.pre){
+        case "slam": tf=`scale(${lerp(2.3,1,eOutBack(clamp(q/.2))).toFixed(3)})`; op=q<0?0:clamp(q/.06); if(q>=0) shake+=Math.exp(-q*14); break;
+        case "zoom": tf=`scale(${lerp(3.6,1,eOutCubic(clamp(q/.26))).toFixed(3)})`; op=q<0?0:clamp(q/.12); break;
+        case "bounce": tf=`translateY(${((1-eOutBounce(clamp(q/.42)))*-160).toFixed(1)}%)`; op=q<0?0:1; break;
+        case "rise": tf=`translateY(${((1-eOutBack(p))*90).toFixed(1)}%) rotate(${((1-p)*(k%2?-12:12)).toFixed(1)}deg)`; op=q<0?0:clamp(q/.1); break;
+        case "type": op=q<0?0:1; clip=`clip-path:inset(-30% ${((1-clamp(q/Math.max(.18,(wt[i+1]||L.a+dur*.6)-wt[i])))*100).toFixed(1)}% -30% 0)`; break;
+        case "slow": tf=`translateY(${((1-eOutCubic(clamp(q/.8)))*40).toFixed(1)}%)`; op=q<0?0:clamp(q/.6); break;
+        case "stack": tf=`scale(${eOutBack(p).toFixed(3)}) rotate(${(k%2?-5:5)}deg)`; op=q<0?0:1; break;
+        case "arc": tf=`scale(${eOutBack(p).toFixed(3)})`; op=q<0?0:1; break;
+        default: tf=`scale(${eOutBack(p).toFixed(3)})`; op=q<0?0:1;
+      }
+      // the word being sung right now pops and changes colour
+      const act = q>=0 && q<.38 ? 1-q/.38 : 0;
+      if(act>0) c=hl;
+      const bump = 1+.22*act;
+      // continuous flag wave
+      const ph=t/(2*B)*Math.PI*2+k*.7;
+      const waveAmp = L.pre==="ribbon"?.28:.07, rotAmp=L.pre==="ribbon"?5:3;
+      let wave=`translateY(${(Math.sin(ph)*waveAmp).toFixed(3)}em) rotate(${(Math.sin(ph+1)*rotAmp).toFixed(2)}deg)`;
+      // arc placement
+      const arc = (L.pre==="arc")?`translateY(${(((k-mid)**2)*.06).toFixed(3)}em) rotate(${((k-mid)*7).toFixed(1)}deg)`:"";
+      // special word effects
+      let fx="";
+      if(L.fx==="tip" && ri===rows.length-1 && q>0) fx=`rotate(${(14*clamp((q-.5)/.5)).toFixed(1)}deg) translateY(${(18*clamp((q-.5)/.5)).toFixed(1)}%)`;
+      if(L.fx==="forget" && ri===rows.length-1 && q>0) op*=1-.6*clamp((q-.6)/.8);
+      if(L.fx==="wobbleLast" && i===all.length-1 && q>0) fx=`rotate(${(Math.sin(q*18)*7*Math.exp(-q*1.2)).toFixed(1)}deg) scale(${(1+Math.sin(q*14)*.06).toFixed(3)})`;
+      if(L.pre==="slow" && w.startsWith("स्लो") && q>0) fx=`scaleX(${(1+.45*clamp(q/1.4)).toFixed(3)})`;
+      if(L.pre==="drip" && i===all.length-1 && q>.5) fx=`translateY(${(16*clamp((q-.5)/1)).toFixed(1)}%) scaleY(${(1+.25*clamp((q-.5)/1)).toFixed(3)})`;
+      if(L.fx==="freeze" && ri===rows.length-1 && q>0) c=act>0?hl:"#BFEAFF";
+      // exit: words scatter up and shrink, staggered
+      if(exitP>0){ const e=clamp(exitP*1.6-(k/n)*.6); op*=1-e; tf+=` translateY(${(-60*eInCubic(e)).toFixed(1)}%) scale(${(1-.6*e).toFixed(3)})`; }
+      const chip = (L.pre==="stack"||L.chip)?" chip":"";
+      return `<span class="wa" style="transform:${arc}"><span class="w${chip}" style="opacity:${op.toFixed(3)};transform:${tf} ${fx};${clip}"><span class="wv" style="transform:${wave} scale(${bump.toFixed(3)});color:${c}">${w}</span></span></span>`;
+    }).join(" ");
+    const shadow = sh?`text-shadow:${(R.sz*.07).toFixed(2)}cqw ${(R.sz*.07).toFixed(2)}cqw 0 ${sh};`:"";
+    html+=`<div class="tx f-${L.font||"baloo"}" style="left:${P(R.cx)};top:${PY(R.y)};font-size:${R.sz.toFixed(2)}cqw;${shadow}">${inner}</div>`;
+  });
+  return {html, shake};
+}
+function steamPath(L,u){
+  const right=L.zone==="R"; const x0=right?30:130, y0=60;
+  const d=`M${x0} ${y0} C ${x0+(right?12:-12)} 30, ${right?70:90} 22, ${right?96:64} 30 S ${right?132:28} 46, ${right?152:8} 20`;
+  const draw=clamp(u/1.1), flow=(u*30)%20;
+  return `<svg class="steam" viewBox="0 0 160 90" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" pathLength="100" class="st1" style="stroke-dashoffset:${(100-100*eOutCubic(draw)).toFixed(2)}"/><path d="${d}" pathLength="100" class="st2" style="stroke-dashoffset:${(-flow).toFixed(2)};opacity:${draw.toFixed(2)}"/></svg>`;
+}
+
+/* ---------- scene renderers ---------- */
+function bgFor(L,t){
+  if(L.snap){ const c=PALS[L.snap]; return c[((Math.floor(beatPos(t))%c.length)+c.length)%c.length] }
+  return S[L.sc]?S[L.sc].bg:"#1B0F1F";
+}
+function lineScene(i,t){
+  const L=LINES[i], u=t-L.a, dur=L.b-L.a, s=S[L.sc], next=LINES[i+1]&&LINES[i+1].sc;
+  const bg=bgFor(L,t);
+  let body = confetti(t,14,["intro","pre"].includes(s.s)?["heart","spark","marigold"]:KINDS);
+  body += L.kal ? kaleido(L.kal,t,L.kalSpeed||1) : cards(L,t,u,dur,next);
+  body += `<div class="ht ${s.st}"></div>`;
+  if(L.steam) body+=steamPath(L,u);
+  if(L.sc===22) body+=`<div class="rain" style="background-position:${(-t*40).toFixed(1)}px ${(t*900).toFixed(1)}px"></div>`;
+  if(L.sc===19){ const p=clamp((u-.15)/.3); body+=`<div class="chat" style="left:8%;top:9%;transform:scale(${eOutBack(p).toFixed(3)}) rotate(-4deg)">hey 🙂 <span>✓✓</span></div>` }
+  if(L.sc===10) body+=`<div class="rec" style="left:53%;top:10%;opacity:${beatFrac(t)<.5?1:0}">REC</div>`;
+  const T=textLayer(L,t,u,dur);
+  if(L.stamp){ const st=LINES[i].a+dur*.42, q=t-st; if(q>0){ const p=clamp(q/.22); body+=`<div class="stamp" style="left:27%;top:50%;transform:translate(-50%,-50%) rotate(-12deg) scale(${lerp(2.4,1,eOutBack(p)).toFixed(3)});opacity:${clamp(q/.08)}">कैंसल</div>`; T.shake+=Math.exp(-q*12)*1.5 } }
+  return {bg, body:body+T.html, shake:T.shake, sub:L.en, u, L};
+}
+const CROPS=[[1,"cover","50% 50%"],[5,"170%","40% 70%"],[2,"190%","45% 22%"],[3,"170%","55% 38%"],[4,"190%","25% 42%"],[2,"200%","85% 12%"],[3,"300%","95% 8%"],[1,"240%","48% 30%"],[5,"150%","70% 85%"],[4,"190%","75% 42%"],[3,"160%","50% 20%"],[2,"cover","50% 50%"]];
+function instScene(i,t){
+  const L=LINES[i], u=t-L.a, k=kick(t), bi=Math.floor(beatPos(t));
+  let body="", bg="#1B0F1F", sub="", shake=0;
+  if(L.kind==="title"){
+    const bar=Math.floor(u/(4*B)); const ks=[[1,"240%","48% 30%"],[5,"240%","30% 72%"],[2,"260%","88% 12%"],[3,"300%","95% 8%"]][bar%4];
+    body+=kaleido(ks,t,.6)+confetti(t,18);
+    const p=clamp((u-.2)/.5), sc=eOutBack(p)*(1+.06*k);
+    const w1=clamp((u-.6)/.25), w2=clamp((u-1.1)/.3);
+    body+=`<div class="badge" style="transform:translate(-50%,-50%) scale(${sc.toFixed(3)}) rotate(${(Math.sin(t*1.3)*3).toFixed(2)}deg)">
+      <div class="b1 f-baloo" style="opacity:${w1};transform:translateY(${((1-eOutBack(w1))*40).toFixed(1)}%)">मेरी तो</div>
+      <div class="b2 f-rozha" style="transform:scale(${(eOutBack(w2)*(1+.08*k)).toFixed(3)})">अलग है</div>
+      <div class="b3">MERI TOH ALAG HAI</div></div>`;
+    if(u>6.6) body+=`<div class="fadeblk" style="opacity:${clamp((u-6.6)/.5)*0}"></div>`;
+    sub="";
+  } else if(L.kind==="gap"){
+    body+=kaleido(L.kal,t,1.4)+confetti(t,10);
+  } else if(L.kind==="drop"){
+    const c=CROPS[((bi%CROPS.length)+CROPS.length)%CROPS.length];
+    const lastBar = u>(L.b-L.a)-4*B;
+    if(lastBar) body+=kaleido([1,"220%","48% 35%"],t,2);
+    else body+=`<div class="full" style="background-image:url(refs/${c[0]}.jpg);background-size:${c[1]};background-position:${c[2]};transform:scale(${(1+.18*k).toFixed(3)}) rotate(${((bi%2?1:-1)*2*k).toFixed(2)}deg);filter:url(#boil${Math.floor(t*12)%6})"></div>`;
+    body+=confetti(t,12,["chilli","lemon","spark"]);
+    body+=`<div class="flashov" style="opacity:${(beatFrac(t)<.12 && bi%4===0?.7*(1-beatFrac(t)/.12):0).toFixed(3)}"></div>`;
+    shake=k*.6;
+  } else if(L.kind==="end"){
+    bg=PALS.ch[((bi%4)+4)%4];
+    const tiles=S[23].im;
+    body+=confetti(t,18);
+    tiles.forEach((l,j)=>{ const [r,x,y,w,h,size,pos]=l; const q=u-j*B; if(q<0) return; const p=clamp(q/.3);
+      body+=`<div class="card sticker" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%;transform:scale(${lerp(1.6,1,eOutBack(p)).toFixed(3)}) rotate(${((hash(j)-.5)*14+Math.sin(t*1.5+j)*2).toFixed(2)}deg);opacity:${clamp(q/.1)};filter:url(#boil${Math.floor(t*12)%6})"><div class="art" style="background-image:url(refs/${r}.jpg);background-size:${size};background-position:${pos}"></div></div>` });
+    const tb=u-4.2; if(tb>0){ const p=clamp(tb/.5); body+=`<div class="badge" style="transform:translate(-50%,-50%) scale(${(eOutBack(p)*(1+.05*k)).toFixed(3)})"><div class="b1 f-baloo">मेरी तो</div><div class="b2 f-rozha">अलग है</div><div class="b3 f-kalam" style="opacity:${clamp((tb-1)/.6)}">कल मिलते हैं।</div></div>` }
+    body+=`<div class="fadeblk" style="opacity:${clamp((t-(END-1.4))/1.2).toFixed(3)}"></div>`;
+  }
+  return {bg, body, shake, sub, u, L};
+}
+
+/* ---------- transitions + camera ---------- */
+function frameFor(i,t){ return LINES[i].kind? instScene(i,t) : lineScene(i,t) }
+function render(t){
+  t=clamp(t,0,END-.001);
+  const i=lineAt(t), L=LINES[i], u=t-L.a;
+  const F=frameFor(i,t);
+  // camera
+  let sc=1, tx=0, ty=0, rot=0;
+  if(L.cam==="push") sc=1+.05*clamp(u/(L.b-L.a));
+  if(L.cam==="tilt") ty=-2*clamp(u/(L.b-L.a));
+  if(L.beat||L.kind) sc+=.035*kick(t);
+  const sh=Math.min(2.2,F.shake||0), fr=Math.floor(t*24);
+  tx+=(hash(fr)-.5)*1.6*sh; ty+=(hash(fr+7)-.5)*1.6*sh; rot+=(hash(fr+13)-.5)*1.2*sh;
+  // transition in
+  let over="", clip="";
+  const tr=L.tr, q=u;
+  if(tr==="zoom" && q<.28) sc*=lerp(1.3,1,eOutCubic(q/.28));
+  if(tr==="slide" && q<.3) tx+=(1-eOutCubic(q/.3))*100;
+  if(tr==="flash" && q<.22) over+=`<div class="flashov" style="opacity:${(1-q/.22).toFixed(3)}"></div>`;
+  if(tr==="iris" && q<.4) clip=`clip-path:circle(${(eOutCubic(q/.4)*80).toFixed(1)}% at 50% 50%)`;
+  // colour wipe that straddles the cut (starts in the previous line)
+  const nx=LINES[i+1]; let wipe="";
+  const wipeOf=(Lw,qq)=>{ const p=clamp((qq+.15)/.3); if(p<=0||p>=1) return ""; const c=(Lw.kind?"#F5C82E":bgFor(Lw,t)); return `<div class="wipe" style="background:${c};transform:translateX(${(-100+200*p).toFixed(1)}%) skewX(-12deg)"></div>` };
+  if(tr==="wipe" && q<.15) wipe=wipeOf(L,q);
+  if(nx && nx.tr==="wipe" && t>nx.a-.15) wipe=wipeOf(nx,t-nx.a);
+  let prevBg="";
+  if(tr==="iris" && q<.4 && i>0){ const Fp=frameFor(i-1,t); prevBg=`<div class="layer0" style="background:${Fp.bg}">${Fp.body}</div>` }
+  const subP=clamp(u/.25), subOut=clamp((u-(L.b-L.a-.15))/.15);
+  const sub=F.sub?`<div class="sub" style="opacity:${(subP*(1-subOut)).toFixed(3)};transform:translate(-50%,${((1-eOutCubic(subP))*60).toFixed(0)}%)">${F.sub}</div>`:"";
+  stage.innerHTML = prevBg+`<div class="layer0" style="background:${F.bg};${clip}"><div class="cam" style="transform:translate(${tx.toFixed(2)}%,${ty.toFixed(2)}%) rotate(${rot.toFixed(2)}deg) scale(${sc.toFixed(4)})">${F.body}</div>${over}</div>${wipe}${sub}`;
+}
+window.__renderAt=render;
+
+const stage=document.getElementById("stage"), audio=document.getElementById("song"), btn=document.getElementById("play"), seek=document.getElementById("seek"), tl=document.getElementById("time");
+let playing=false, useAudio=true, t0=0, pausedAt=0;
+audio.addEventListener("error",()=>{useAudio=false});
+const now=()=>useAudio?audio.currentTime:(playing?(performance.now()-t0)/1000:pausedAt);
+function loop(){ const t=now(); render(t); seek.value=t; tl.textContent=`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,"0")}`; if(t>=END-.05){playing=false;btn.textContent="▶ Play"} if(playing) requestAnimationFrame(loop) }
+btn.addEventListener("click",()=>{ if(playing){ playing=false; pausedAt=now(); if(useAudio) audio.pause(); btn.textContent="▶ Play" } else { playing=true; btn.textContent="❚❚ Pause"; if(useAudio) audio.play().catch(()=>{useAudio=false; t0=performance.now()-pausedAt*1000}); else t0=performance.now()-pausedAt*1000; requestAnimationFrame(loop) } });
+seek.addEventListener("input",()=>{ const t=+seek.value; pausedAt=t; t0=performance.now()-t*1000; if(useAudio) audio.currentTime=t; render(t) });
+document.fonts.ready.then(()=>render(14.5));
+</script>
