@@ -3,7 +3,15 @@
 A 1920×1080, 30 fps lyric video for *Sapphic Season* (made with Suno), built in [Remotion](https://remotion.dev).
 Lyrics come from the track's embedded `lyrics-eng` tag; timing comes from the audio itself.
 
-## Look
+## Two versions
+- `SapphicSeasonFilm` (`src/film/`): an indie-film look. Drawn autumn shots (pines into hazy sun, a hillside city,
+  the forest floor, backlit branches, two people on a hill, a café window, a phone lighting up, red and blue gel-lit
+  silhouettes) under a warm faded grade with grain, gate weave and letterbox bars. Hard cuts on lyric lines, and plain
+  yellow lowercase italic subtitles. `src/film/shots.ts` holds the cut list; lines about coffee, texting or falling leaves
+  get matching shots. Render with `npm run render:film`.
+- `SapphicSeason`: the original animated version described below. Render with `npm run render`.
+
+## Look (animated version)
 - **Intro / outro (spoken):** the lines arrive as chat bubbles on a phone, with a live voice-note waveform.
 - **Verses:** October rust gradient, falling leaves, words light up karaoke-style as they're sung.
 - **Pre-choruses:** a rotating pink sunburst builds the tension.

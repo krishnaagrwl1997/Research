@@ -5,9 +5,11 @@
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts SapphicSeason build/sapphic-season-lyric-video.mp4",
+    "render:film": "remotion render src/index.ts SapphicSeasonFilm build/sapphic-season-film.mp4",
     "still": "remotion still src/index.ts SapphicSeason build/still.png"
   },
   "dependencies": {
+    "@fontsource/arimo": "^5.3.0",
     "@fontsource/caveat": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
     "@fontsource/fraunces": "^5.3.0",
