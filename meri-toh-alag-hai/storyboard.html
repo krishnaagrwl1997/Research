@@ -61,7 +61,18 @@ header .lede{max-width:68ch;font-size:1.05rem}
 .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:28px}
 .shot{display:grid;gap:12px;min-width:0}
 .frame{position:relative;aspect-ratio:16/9;max-width:100%;container-type:inline-size;overflow:hidden;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
-.frame svg.art{position:absolute;inset:0;width:100%;height:100%}
+.layer{position:absolute;background-repeat:no-repeat}
+.rec{position:absolute;font-family:var(--f-mono);font-size:1.4cqw;color:#fff;background:#FF2A2A;padding:.1cqw .6cqw;border-radius:.4cqw;z-index:1}
+.chat{position:absolute;font-family:var(--f-body);font-weight:600;font-size:2.6cqw;color:#2A0F2E;background:#fff;padding:1cqw 2.2cqw;border-radius:1.6cqw 1.6cqw 1.6cqw .2cqw;box-shadow:.6cqw .6cqw 0 rgba(30,8,30,.3)}
+.chat span{color:#2F9BEA;font-size:2cqw;margin-left:.6cqw}
+.rain{position:absolute;inset:0;background:repeating-linear-gradient(105deg,transparent 0 1.6cqw,rgba(220,235,255,.45) 1.6cqw 1.75cqw);pointer-events:none}
+.stamp{position:absolute;transform:translate(-50%,-50%) rotate(-12deg);font-family:var(--f-rozha);font-size:7cqw;line-height:1.1;color:#D7263D;border:.6cqw solid #D7263D;outline:.25cqw solid #D7263D;outline-offset:.5cqw;padding:0 2cqw;background:rgba(255,246,236,.92)}
+.refs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.refs figure{margin:0;display:grid;gap:4px;min-width:0}
+.refs img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;border:1px solid var(--line)}
+.refs figcaption{font-size:.72rem;line-height:1.3}
+.refs figcaption span{display:block;color:var(--muted)}
+.look .refbox{grid-column:1/-1}
 .frame::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.35;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 .frame.halftone .ht{position:absolute;inset:0;background-image:radial-gradient(rgba(60,0,40,.22) 18%,transparent 22%);background-size:1.1cqw 1.1cqw;pointer-events:none}
@@ -95,13 +106,10 @@ dd{margin:0;min-width:0}
 
 <div class="wrap">
 <header>
-  <p class="kicker">Music video storyboard · YouTube 16:9 · 1:31 · 25 shots</p>
+  <p class="kicker">Music video storyboard · YouTube 16:9 · 1:31 · 25 shots · built from your 5 references</p>
   <h1>Meri Toh Alag Hai <span class="dev">· मेरी तो अलग है</span></h1>
-  <p class="lede">A 2D illustrated video that plays like a desi pop-art zine coming to life. One original heroine, the "maharani of her own chaos". Every lyric line is its own poster scene on a flat, loud background, and the bold lyrics are part of the artwork. Each time the chorus says <b>"alag"</b>, the art style switches between the four reference looks.</p>
-  <div class="chips">
-    <span class="chip">Ref 1 · Halftone poster</span><span class="chip">Ref 2 · Y2K comic</span><span class="chip">Ref 3 · Bold vector</span><span class="chip">Ref 4 · Folk textured</span><span class="chip">Ref 5 · Flat hand</span>
-  </div>
-</header>
+  <p class="lede">Every frame is built from your five reference images, cropped and framed for each lyric line, with the bold Hindi lyrics set over them like the "नो बुरी नज़र" poster. Each time the chorus says <b>"alag"</b>, the frame jumps to a different reference.</p>
+  </header>
 
 <section style="display:grid;gap:10px">
   <h2>Song map</h2>
@@ -110,18 +118,12 @@ dd{margin:0;min-width:0}
 </section>
 
 <section class="look">
-  <section>
-    <h3>The heroine</h3>
-    <ul>
-      <li>An original character, early 20s, long wavy black hair, red bindi</li>
-      <li>Pink heart-shaped sunglasses, often pushed up on her head</li>
-      <li>Red paisley crop top, a chain belt, flared dark jeans with embroidered hems</li>
-      <li>Mehendi on both hands, neon-yellow almond nails, a stack of gold bangles</li>
-      <li>Attitude: innocent face, chaotic brain, never sorry</li>
-    </ul>
+  <section class="refbox">
+    <h3>Your references</h3>
+    <div class="refs" id="refs"></div>
   </section>
   <section>
-    <h3>Palette</h3>
+    <h3>Palette, sampled from the refs</h3>
     <div class="swatches" id="sw"></div>
   </section>
   <section>
@@ -148,390 +150,187 @@ dd{margin:0;min-width:0}
   <h2>Production notes</h2>
   <ol>
     <li><b>Add lyrics in the edit</b> (CapCut, After Effects or Premiere), never in AI-generated frames. AI image tools still get Devanagari wrong.</li>
-    <li><b>Keep the heroine consistent.</b> Make a character sheet first (front, side and three-quarter views, plus hands), then use it as the reference image for every shot.</li>
+    <li><b>These frames use other artists' work.</b> The references are for direction only, and ref 4 carries the artist's "imani.prnt" watermark. For the published video, make original art in these styles, or get each artist's permission and credit them.</li>
+    <li><b>One heroine or many.</b> The references show different women. If you want one consistent heroine, base her on ref 2 (closest to the song's attitude) and redraw her in each reference's style.</li>
     <li><b>The outro is very short.</b> The track ends at about 1:31 and the spoken outro gets roughly 3 seconds. Consider adding a 3–4 second tail of room tone or a beat loop so the "cancel" stamp and the end card have room to breathe.</li>
-    <li><b>Food-delivery app (shot 21):</b> draw a generic orange app with no real logo, so the video doesn't use another brand's marks.</li>
+    <li><b>Food-delivery app (shot 21):</b> show a generic orange app with no real logo, so the video doesn't use another brand's marks.</li>
     <li><b>Shorts and Reels:</b> keep the chorus shots (13–17) centred so they crop cleanly to 9:16.</li>
-    <li><b>Thumbnail:</b> use shot 20's palm-to-camera pose on hot pink, with a huge halftone "अलग".</li>
+    <li><b>Thumbnail:</b> use shot 20's ref 2 palm on hot pink, with a huge halftone "अलग".</li>
   </ol>
 </section>
 </div>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<defs>
-  <symbol id="girl" viewBox="0 0 100 100">
-    <path d="M27 32 Q28 6 50 6 Q72 6 73 32 L78 82 Q50 90 22 82 Z" fill="#1B0F1F"/>
-    <rect x="44" y="50" width="12" height="16" fill="#A8603F"/>
-    <path d="M24 82 Q50 64 76 82 L79 100 L21 100 Z" fill="#D7263D"/>
-    <path d="M40 86 q4 -6 8 0 q-4 6 -8 0Z M54 90 q4 -6 8 0 q-4 6 -8 0Z" fill="#F59BB5"/>
-    <ellipse cx="50" cy="35" rx="15" ry="18" fill="#B86B4B"/>
-    <path d="M35 30 Q40 14 50 14 Q62 14 66 30 Q58 20 50 21 Q42 21 35 30Z" fill="#1B0F1F"/>
-    <circle cx="50" cy="26" r="1.6" fill="#8B0A1A"/>
-    <path d="M43 31 c-3 -4 -8 -1 0 5 c8 -6 3 -9 0 -5Z M57 31 c-3 -4 -8 -1 0 5 c8 -6 3 -9 0 -5Z" fill="#F7A1C4" stroke="#fff" stroke-width=".6" opacity=".95"/>
-    <line x1="46" y1="32" x2="54" y2="32" stroke="#fff" stroke-width=".6"/>
-    <path d="M45 44 Q50 48 55 44 Q50 46 45 44Z" fill="#7A1426" stroke="#7A1426" stroke-width="1.2"/>
-    <circle cx="34.5" cy="42" r="2.4" fill="none" stroke="#E8B923" stroke-width="1.2"/>
-    <circle cx="65.5" cy="42" r="2.4" fill="none" stroke="#E8B923" stroke-width="1.2"/>
-  </symbol>
-  <symbol id="aunty" viewBox="0 0 100 100">
-    <path d="M22 40 Q22 6 50 6 Q78 6 78 40 L84 100 L16 100 Z" fill="#2E4FA8"/>
-    <path d="M30 20 q6 -4 10 0 M60 22 q6 -4 10 0 M26 60 q6 -4 10 0 M66 64 q6 -4 10 0 M40 84 q6 -4 10 0" stroke="#A9C1F0" stroke-width="3" fill="none"/>
-    <ellipse cx="50" cy="40" rx="15" ry="18" fill="#7A4A30"/>
-    <ellipse cx="44" cy="37" rx="4.5" ry="3.4" fill="#fff"/><ellipse cx="56" cy="37" rx="4.5" ry="3.4" fill="#fff"/>
-    <circle cx="45.5" cy="37.5" r="1.8" fill="#1B0F1F"/><circle cx="57.5" cy="37.5" r="1.8" fill="#1B0F1F"/>
-    <path d="M39 32 l9 2 M61 32 l-9 2" stroke="#1B0F1F" stroke-width="1.6"/>
-    <path d="M45 49 h10" stroke="#3A1010" stroke-width="1.6"/>
-    <circle cx="44" cy="45" r=".8" fill="#2a1a10"/><circle cx="47" cy="47" r=".8" fill="#2a1a10"/>
-  </symbol>
-  <symbol id="hand" viewBox="0 0 100 100">
-    <rect x="30" y="46" width="40" height="40" rx="13" fill="#B86B4B"/>
-    <rect x="31" y="16" width="8.5" height="38" rx="4.2" fill="#B86B4B"/>
-    <rect x="41" y="8" width="8.5" height="44" rx="4.2" fill="#B86B4B"/>
-    <rect x="51" y="10" width="8.5" height="42" rx="4.2" fill="#B86B4B"/>
-    <rect x="61" y="18" width="8" height="36" rx="4" fill="#B86B4B"/>
-    <rect x="16" y="50" width="8" height="26" rx="4" fill="#B86B4B" transform="rotate(-38 20 63)"/>
-    <rect x="31" y="16" width="8.5" height="9" rx="4" fill="#7A1F12"/><rect x="41" y="8" width="8.5" height="9" rx="4" fill="#7A1F12"/>
-    <rect x="51" y="10" width="8.5" height="9" rx="4" fill="#7A1F12"/><rect x="61" y="18" width="8" height="9" rx="4" fill="#7A1F12"/>
-    <ellipse cx="35.2" cy="14" rx="3.4" ry="4.6" fill="#E6F542"/><ellipse cx="45.2" cy="6" rx="3.4" ry="4.6" fill="#E6F542"/>
-    <ellipse cx="55.2" cy="8" rx="3.4" ry="4.6" fill="#E6F542"/><ellipse cx="65" cy="16" rx="3.2" ry="4.4" fill="#E6F542"/>
-    <circle cx="50" cy="66" r="10" fill="none" stroke="#7A1F12" stroke-width="2.4"/>
-    <circle cx="50" cy="66" r="4" fill="#7A1F12"/>
-    <g fill="#7A1F12"><circle cx="50" cy="52" r="1.3"/><circle cx="62" cy="58" r="1.3"/><circle cx="38" cy="58" r="1.3"/><circle cx="62" cy="74" r="1.3"/><circle cx="38" cy="74" r="1.3"/></g>
-    <rect x="50.5" y="36" width="9.5" height="3.4" fill="#C9CED6"/>
-    <rect x="30" y="86" width="40" height="5" rx="2" fill="#E8B923"/><rect x="30" y="92" width="40" height="5" rx="2" fill="#E8B923"/>
-  </symbol>
-  <symbol id="chai" viewBox="0 0 100 100">
-    <path d="M30 28 L70 28 L65 92 L35 92 Z" fill="#fff" fill-opacity=".6" stroke="#2A0F2E" stroke-width="1.6"/>
-    <path d="M32.5 42 L67.5 42 L64.6 90 L35.4 90 Z" fill="#C69C72"/>
-    <path d="M32 50 h36 M33 64 h34 M34 78 h32" stroke="#fff" stroke-opacity=".5" stroke-width="1.2"/>
-  </symbol>
-  <symbol id="steam" viewBox="0 0 100 100">
-    <path d="M38 90 q-8 -14 0 -26 q8 -12 0 -26 M52 90 q-8 -16 0 -30 q8 -14 0 -30 M66 90 q-8 -14 0 -26 q8 -12 0 -26" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".85"/>
-  </symbol>
-  <symbol id="nimbu" viewBox="0 0 100 100">
-    <line x1="50" y1="0" x2="50" y2="100" stroke="#3A1A3A" stroke-width="1.2"/>
-    <g stroke-linecap="round" fill="none">
-      <path d="M50 12 Q30 8 12 18" stroke="#7B2A8F" stroke-width="5"/><path d="M50 18 Q72 12 90 22" stroke="#9A2E7E" stroke-width="5"/>
-      <path d="M50 24 Q28 20 10 30" stroke="#B0306A" stroke-width="5"/><path d="M50 28 Q70 24 86 34" stroke="#7B2A8F" stroke-width="5"/>
-    </g>
-    <ellipse cx="50" cy="52" rx="15" ry="17" fill="#F3A24A"/><ellipse cx="45" cy="47" rx="6" ry="7" fill="#F9C985"/>
-    <g stroke-linecap="round" fill="none">
-      <path d="M50 72 Q28 70 14 80" stroke="#9A2E7E" stroke-width="5"/><path d="M50 76 Q72 74 88 84" stroke="#7B2A8F" stroke-width="5"/>
-      <path d="M50 82 Q30 82 18 92" stroke="#B0306A" stroke-width="5"/><path d="M50 86 Q68 86 82 96" stroke="#9A2E7E" stroke-width="5"/>
-    </g>
-  </symbol>
-  <symbol id="phone" viewBox="0 0 100 100">
-    <rect x="28" y="2" width="44" height="96" rx="7" fill="#151018"/>
-    <rect x="31.5" y="9" width="37" height="82" rx="3" fill="#FF8FC0"/>
-    <circle cx="62" cy="15" r="2.4" fill="#FF2A2A"/>
-    <path d="M40 80 q3 -4 6 0 q-3 4 -6 0Z M50 74 q3 -4 6 0 q-3 4 -6 0Z M57 82 q3 -4 6 0 q-3 4 -6 0Z" fill="#fff"/>
-  </symbol>
-  <symbol id="bed" viewBox="0 0 100 100">
-    <rect x="4" y="30" width="92" height="64" rx="8" fill="#F7E3C0"/>
-    <rect x="10" y="36" width="30" height="16" rx="7" fill="#fff"/>
-    <path d="M4 56 Q50 46 96 56 L96 94 L4 94Z" fill="#E2338E"/>
-    <path d="M14 66 h10 M34 72 h10 M58 64 h10 M76 74 h10" stroke="#F9B6D4" stroke-width="3" stroke-linecap="round"/>
-  </symbol>
-  <symbol id="clock" viewBox="0 0 100 100">
-    <circle cx="30" cy="24" r="12" fill="#E8B923"/><circle cx="70" cy="24" r="12" fill="#E8B923"/>
-    <circle cx="50" cy="56" r="34" fill="#E8B923"/><circle cx="50" cy="56" r="27" fill="#fff"/>
-    <path d="M50 56 V38 M50 56 L62 62" stroke="#2A0F2E" stroke-width="4" stroke-linecap="round"/>
-  </symbol>
-  <symbol id="snail" viewBox="0 0 100 100">
-    <path d="M10 80 Q50 74 90 80 L90 86 L10 86Z" fill="#7BAA3C"/>
-    <path d="M78 80 q4 -18 0 -30" stroke="#7BAA3C" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <circle cx="44" cy="56" r="26" fill="#E2338E"/><path d="M44 56 m-14 0 a14 14 0 1 1 14 14 a8 8 0 1 1 -8 -8" fill="none" stroke="#5B1E7A" stroke-width="4"/>
-    <circle cx="80" cy="54" r="3.4" fill="none" stroke="#E8B923" stroke-width="1.6"/>
-  </symbol>
-  <symbol id="paper" viewBox="0 0 100 100">
-    <rect x="18" y="8" width="64" height="84" fill="#fff" transform="rotate(-6 50 50)"/>
-    <path d="M28 26 h40 M28 38 h40 M28 50 h34 M28 62 h40 M28 74 h26" stroke="#9AA7C7" stroke-width="3" transform="rotate(-6 50 50)"/>
-  </symbol>
-  <symbol id="cal" viewBox="0 0 100 100">
-    <rect x="14" y="14" width="72" height="76" rx="6" fill="#fff"/><rect x="14" y="14" width="72" height="20" rx="6" fill="#D7263D"/>
-    <rect x="28" y="6" width="6" height="16" rx="3" fill="#2A0F2E"/><rect x="66" y="6" width="6" height="16" rx="3" fill="#2A0F2E"/>
-  </symbol>
-  <symbol id="cloud" viewBox="0 0 100 100">
-    <path d="M14 74 a16 16 0 0 1 10 -30 a22 22 0 0 1 40 -8 a18 18 0 0 1 24 22 a14 14 0 0 1 -4 16Z" fill="#9D7BF2"/>
-    <path d="M24 64 q10 -10 20 0 M50 52 q10 -10 20 0" stroke="#C9B5FF" stroke-width="3" fill="none"/>
-  </symbol>
-  <symbol id="crown" viewBox="0 0 100 100">
-    <path d="M10 76 L18 30 L36 54 L50 20 L64 54 L82 30 L90 76Z" fill="#F2C230" stroke="#8A5A00" stroke-width="2"/>
-    <circle cx="50" cy="60" r="6" fill="#D7263D"/><circle cx="30" cy="66" r="4" fill="#1F9D55"/><circle cx="70" cy="66" r="4" fill="#1F9D55"/>
-  </symbol>
-  <symbol id="chhatri" viewBox="0 0 100 100">
-    <rect x="0" y="0" width="100" height="100" fill="#F5C82E"/>
-    <path d="M20 44 Q50 4 80 44Z" fill="#E2338E"/><path d="M30 44 Q50 14 70 44" fill="none" stroke="#5B1E7A" stroke-width="2"/>
-    <rect x="16" y="44" width="68" height="6" fill="#F28C1C"/>
-    <path d="M22 50 v30 M40 50 v30 M60 50 v30 M78 50 v30" stroke="#F28C1C" stroke-width="6"/>
-    <rect x="10" y="80" width="80" height="20" fill="#2F5BEA"/><path d="M10 86 h80 M10 92 h80" stroke="#1F9D55" stroke-width="3"/>
-  </symbol>
-  <symbol id="eye" viewBox="0 0 100 100">
-    <rect x="0" y="0" width="100" height="100" fill="#C36BE0"/>
-    <path d="M10 56 Q50 18 90 56 Q50 80 10 56Z" fill="#fff"/><circle cx="50" cy="54" r="15" fill="#5B1E7A"/><circle cx="50" cy="54" r="6" fill="#1B0F1F"/>
-    <path d="M10 46 Q50 6 92 40" stroke="#1B0F1F" stroke-width="7" fill="none"/>
-  </symbol>
-  <symbol id="wallet" viewBox="0 0 100 100">
-    <rect x="10" y="34" width="80" height="54" rx="8" fill="#8A4B2A"/><rect x="10" y="26" width="80" height="22" rx="8" fill="#A65E36"/>
-    <path d="M44 22 q-10 -14 -2 -18 q6 4 6 14 q4 -12 12 -12 q4 8 -10 18" fill="#CDB89A"/>
-  </symbol>
-  <symbol id="card" viewBox="0 0 100 100">
-    <rect x="22" y="8" width="56" height="84" rx="6" fill="#fff" stroke="#2A0F2E" stroke-width="2"/>
-    <rect x="28" y="14" width="44" height="40" fill="#F5C82E"/>
-  </symbol>
-  <symbol id="pc-city" viewBox="0 0 100 100">
-    <rect x="4" y="16" width="92" height="68" fill="#fff" stroke="#2A0F2E" stroke-width="2"/>
-    <rect x="10" y="22" width="80" height="56" fill="#9CC3F5"/>
-    <path d="M18 78 V46 h8 v-10 h4 v10 h8 v32Z M46 78 V30 l6 -8 l6 8 v48Z M66 78 V50 h18 v28Z" fill="#2E4FA8"/>
-    <rect x="70" y="20" width="16" height="16" fill="#D7263D" stroke="#fff" stroke-width="1.5"/>
-  </symbol>
-  <symbol id="pc-hill" viewBox="0 0 100 100">
-    <rect x="4" y="16" width="92" height="68" fill="#fff" stroke="#2A0F2E" stroke-width="2"/>
-    <rect x="10" y="22" width="80" height="56" fill="#BFE6D2"/>
-    <path d="M10 78 L34 36 L52 62 L66 44 L90 78Z" fill="#1F9D55"/><path d="M28 46 L34 36 L40 46Z" fill="#fff"/>
-    <rect x="70" y="20" width="16" height="16" fill="#F28C1C" stroke="#fff" stroke-width="1.5"/>
-  </symbol>
-  <symbol id="chat" viewBox="0 0 100 100">
-    <path d="M8 18 h84 a6 6 0 0 1 6 6 v40 a6 6 0 0 1 -6 6 h-56 l-14 14 v-14 h-14 a6 6 0 0 1 -6 -6 v-40 a6 6 0 0 1 6 -6Z" fill="#fff" stroke="#2A0F2E" stroke-width="2"/>
-    <path d="M66 56 l4 4 l8 -9 M74 56 l4 4 l8 -9" stroke="#2F9BEA" stroke-width="3" fill="none" stroke-linecap="round"/>
-  </symbol>
-  <symbol id="cart" viewBox="0 0 100 100">
-    <path d="M6 20 h14 l10 46 h52 l10 -34 h-66" fill="none" stroke="#2A0F2E" stroke-width="5" stroke-linejoin="round"/>
-    <path d="M24 32 h66 l-8 28 h-50Z" fill="#fff"/>
-    <circle cx="36" cy="80" r="7" fill="#2A0F2E"/><circle cx="76" cy="80" r="7" fill="#2A0F2E"/>
-    <rect x="30" y="14" width="10" height="16" fill="#F2C230"/><rect x="44" y="10" width="12" height="20" fill="#D7263D"/><rect x="60" y="16" width="10" height="14" fill="#1F9D55"/><circle cx="78" cy="22" r="8" fill="#9D7BF2"/>
-  </symbol>
-  <symbol id="mirror" viewBox="0 0 100 100">
-    <ellipse cx="50" cy="50" rx="34" ry="46" fill="#F2C230"/>
-    <ellipse cx="50" cy="50" rx="27" ry="38" fill="#DCEBF5"/>
-    <circle cx="16" cy="50" r="5" fill="#F2C230"/><circle cx="84" cy="50" r="5" fill="#F2C230"/><circle cx="50" cy="3" r="5" fill="#F2C230"/>
-  </symbol>
-  <symbol id="rain" viewBox="0 0 100 100">
-    <g stroke="#DDEBFF" stroke-width="2.2" stroke-linecap="round">
-      <path d="M8 4 l-4 14 M24 10 l-4 14 M40 2 l-4 14 M56 12 l-4 14 M72 4 l-4 14 M90 10 l-4 14 M14 34 l-4 14 M32 40 l-4 14 M48 30 l-4 14 M66 38 l-4 14 M84 32 l-4 14 M6 64 l-4 14 M22 70 l-4 14 M40 62 l-4 14 M58 72 l-4 14 M76 64 l-4 14 M94 70 l-4 14"/>
-    </g>
-  </symbol>
-  <symbol id="door" viewBox="0 0 100 100">
-    <rect x="20" y="4" width="60" height="96" fill="#F28C1C"/><rect x="28" y="12" width="44" height="88" fill="#5B1E7A"/>
-  </symbol>
-  <symbol id="comedian" viewBox="0 0 100 100">
-    <path d="M14 70 a18 18 0 0 1 8 -34 a24 24 0 0 1 46 -6 a20 20 0 0 1 22 30 a14 14 0 0 1 -6 10Z" fill="#fff"/>
-    <ellipse cx="42" cy="44" rx="4" ry="5" fill="#1B0F1F"/><ellipse cx="62" cy="44" rx="4" ry="5" fill="#1B0F1F"/>
-    <path d="M38 54 Q52 70 66 54Z" fill="#D7263D"/>
-    <path d="M80 70 l10 24" stroke="#2A0F2E" stroke-width="4"/><circle cx="78" cy="66" r="7" fill="#2A0F2E"/>
-  </symbol>
-  <symbol id="spot" viewBox="0 0 100 100">
-    <path d="M44 0 h12 L96 100 H4Z" fill="#FFF3A8" opacity=".55"/>
-  </symbol>
-  <symbol id="stamp" viewBox="0 0 100 100">
-    <rect x="6" y="20" width="88" height="60" rx="6" fill="none" stroke="#D7263D" stroke-width="5"/>
-    <rect x="13" y="27" width="74" height="46" rx="3" fill="none" stroke="#D7263D" stroke-width="2"/>
-  </symbol>
-  <symbol id="note" viewBox="0 0 100 100">
-    <rect x="10" y="10" width="80" height="80" fill="#FFF6C9" transform="rotate(-3 50 50)"/>
-    <path d="M18 30 h64 M18 46 h64 M18 62 h64 M18 78 h64" stroke="#E4C8A0" stroke-width="1.4" transform="rotate(-3 50 50)"/>
-  </symbol>
-  <symbol id="swirl" viewBox="0 0 100 100">
-    <path d="M0 70 Q20 40 40 60 T80 50 T100 40 V100 H0Z" fill="#8F6BF0"/>
-    <path d="M0 80 Q20 56 40 72 T80 62 T100 56" fill="none" stroke="#C9B5FF" stroke-width="2.5"/>
-  </symbol>
-  <symbol id="star" viewBox="0 0 100 100">
-    <path d="M50 4 Q54 46 96 50 Q54 54 50 96 Q46 54 4 50 Q46 46 50 4Z" fill="#fff"/>
-  </symbol>
-</defs>
-</svg>
-
 <script>
 const SEC = {
-  intro:{n:"Intro",c:"#F7A1C4"}, v1:{n:"Verse 1",c:"#FF9A4D"}, pre:{n:"Pre-chorus",c:"#9DB4FF"},
-  drop:{n:"Drop",c:"#C9B5FF"}, ch:{n:"Chorus",c:"#F5C82E"}, v2:{n:"Verse 2",c:"#7FD3A6"}, out:{n:"Outro",c:"#F59BB5"}
+  intro:{n:"Intro",c:"#F9A8C6"}, v1:{n:"Verse 1",c:"#FF9A4D"}, pre:{n:"Pre-chorus",c:"#9DB4FF"},
+  drop:{n:"Drop",c:"#C9B5FF"}, ch:{n:"Chorus",c:"#F5C82E"}, v2:{n:"Verse 2",c:"#7FD3A6"}, out:{n:"Outro",c:"#E3C69B"}
 };
 const MAP = [["intro",0,6],["v1",6,22],["pre",22,38],["drop",38,40],["ch",40,58],["v2",58,88],["out",88,91]];
-const PAL = [["#FF7A1A","Chai orange"],["#F7A1C4","Y2K pink"],["#F5A21B","Marigold"],["#2F5BEA","Royal blue"],["#8F6BF0","Cloud violet"],["#D9C7A0","Khadi paper"],["#D7263D","Sindoor red"],["#E6F542","Neon nail"]];
+const PAL = [["#FE7318","Ref 5 orange"],["#F9A8C6","Ref 2 pink"],["#E58D0F","Ref 1 marigold"],["#D21D6C","Ref 1 magenta"],["#255BDF","Ref 3 blue"],["#9860FF","Ref 3 violet"],["#E3C69B","Ref 4 khadi"],["#E3F13A","Ref 5 neon nail"]];
+const REFS = [[1,"Halftone nazar poster","Chorus, drop, outro"],[2,"Y2K girl, palm out","Intro, Dil, reel, ex, mirror"],[3,"Bold vector maharani","Verse 1, chorus, rain"],[4,"Folk whispering women","Dimaag, tension"],[5,"Chai hand on orange","Chai, money, cart"]];
 
-// props: [symbol, x, y, w, h, rotate] in a 160x90 frame
-// text:  [string, xPct, yPct, sizeCqw, font, color, shadow, align, rotate]
+// img layer: [ref, xPct, yPct, wPct, hPct, bgSize, bgPos, extraCss]
+// text:      [string, x(0-160), y(0-90), sizeCqw, font, color, shadow, align, rotate]
+const PANEL = "box-shadow:.8cqw .8cqw 0 rgba(30,8,30,.35)";
 const S = [
- {t:"0:00–0:02",s:"intro",ref:"Ref 4 · folk",st:"folk",bg:"#D9C7A0",
-  p:[["note",8,14,58,58,-4],["girl",86,4,78,96],["hand",64,24,30,40,-8]],
-  x:[["आज से",12,24,6,"kalam","#2A0F2E",null,"l",-4],["सुधर जाऊँगी…",12,40,6,"kalam","#2A0F2E",null,"l",-4]],
-  sub:"From today, I'll behave…",
-  ly:"आज से सुधर जाऊँगी…", en:"Spoken: \"From today, I'll behave…\"",
-  a:"A tight shot of her, one mehendi hand raised like she's taking an oath. Her resolution is written on a sticky note beside her.",
-  cam:"Slow push in.", tx:"Handwriting writes itself on, letter by letter."},
- {t:"0:02–0:04",s:"intro",ref:"Ref 4 · folk",st:"folk",bg:"#D9C7A0",
-  p:[["note",8,14,58,58,-4],["girl",86,4,78,96]],
-  x:[["आज से",12,24,6,"kalam","#2A0F2E",null,"l",-4],["सुधर जाऊँगी…",12,40,6,"kalam","#2A0F2E",null,"l",-4],["पक्का।",44,58,9,"baloo","#D7263D","#2A0F2E","l",-6]],
-  sub:"Promise.",
-  ly:"पक्का।", en:"\"Promise.\"",
-  a:"She nods and winks. The word \"promise\" stamps onto the note.",
+ {t:"0:00–0:02",s:"intro",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,52,0,48,100,"240%","40% 17%"]],
+  x:[["आज से",46,32,6,"kalam","#2A0F2E"],["सुधर जाऊँगी…",46,50,6,"kalam","#2A0F2E"]],
+  sub:"From today, I'll behave…", ly:"आज से सुधर जाऊँगी…", en:"Spoken: \"From today, I'll behave…\"",
+  a:"Ref 2's face, cropped tight on the heart sunglasses and pout. The resolution writes itself in the empty pink space.",
+  cam:"Slow push in on her face.", tx:"Handwriting writes itself on, letter by letter."},
+ {t:"0:02–0:04",s:"intro",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,52,0,48,100,"240%","40% 17%"]],
+  x:[["आज से",46,26,6,"kalam","#2A0F2E"],["सुधर जाऊँगी…",46,42,6,"kalam","#2A0F2E"],["पक्का।",46,62,9,"baloo","#D7263D","#2A0F2E","c",-6]],
+  sub:"Promise.", ly:"पक्का।", en:"\"Promise.\"",
+  a:"Same close-up. She lowers the sunglasses and winks.",
   cam:"Held shot with a small bump on the stamp.", tx:"\"पक्का\" stamps in at 120% size and settles to 100%."},
- {t:"0:04–0:06",s:"intro",ref:"Ref 2 · Y2K",st:"y2k",bg:"#F7A1C4",
-  p:[["girl",4,6,74,94],["note",98,46,40,34,6]],
-  x:[["कल से।",116,30,13,"rozha","#D7263D","#5B1E7A","c",-6]],
-  sub:"From tomorrow.",
-  ly:"कल से। 💅", en:"\"From tomorrow.\"",
-  a:"A smash cut to hot pink. She blows on her nails, and the oath note behind her flips over.",
-  cam:"A hard cut on the beat.", tx:"\"कल से\" slams in big, with one sparkle on the full stop."},
- {t:"0:06–0:10",s:"v1",ref:"Ref 5 · flat",st:"",bg:"#FF7A1A",
-  p:[["bed",4,10,82,78],["girl",22,6,36,40,-80],["clock",68,8,18,20,14]],
-  x:[["सुबह उठी,",118,30,7.4,"baloo","#FFF3C4","#2A0F2E","c"],["फिर सो गई",118,50,7.4,"baloo","#FFF3C4","#2A0F2E","c",8]],
-  sub:"Woke up in the morning, then fell asleep again",
-  ly:"सुबह उठी, फिर सो गई", en:"Woke up in the morning, then fell asleep again",
-  a:"A top-down view of the bed. The alarm rings, her hand slaps it, and she flops back under the blanket.",
-  cam:"Top-down. The frame shakes once with the alarm.", tx:"\"सो गई\" tips over sideways as if it's falling asleep."},
- {t:"0:10–0:14",s:"v1",ref:"Ref 5 · flat",st:"",bg:"#FF7A1A",
-  p:[["snail",6,28,60,60]],
-  x:[["ज़िंदगी मेरी",112,28,7,"baloo","#FFF3C4","#2A0F2E","c"],["स्लो  गई",112,50,10,"rozha","#2F5BEA","#2A0F2E","c"]],
-  sub:"My life went slow",
-  ly:"ज़िंदगी मेरी स्लो गई", en:"My life went slow",
-  a:"A snail with a gold nose ring and her heart sunglasses crawls across the frame, carrying her phone.",
-  cam:"Slow left-to-right track that matches the snail.", tx:"The letters of \"स्लो\" stretch apart in slow motion."},
- {t:"0:14–0:18",s:"v1",ref:"Ref 5 · flat",st:"",bg:"#FF7A1A",
-  p:[["hand",14,18,52,70,-26],["chai",30,44,28,36],["steam",32,22,26,28]],
-  x:[["चाय बनाई,",116,30,7.6,"baloo","#FFF3C4","#2A0F2E","c"],["भूल गई",116,52,9.4,"rozha","#E6F542","#2A0F2E","c"]],
-  sub:"Made chai, forgot about it",
-  ly:"चाय बनाई, भूल गई", en:"Made chai, forgot about it",
-  a:"The hero hand shot: her mehendi hand with neon nails holds a cutting-chai glass, then her attention drifts to her phone off-screen.",
+ {t:"0:04–0:06",s:"intro",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,60,0,37.5,100,"cover","50% 50%"]],
+  x:[["कल से।",50,42,15,"rozha","#D7263D","#5B1E7A","c",-6]],
+  sub:"From tomorrow.", ly:"कल से। 💅", en:"\"From tomorrow.\"",
+  a:"Pull out to ref 2's full pose: the mehendi palm thrust at the camera, as if saying no to self-improvement.",
+  cam:"A hard cut on the beat, with a quick zoom out to the full figure.", tx:"\"कल से\" slams in big, with one sparkle on the full stop."},
+ {t:"0:06–0:10",s:"v1",ref:"Ref 3",st:"",bg:"#255BDF",
+  im:[[3,0,0,52,100,"175%","55% 38%"]],
+  x:[["सुबह उठी,",118,30,6.4,"baloo","#FFF3C4","#2A0F2E"],["फिर सो गई",118,50,6.4,"baloo","#FFF3C4","#2A0F2E","c",8]],
+  sub:"Woke up in the morning, then fell asleep again", ly:"सुबह उठी, फिर सो गई", en:"Woke up in the morning, then fell asleep again",
+  a:"Ref 3's face, cropped on her heavy-lidded eyes, which already look sleepy. Her eyes open, then drift shut again.",
+  cam:"A slow drift down as she nods off.", tx:"\"सो गई\" tips over sideways as if it's falling asleep."},
+ {t:"0:10–0:14",s:"v1",ref:"Ref 3",st:"",bg:"#255BDF",
+  im:[[3,0,0,100,100,"250%","95% 8%"]],
+  x:[["ज़िंदगी मेरी",80,34,7.4,"baloo","#FFF3C4","#2A0F2E"],["स्लो  गई",80,56,11,"rozha","#F5C82E","#2A0F2E"]],
+  sub:"My life went slow", ly:"ज़िंदगी मेरी स्लो गई", en:"My life went slow",
+  a:"A full-frame crop of ref 3's swirling violet clouds, drifting very slowly.",
+  cam:"A slow left-to-right drift.", tx:"The letters of \"स्लो\" stretch apart in slow motion."},
+ {t:"0:14–0:18",s:"v1",ref:"Ref 5",st:"",bg:"#FE7318",
+  im:[[5,6,0,31.6,100,"cover","50% 50%"]],
+  x:[["चाय बनाई,",112,30,7.4,"baloo","#FFF3C4","#2A0F2E"],["भूल गई",112,52,9.4,"rozha","#E3F13A","#2A0F2E"]],
+  sub:"Made chai, forgot about it", ly:"चाय बनाई, भूल गई", en:"Made chai, forgot about it",
+  a:"Ref 5 in full: the mehendi hand with neon nails holding the cutting-chai glass on flat orange.",
   cam:"A locked frame. The hand sways slightly in time with the beat.", tx:"\"भूल गई\" fades to 40% opacity, like it's being forgotten."},
- {t:"0:18–0:22",s:"v1",ref:"Ref 5 · flat",st:"",bg:"#FF7A1A",
-  p:[["chai",24,24,40,52]],
-  x:[["ख़ुद की ही चाय",110,28,6.4,"baloo","#FFF3C4","#2A0F2E","c"],["ठंडी हो गई",110,50,9,"rozha","#9FE3FF","#1C3F8F","c"]],
-  sub:"My own chai went cold",
-  ly:"ख़ुद की ही चाय ठंडी हो गई", en:"My own chai went cold",
-  a:"The steam stops. Frost creeps up the glass and the orange background fades toward pale blue.",
+ {t:"0:18–0:22",s:"v1",ref:"Ref 5",st:"",bg:"linear-gradient(90deg,#FE7318,#9CC9F0)",
+  im:[[5,0,0,50,100,"150%","25% 78%","filter:hue-rotate(190deg) saturate(.75) brightness(1.08)"]],
+  x:[["ख़ुद की ही चाय",114,30,6,"baloo","#FFF3C4","#2A0F2E"],["ठंडी हो गई",114,52,8,"rozha","#DFF4FF","#1C3F8F"]],
+  sub:"My own chai went cold", ly:"ख़ुद की ही चाय ठंडी हो गई", en:"My own chai went cold",
+  a:"Close crop on ref 5's glass. The colours slide from warm orange to icy blue as the chai goes cold.",
   cam:"A slow zoom into the glass.", tx:"\"ठंडी\" turns icy blue and grows small icicles."},
- {t:"0:22–0:26",s:"pre",ref:"Ref 4 · folk",st:"folk",bg:"linear-gradient(90deg,#D9C7A0 50%,#F7A1C4 50%)",
-  p:[["aunty",6,10,62,80],["girl",98,30,46,60]],
-  x:[["दिमाग बोले,",40,22,5.6,"baloo","#2E4FA8","#fff","c"],["“थोड़ा संभल”",40,64,6.6,"rozha","#2A0F2E","#F5C82E","c"]],
-  sub:"My brain says, \"Get it together a little\"",
-  ly:"दिमाग बोले, \"थोड़ा संभल\"", en:"My brain says, \"Get it together a little\"",
-  a:"A split screen. On the left, \"Dimaag\" (her brain) is a stern aunty in the folk style, wagging a finger. On the right, \"Dil\" (her heart) waits, still dim.",
+ {t:"0:22–0:26",s:"pre",ref:"Ref 4 + Ref 2",st:"folk",bg:"linear-gradient(90deg,#E3C69B 50%,#F9A8C6 50%)",
+  im:[[4,0,0,50,100,"200%","18% 42%"],[2,50,0,50,100,"230%","40% 17%","filter:grayscale(.7) brightness(.55)"]],
+  x:[["दिमाग बोले,",40,16,5.6,"baloo","#2E4FA8","#fff"],["“थोड़ा संभल”",40,66,6.4,"rozha","#2A0F2E","#F5C82E"]],
+  sub:"My brain says, \"Get it together a little\"", ly:"दिमाग बोले, \"थोड़ा संभल\"", en:"My brain says, \"Get it together a little\"",
+  a:"A split screen. On the left, \"Dimaag\" (her brain) is ref 4's woman in the blue dupatta with a side-eye. On the right, \"Dil\" (her heart, ref 2) waits in the dark.",
   cam:"Both halves held. The left half is lit.", tx:"The words appear one at a time in a stern, steady rhythm."},
- {t:"0:26–0:30",s:"pre",ref:"Ref 2 · Y2K",st:"y2k",bg:"linear-gradient(90deg,#D9C7A0 50%,#F7A1C4 50%)",
-  p:[["aunty",14,40,40,52],["girl",92,6,62,84]],
-  x:[["दिल बोले,",120,22,5.6,"baloo","#D3136F","#fff","c"],["“छोड़ ना,",120,50,6,"baloo","#2A0F2E","#fff","c"],["क्या बवाल!”",120,66,7.4,"rozha","#E6F542","#5B1E7A","c",-4]],
-  sub:"My heart says, \"Let it go, what's the fuss!\"",
-  ly:"दिल बोले, \"छोड़ ना, क्या बवाल!\"", en:"My heart says, \"Let it go, what's the fuss!\"",
-  a:"The right half lights up. \"Dil\" is a carefree Y2K version of her, blowing a bubblegum bubble that pops in the aunty's face.",
+ {t:"0:26–0:30",s:"pre",ref:"Ref 4 + Ref 2",st:"y2k",bg:"linear-gradient(90deg,#E3C69B 50%,#F9A8C6 50%)",
+  im:[[4,0,0,50,100,"200%","18% 42%","filter:grayscale(.6) brightness(.55)"],[2,50,0,50,100,"230%","40% 17%"]],
+  x:[["दिल बोले,",120,16,5.6,"baloo","#D3136F","#fff"],["“छोड़ ना,",120,30,5.6,"baloo","#2A0F2E","#fff"],["क्या बवाल!”",120,66,7,"rozha","#E3F13A","#5B1E7A","c",-4]],
+  sub:"My heart says, \"Let it go, what's the fuss!\"", ly:"दिल बोले, \"छोड़ ना, क्या बवाल!\"", en:"My heart says, \"Let it go, what's the fuss!\"",
+  a:"The lights swap. Ref 2's face lights up on the right and blows a bubblegum bubble. The aunty on the left goes dark.",
   cam:"A whip pan from left to right.", tx:"\"क्या बवाल!\" bounces in the way a bubble pops."},
- {t:"0:30–0:34",s:"pre",ref:"Ref 3 · vector",st:"",bg:"#2F5BEA",
-  p:[["girl",8,8,60,82],["paper",62,14,30,36,30],["paper",80,30,24,30,60],["cal",118,24,30,34,8]],
-  x:[["कल की टेंशन",100,16,6.6,"baloo","#FFF3C4","#5B1E7A","c"],["कल पे डाली",132,68,6,"yatra","#F5C82E","#2A0F2E","c"]],
-  sub:"Dumped tomorrow's tension on tomorrow",
-  ly:"कल की टेंशन कल पे डाली", en:"Dumped tomorrow's tension on tomorrow",
-  a:"She throws a stack of to-do lists over her shoulder and they land on a calendar page marked \"tomorrow\".",
-  cam:"The camera follows the papers' arc from left to right.", tx:"The papers carry the first half of the line. The second half lands with the calendar."},
- {t:"0:34–0:38",s:"pre",ref:"Ref 2 · Y2K",st:"y2k",bg:"#8F6BF0",
-  p:[["phone",58,4,44,82],["girl",68,18,24,34]],
-  x:[["आज की",30,42,7.6,"baloo","#FFF3C4","#2A0F2E","c"],["मैंने",30,60,7.6,"baloo","#FFF3C4","#2A0F2E","c"],["रील",130,38,10,"rozha","#E6F542","#2A0F2E","c"],["बना ली",130,60,7.6,"baloo","#FFF3C4","#2A0F2E","c"]],
-  sub:"And made today into a reel",
-  ly:"आज की मैंने रील बना ली", en:"And made today into a reel",
-  a:"A vertical phone screen pops up in the middle of the wide frame with a red REC dot. She poses inside it and hearts float up.",
+ {t:"0:30–0:34",s:"pre",ref:"Ref 4",st:"folk",bg:"#E3C69B",
+  im:[[4,4,0,45,100,"cover","50% 50%"]],
+  x:[["कल की टेंशन",116,30,6,"baloo","#2E4FA8","#fff"],["कल पे डाली",116,52,7,"yatra","#D7263D","#2A0F2E"]],
+  sub:"Dumped tomorrow's tension on tomorrow", ly:"कल की टेंशन कल पे डाली", en:"Dumped tomorrow's tension on tomorrow",
+  a:"Ref 4 in full: the two women whispering. The joke is that she's gossiping her worries off to tomorrow.",
+  cam:"A slow push toward the whisper.", tx:"The second half of the line slides in like it's being whispered."},
+ {t:"0:34–0:38",s:"pre",ref:"Ref 2",st:"y2k",bg:"#9860FF",
+  im:[[2,41,6,18,88,"cover","45% 25%","border-radius:2cqw;box-shadow:0 0 0 1.1cqw #151018,1.4cqw 1.4cqw 0 1.1cqw rgba(30,8,30,.35)"]],
+  h:'<div class="rec" style="left:53%;top:10%">REC</div>',
+  x:[["आज की",32,42,7.4,"baloo","#FFF3C4","#2A0F2E"],["मैंने",32,60,7.4,"baloo","#FFF3C4","#2A0F2E"],["रील",128,38,10,"rozha","#E3F13A","#2A0F2E"],["बना ली",128,60,7.4,"baloo","#FFF3C4","#2A0F2E"]],
+  sub:"And made today into a reel", ly:"आज की मैंने रील बना ली", en:"And made today into a reel",
+  a:"Ref 2's full pose appears inside a vertical phone screen in the middle of the wide frame, with a red REC dot.",
   cam:"The phone zooms in from the centre of the frame.", tx:"The text sits on both sides of the phone, as if the reel's caption had spilled out."},
- {t:"0:38–0:40",s:"drop",ref:"Ref 1 · halftone",st:"halftone",bg:"#1B0F1F",
-  p:[["nimbu",62,-6,36,70,6]],
-  x:[],sub:"",
-  ly:"(instrumental break)", en:"",
-  a:"Blackout. A nimbu-mirchi charm drops in on its string and swings.",
+ {t:"0:38–0:40",s:"drop",ref:"Ref 1",st:"halftone",bg:"#1B0F1F",
+  im:[[1,34,0,32,100,"260%","48% 30%"]],
+  x:[], sub:"", ly:"(instrumental break)", en:"",
+  a:"Blackout, then ref 1's nimbu-mirchi charm drops in on its string and swings.",
   cam:"A drop with a bounce, then a white flash on the downbeat.", tx:"No text, to give the eyes a beat of rest before the chorus."},
- {t:"0:40–0:44",s:"ch",ref:"Ref 1 · halftone",st:"halftone",bg:"#F5A21B",
-  p:[["nimbu",58,6,44,80]],
-  x:[["मेरी तो",30,26,6.4,"baloo","#D7263D","#5B1E7A","c"],["अलग है,",30,46,8.4,"baloo","#D7263D","#5B1E7A","c"],["अलग है,",130,30,8.4,"rozha","#E2338E","#5B1E7A","c"],["अलग!",130,58,10,"yatra","#D7263D","#5B1E7A","c"]],
-  sub:"Mine's different, different, different!",
-  ly:"मेरी तो अलग है, अलग है, अलग!", en:"Mine's different, different, different!",
-  a:"A poster frame based on ref 1, with a halftone print texture and a magenta border. The nimbu-mirchi is in the centre and each \"अलग\" slams in around it.",
+ {t:"0:40–0:44",s:"ch",ref:"Ref 1",st:"halftone",bg:"#E58D0F",
+  im:[[1,32,10,36,80,"cover","50% 50%",PANEL]],
+  x:[["मेरी तो",34,26,6,"baloo","#D7263D","#5B1E7A"],["अलग है,",34,44,7.4,"baloo","#D7263D","#5B1E7A"],["अलग है,",126,28,7.4,"rozha","#D21D6C","#5B1E7A"],["अलग!",126,58,9,"yatra","#D7263D","#5B1E7A"]],
+  sub:"Mine's different, different, different!", ly:"मेरी तो अलग है, अलग है, अलग!", en:"Mine's different, different, different!",
+  a:"Ref 1's \"no buri nazar\" poster sits in the centre like a framed print. Each \"अलग\" slams in around it.",
   cam:"A screen shake on each \"alag\".", tx:"Each \"अलग\" appears in a different font and colour: Baloo, then Rozha, then Yatra."},
- {t:"0:44–0:48",s:"ch",ref:"Ref 3 · vector",st:"",bg:"#2F5BEA",
-  p:[["swirl",0,40,160,50],["girl",46,4,68,86],["star",120,12,8,8],["star",30,20,6,6]],
-  x:[["सीधी सी शकल,",30,20,5.4,"baloo","#FFF3C4","#2A0F2E","c"],["पर दिमाग में",128,48,5.4,"baloo","#FFF3C4","#2A0F2E","c"],["लफड़ा!",128,64,10,"rozha","#F5C82E","#D7263D","c",-6]],
-  sub:"Innocent face, but chaos in my head!",
-  ly:"सीधी सी शकल, पर दिमाग में लफड़ा!", en:"Innocent face, but chaos in my head!",
-  a:"Bold vector style. A calm, innocent close-up, then the top of her head pops open like a tiffin box and chaos spills out: tangled earphones, chillies, phones and notifications.",
-  cam:"A slow push, then a fast pull-out when the chaos bursts.", tx:"\"लफड़ा\" wobbles like jelly."},
- {t:"0:48–0:51",s:"ch",ref:"Ref 3 · vector",st:"",bg:"#8F6BF0",
-  p:[["cloud",4,4,44,30],["cloud",112,8,46,30],["girl",54,10,56,80]],
-  x:[["थोड़ी सी क्रेज़ी,",30,62,5.8,"baloo","#FFF3C4","#2A0F2E","c",-4],["थोड़ी नवाबी",132,62,6.6,"yatra","#F5C82E","#5B1E7A","c"]],
-  sub:"A little crazy, a little royal",
-  ly:"थोड़ी सी क्रेज़ी, थोड़ी नवाबी", en:"A little crazy, a little royal",
-  a:"Violet clouds. She does a goofy cross-eyed face, then switches to a regal pose with a hand fan.",
-  cam:"A hard cut between the two expressions, right on the comma.", tx:"\"क्रेज़ी\" is tilted. \"नवाबी\" sits level in gold, like a nameplate."},
- {t:"0:51–0:55",s:"ch",ref:"Ref 3 · vector",st:"",bg:"#D7263D",
-  p:[["chhatri",8,8,26,30],["eye",136,52,18,22],["girl",90,14,60,76],["crown",106,0,28,22]],
-  x:[["ख़ुद की ही दुनिया की",46,50,4.8,"baloo","#FFF3C4","#2A0F2E","c"],["मैं महारानी!",46,66,8,"yatra","#F5C82E","#5B1E7A","c"]],
-  sub:"I'm the queen of my own world!",
-  ly:"ख़ुद की ही दुनिया की मैं महारानी!", en:"I'm the queen of my own world!",
-  a:"Crowned on a throne made from a red plastic chair with gold trim. Inset panels like ref 3 show a chhatri (a domed pavilion) and a close-up of her eye.",
-  cam:"A slow tilt up to the crown, with sparkles.", tx:"\"महारानी\" gets a gold-foil shine that sweeps across it."},
- {t:"0:55–0:58",s:"ch",ref:"All refs · style cycle",st:"halftone",bg:"linear-gradient(90deg,#F5A21B 25%,#F7A1C4 25% 50%,#2F5BEA 50% 75%,#D9C7A0 75%)",
-  p:[["girl",4,20,34,60],["girl",44,20,34,60],["girl",84,20,34,60],["girl",124,20,34,60]],
-  x:[["अलग",20,16,7,"baloo","#D7263D","#2A0F2E","c"],["अलग",60,16,7,"rozha","#E2338E","#fff","c"],["अलग",100,16,7,"yatra","#F5C82E","#2A0F2E","c"],["अलग",140,16,7,"kalam","#2A0F2E",null,"c"]],
-  sub:"Different, different, different!",
-  ly:"अलग है, अलग है, अलग! / सीधी सी शकल…", en:"Chorus repeat",
-  a:"The style switch: the same pose redrawn in the halftone, Y2K, vector and folk styles, cutting on every beat. The storyboard shows the four together; in the edit they play full-frame one after another.",
-  cam:"One cut per beat.", tx:"The font of \"अलग\" changes with each style."},
- {t:"0:58–1:02",s:"v2",ref:"Ref 5 · flat",st:"",bg:"#1F9D55",
-  p:[["wallet",8,30,40,46],["card",58,14,22,40,-18],["card",74,10,22,40,-6],["card",90,10,22,40,6],["card",106,14,22,40,18]],
-  x:[["पैसे कम,",28,22,5.4,"baloo","#FFF3C4","#2A0F2E","c"],["पर प्लान्स हैं चार",100,66,7.4,"rozha","#F5C82E","#2A0F2E","c"]],
-  sub:"Little money, but four plans",
-  ly:"पैसे कम, पर प्लान्स हैं चार", en:"Little money, but four plans",
-  a:"Her wallet opens and a moth flies out. Then four plan cards fan out like a winning hand of cards.",
-  cam:"A small push on the wallet, then the cards snap open.", tx:"\"पैसे कम\" is small and sad. \"प्लान्स हैं चार\" is big and confident."},
- {t:"1:02–1:06",s:"v2",ref:"Ref 3 · vector",st:"",bg:"#9CC3F5",
-  p:[["pc-city",8,16,58,46,-6],["pc-hill",94,24,58,46,5],["girl",58,30,40,60]],
-  x:[["एक दिन लंदन,",36,14,5.6,"baloo","#D7263D","#fff","c"],["एक दिन पहाड़",124,16,5.6,"baloo","#1F9D55","#fff","c"]],
-  sub:"One day London, one day the mountains",
-  ly:"एक दिन लंदन, एक दिन पहाड़", en:"One day London, one day the mountains",
-  a:"A scrapbook layout. She slaps a passport stamp onto a generic city postcard, then onto a mountain postcard.",
+ {t:"0:44–0:48",s:"ch",ref:"Ref 3",st:"",bg:"#255BDF",
+  im:[[3,50,0,50,100,"180%","55% 38%"]],
+  x:[["सीधी सी शकल,",46,22,5.4,"baloo","#FFF3C4","#2A0F2E"],["पर दिमाग में",46,40,5.4,"baloo","#FFF3C4","#2A0F2E"],["लफड़ा!",46,62,10,"rozha","#F5C82E","#D7263D","c",-6]],
+  sub:"Innocent face, but chaos in my head!", ly:"सीधी सी शकल, पर दिमाग में लफड़ा!", en:"Innocent face, but chaos in my head!",
+  a:"Ref 3's calm face. On \"lafda\", the cloud swirls behind her spin faster, as if her head is overflowing.",
+  cam:"A slow push, then a fast shake on \"lafda\".", tx:"\"लफड़ा\" wobbles like jelly."},
+ {t:"0:48–0:51",s:"ch",ref:"Ref 3",st:"",bg:"#9860FF",
+  im:[[3,60,10,36,80,"cover","50% 50%",PANEL]],
+  x:[["थोड़ी सी",52,18,6.4,"baloo","#FFF3C4","#2A0F2E"],["क्रेज़ी,",52,33,8,"rozha","#E3F13A","#2A0F2E","c",-6],["थोड़ी",52,50,6.4,"baloo","#FFF3C4","#2A0F2E"],["नवाबी",52,66,8,"yatra","#F5C82E","#5B1E7A"]],
+  sub:"A little crazy, a little royal", ly:"थोड़ी सी क्रेज़ी, थोड़ी नवाबी", en:"A little crazy, a little royal",
+  a:"Ref 3 in full as a framed portrait among violet clouds: the royal half of the line.",
+  cam:"A hard cut between two crops, right on the comma.", tx:"\"क्रेज़ी\" is tilted. \"नवाबी\" sits level in gold, like a nameplate."},
+ {t:"0:51–0:55",s:"ch",ref:"Ref 3",st:"",bg:"#E5332A",
+  im:[[3,50,0,50,100,"170%","50% 22%"],[3,6,6,16,32,"400%","96% 83%",PANEL]],
+  x:[["ख़ुद की ही",48,44,5.6,"baloo","#FFF3C4","#2A0F2E"],["दुनिया की",48,56,5.6,"baloo","#FFF3C4","#2A0F2E"],["मैं महारानी!",48,70,6,"yatra","#F5C82E","#5B1E7A"]],
+  sub:"I'm the queen of my own world!", ly:"ख़ुद की ही दुनिया की मैं महारानी!", en:"I'm the queen of my own world!",
+  a:"Ref 3 cropped on her gold maang tikka, nath and jewellery. Ref 3's chhatri inset pops in at the top left as her palace.",
+  cam:"A slow tilt up to her headpiece, with sparkles.", tx:"\"महारानी\" gets a gold-foil shine that sweeps across it."},
+ {t:"0:55–0:58",s:"ch",ref:"All five refs",st:"",bg:"#1B0F1F",
+  im:[[1,0,0,20,100,"cover","50% 50%"],[2,20,0,20,100,"cover","40% 30%"],[3,40,0,20,100,"cover","55% 40%"],[4,60,0,20,100,"cover","50% 45%"],[5,80,0,20,100,"cover","45% 70%"]],
+  x:[["अलग",16,16,6,"baloo","#D7263D","#2A0F2E"],["अलग",48,16,6,"rozha","#D21D6C","#fff"],["अलग",80,16,6,"yatra","#F5C82E","#2A0F2E"],["अलग",112,16,6,"kalam","#2A0F2E"],["अलग",144,16,6,"baloo","#E3F13A","#2A0F2E"]],
+  sub:"Different, different, different!", ly:"अलग है, अलग है, अलग! / सीधी सी शकल…", en:"Chorus repeat",
+  a:"The style switch: one reference per beat, full-frame. The storyboard shows all five side by side; in the edit they play one after another.",
+  cam:"One cut per beat.", tx:"The font of \"अलग\" changes with each reference."},
+ {t:"0:58–1:02",s:"v2",ref:"Ref 5",st:"",bg:"#FE7318",
+  im:[[5,0,0,52,100,"150%","75% 80%"]],
+  x:[["पैसे कम,",116,24,6,"baloo","#FFF3C4","#2A0F2E"],["पर प्लान्स",116,44,6.4,"rozha","#E3F13A","#2A0F2E"],["हैं चार",116,62,8.4,"rozha","#E3F13A","#2A0F2E"]],
+  sub:"Little money, but four plans", ly:"पैसे कम, पर प्लान्स हैं चार", en:"Little money, but four plans",
+  a:"Ref 5 cropped on the gold bangles and rings: she has no money but is dripping in gold anyway.",
+  cam:"A small push on the bangles.", tx:"\"पैसे कम\" is small and sad. \"हैं चार\" is big and confident."},
+ {t:"1:02–1:06",s:"v2",ref:"Ref 3",st:"",bg:"#9CC3F5",
+  im:[[3,8,24,34,56,"380%","96% 83%","border:1cqw solid #fff;transform:rotate(-6deg);"+PANEL],[3,56,26,34,56,"260%","95% 6%","border:1cqw solid #fff;transform:rotate(5deg);"+PANEL]],
+  x:[["एक दिन लंदन,",40,12,5.4,"baloo","#D7263D","#fff"],["एक दिन पहाड़",116,12,5.4,"baloo","#1F9D55","#fff"]],
+  sub:"One day London, one day the mountains", ly:"एक दिन लंदन, एक दिन पहाड़", en:"One day London, one day the mountains",
+  a:"A scrapbook of two postcards cut from ref 3: the chhatri inset and the cloud sky. Each gets a passport stamp.",
   cam:"A pan from left to right across the scrapbook.", tx:"Each half of the line lands with its postcard."},
- {t:"1:06–1:10",s:"v2",ref:"Ref 2 · Y2K",st:"y2k",bg:"#F7A1C4",
-  p:[["chat",6,8,56,40],["hand",80,0,64,90,6]],
-  x:[["hey 🙂",22,24,4,"baloo","#2A0F2E",null,"l"],["एक्स का मैसेज?",38,58,6,"baloo","#2A0F2E","#fff","c"],["सीन पे छोड़",38,72,6.8,"rozha","#2F5BEA","#fff","c"]],
-  sub:"A message from my ex? Left on seen",
-  ly:"एक्स का मैसेज? सीन पे छोड़", en:"A message from my ex? Left on seen",
-  a:"A chat bubble arrives from her ex. She gives the ref 2 \"talk to the hand\" palm straight to the camera, and blue ticks appear. This is also the thumbnail pose.",
+ {t:"1:06–1:10",s:"v2",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
+  im:[[2,48,0,52,100,"200%","88% 12%"]],
+  h:'<div class="chat" style="left:8%;top:10%">hey 🙂 <span>✓✓</span></div>',
+  x:[["एक्स का मैसेज?",44,54,5.4,"baloo","#2A0F2E","#fff"],["सीन पे छोड़",44,68,7,"rozha","#2F5BEA","#fff"]],
+  sub:"A message from my ex? Left on seen", ly:"एक्स का मैसेज? सीन पे छोड़", en:"A message from my ex? Left on seen",
+  a:"Ref 2's mehendi palm, cropped huge: \"talk to the hand\" straight to the camera while the ex's message sits on blue ticks. This is also the thumbnail.",
   cam:"The palm pushes toward the lens.", tx:"\"सीन\" gets a blue double tick."},
- {t:"1:10–1:16",s:"v2",ref:"Ref 5 · flat",st:"",bg:"#FF7A1A",
-  p:[["cart",10,12,60,60],["hand",126,22,26,36,-20]],
-  x:[["स्विगी पे कार्ट में",104,16,5.4,"baloo","#FFF3C4","#2A0F2E","c"],["दस चीज़ें और!",108,66,7.2,"rozha","#E6F542","#2A0F2E","c"],["10",68,20,6,"baloo","#fff","#D7263D","c"]],
-  sub:"Ten more things in the food-app cart!",
-  ly:"स्विगी पे कार्ट में दस चीज़ें और!", en:"Ten more things in the food-app cart!",
-  a:"A generic food-delivery cart with no real logo. Her finger keeps tapping \"add\" and items pile up until the cart overflows.",
-  cam:"Static. Items drop in on the hi-hats.", tx:"A counter badge ticks from 1 to 10."},
- {t:"1:16–1:20",s:"v2",ref:"Ref 3 · vector",st:"",bg:"#E2338E",
-  p:[["mirror",88,6,56,78],["girl",96,18,40,56],["girl",18,30,52,60]],
-  x:[["मिरर में बोली,",44,14,5.4,"baloo","#FFF3C4","#5B1E7A","c"],["“तू है कमाल”",44,28,7,"yatra","#F5C82E","#5B1E7A","c"]],
-  sub:"Told the mirror, \"You're amazing\"",
-  ly:"मिरर में बोली, \"तू है कमाल\"", en:"Told the mirror, \"You're amazing\"",
-  a:"She points at an ornate gold mirror, and her reflection blows a kiss back. The music dips here, so this is the soft, confident moment.",
+ {t:"1:10–1:16",s:"v2",ref:"Ref 5",st:"",bg:"#FE7318",
+  im:[[5,0,0,50,100,"160%","15% 55%"]],
+  x:[["स्विगी पे",116,20,6,"baloo","#FFF3C4","#2A0F2E"],["कार्ट में",116,36,6,"baloo","#FFF3C4","#2A0F2E"],["दस चीज़ें और!",116,60,5.8,"rozha","#E3F13A","#2A0F2E"]],
+  sub:"Ten more things in the food-app cart!", ly:"स्विगी पे कार्ट में दस चीज़ें और!", en:"Ten more things in the food-app cart!",
+  a:"Ref 5 cropped on the pointing finger and neon nail, tapping \"add\" again and again on a generic food-app screen (no real logo).",
+  cam:"Static. A tap lands on every hi-hat.", tx:"A counter badge ticks from 1 to 10 beside the text."},
+ {t:"1:16–1:20",s:"v2",ref:"Ref 2",st:"y2k",bg:"#E2338E",
+  im:[[2,4,8,36,84,"230%","40% 17%",PANEL],[2,58,6,32,88,"230%","40% 17%","transform:scaleX(-1);border-radius:50%;box-shadow:0 0 0 1.4cqw #F2C230,1cqw 1cqw 0 1.4cqw rgba(30,8,30,.35)"]],
+  x:[["मिरर में बोली,",80,12,5,"baloo","#FFF3C4","#5B1E7A"],["“तू है कमाल”",80,70,6.6,"yatra","#F5C82E","#5B1E7A"]],
+  sub:"Told the mirror, \"You're amazing\"", ly:"मिरर में बोली, \"तू है कमाल\"", en:"Told the mirror, \"You're amazing\"",
+  a:"Ref 2's face on the left, and the same face flipped inside a gold oval mirror on the right. Her reflection blows a kiss back.",
   cam:"Over the shoulder into the mirror.", tx:"\"कमाल\" sparkles once."},
- {t:"1:20–1:24",s:"v2",ref:"Ref 5 · flat",st:"",bg:"#2E4FA8",
-  p:[["door",6,10,42,80],["girl",14,26,30,64],["rain",0,0,160,90]],
-  x:[["बाहर निकली तो",110,26,6,"baloo","#FFF3C4","#1B0F1F","c"],["बारिश का बवाल",110,52,8,"rozha","#9FE3FF","#1B0F1F","c"]],
-  sub:"Stepped outside into a rainstorm",
-  ly:"बाहर निकली तो बारिश का बवाल", en:"Stepped outside into a rainstorm",
-  a:"She struts out the door and gets drenched instantly. Her hair puffs up and her heart sunglasses fog over.",
+ {t:"1:20–1:24",s:"v2",ref:"Ref 3",st:"",bg:"#2E4FA8",
+  im:[[3,0,0,50,100,"170%","55% 38%","filter:saturate(.6) hue-rotate(-15deg) brightness(.85)"]],
+  h:'<div class="rain"></div>',
+  x:[["बाहर निकली तो",116,30,5.2,"baloo","#FFF3C4","#1B0F1F"],["बारिश का बवाल",114,50,5.4,"rozha","#DFF4FF","#1B0F1F"]],
+  sub:"Stepped outside into a rainstorm", ly:"बाहर निकली तो बारिश का बवाल", en:"Stepped outside into a rainstorm",
+  a:"Ref 3's face, colours washed out and cooled, with rain streaking across the whole frame. Her look turns from proud to drenched.",
   cam:"Strut in slow motion, then snap to normal speed when the rain hits.", tx:"\"बवाल\" melts and drips down the frame."},
- {t:"1:24–1:28",s:"v2",ref:"All refs · collage",st:"halftone",bg:"#5B1E7A",
-  p:[["spot",44,0,72,90],["comedian",18,18,48,44],["girl",86,16,54,74],["chhatri",6,8,18,20],["star",70,10,6,6]],
-  x:[["किस्मत मेरी",40,64,5.4,"baloo","#FFF3C4","#2A0F2E","c"],["फ़ुल-टाइम कॉमेडियन",40,74,4.6,"baloo","#F5C82E","#2A0F2E","c"],["को-क्रिएटर!",116,16,7.4,"rozha","#E6F542","#D7263D","c",-4]],
-  sub:"Fate's a comedian, and I co-write the jokes",
-  ly:"किस्मत मेरी फ़ुल-टाइम कॉमेडियन / मैं भी हूँ थोड़ी उसकी को-क्रिएटर!", en:"My luck is a full-time comedian, and I'm a bit of its co-creator!",
-  a:"Fate is a cloud doing stand-up under a spotlight. She grabs the mic and laughs along. The background becomes the climax collage of every style used so far.",
+ {t:"1:24–1:28",s:"v2",ref:"All five refs",st:"halftone",bg:"#5B1E7A",
+  im:[[1,4,10,20,46,"cover","50% 50%","transform:rotate(-6deg);"+PANEL],[3,38,6,22,56,"cover","55% 40%","transform:rotate(-2deg);"+PANEL],[2,20,42,18,48,"cover","40% 30%","transform:rotate(5deg);"+PANEL],[4,62,10,20,48,"cover","50% 45%","transform:rotate(4deg);"+PANEL],[5,82,34,14,58,"cover","50% 70%","transform:rotate(-5deg);"+PANEL]],
+  x:[["को-क्रिएटर!",80,16,7.4,"rozha","#E3F13A","#D7263D","c",-4],["किस्मत मेरी",80,54,5.4,"baloo","#FFF3C4","#2A0F2E"],["फ़ुल-टाइम कॉमेडियन",80,68,5,"baloo","#F5C82E","#2A0F2E"]],
+  sub:"Fate's a comedian, and I co-write the jokes", ly:"किस्मत मेरी फ़ुल-टाइम कॉमेडियन / मैं भी हूँ थोड़ी उसकी को-क्रिएटर!", en:"My luck is a full-time comedian, and I'm a bit of its co-creator!",
+  a:"The climax collage: all five references pasted together like a zine spread, each one slapped on with the beat.",
   cam:"Fast cuts with a zoom out to reveal the collage.", tx:"\"को-क्रिएटर\" lands as a big signboard word."},
- {t:"1:28–1:31",s:"out",ref:"Ref 4 → Ref 5 · loop",st:"folk",bg:"#D9C7A0",
-  p:[["note",10,10,64,64,-4],["stamp",28,30,52,40,-12],["bed",100,40,56,46],["girl",110,38,22,26,-80]],
-  x:[["सुधरने का प्लान",40,24,4.6,"kalam","#2A0F2E",null,"c",-4],["कैंसल",56,50,9,"rozha","#D7263D",null,"c",-12],["कल मिलते हैं।",128,18,6,"kalam","#2A0F2E",null,"c"]],
-  sub:"Self-improvement plan: cancelled. See you tomorrow.",
-  ly:"सुधरने का प्लान कैंसल। कल मिलते हैं।", en:"Spoken: \"Self-improvement plan cancelled. See you tomorrow.\"",
-  a:"A red rubber stamp cancels the note from shot 1. Cut to her asleep in bed again, which loops back to the opening for YouTube replays.",
-  cam:"The stamp slams with a frame shake, then a slow fade.", tx:"\"कैंसल\" stamps in red ink. The end card \"कल मिलते हैं\" is handwritten."}
+ {t:"1:28–1:31",s:"out",ref:"Ref 1 + Ref 4",st:"folk",bg:"#E3C69B",
+  im:[[1,8,10,36,80,"cover","50% 50%",PANEL]],
+  h:'<div class="stamp" style="left:26%;top:50%">कैंसल</div>',
+  x:[["सुधरने का प्लान",112,30,5.4,"kalam","#2A0F2E"],["कल मिलते हैं।",112,52,6,"kalam","#2A0F2E"]],
+  sub:"Self-improvement plan: cancelled. See you tomorrow.", ly:"सुधरने का प्लान कैंसल। कल मिलते हैं।", en:"Spoken: \"Self-improvement plan cancelled. See you tomorrow.\"",
+  a:"Ref 1's poster on ref 4's khadi paper. A red rubber stamp slams \"कैंसल\" across it, then cut back to shot 1 so the video loops.",
+  cam:"The stamp slams with a frame shake, then a slow fade.", tx:"\"कैंसल\" stamps in red ink. \"कल मिलते हैं\" is handwritten."}
 ];
 
 const toPct = (v,max)=> (v/max*100).toFixed(2)+"%";
-function art(p){
-  return `<svg class="art" viewBox="0 0 160 90" preserveAspectRatio="none" aria-hidden="true">${
-    p.map(([id,x,y,w,h,r=0])=>`<g transform="rotate(${r} ${x+w/2} ${y+h/2})"><use href="#${id}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/></g>`).join("")}</svg>`;
+function layer([r,x,y,w,h,size,pos,extra=""]){
+  return `<div class="layer" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%;background-image:url(refs/${r}.jpg);background-size:${size};background-position:${pos};${extra}"></div>`;
 }
 function text([t,x,y,sz,f,c,sh,al="c",r=0]){
   const tr = al==="c"?"-50%":al==="r"?"-100%":"0";
@@ -543,10 +342,11 @@ document.getElementById("map").innerHTML = MAP.map(([k,a,b])=>{
   return `<div style="flex:${b-a};background:${SEC[k].c}" title="${SEC[k].n} ${f(a)}–${f(b)}"><b>${SEC[k].n}</b><span>${f(a)}</span></div>`;
 }).join("");
 document.getElementById("sw").innerHTML = PAL.map(([c,n])=>`<div class="sw"><i style="background:${c}"></i>${n}</div>`).join("");
+document.getElementById("refs").innerHTML = REFS.map(([n,name,use])=>`<figure><img src="refs/${n}.jpg" alt="Reference ${n}: ${name}"><figcaption><b>Ref ${n}</b> ${name}<span>${use}</span></figcaption></figure>`).join("");
 document.getElementById("board").innerHTML = S.map((s,i)=>`
   <article class="shot">
     <div class="frame ${s.st}" style="background:${s.bg}">
-      ${art(s.p)}<div class="ht"></div>
+      ${s.im.map(layer).join("")}<div class="ht"></div>${s.h||""}
       ${s.x.map(text).join("")}
       ${s.sub?`<div class="sub">${s.sub}</div>`:""}
       <div class="safe"></div><div class="no">${String(i+1).padStart(2,"0")}</div>
