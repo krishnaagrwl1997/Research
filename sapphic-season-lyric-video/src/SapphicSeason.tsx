@@ -4,7 +4,9 @@ import { HAND, SANS, SERIF } from './fonts';
 import { DURATION, LINES, SECTIONS, Line, sectionAt, pulse } from './data';
 import { Background } from './components/Background';
 import { Hearts, Leaves } from './components/Particles';
-import { LyricLine } from './components/LyricLine';
+import { Kinetic } from './components/Kinetic';
+import { Wipe } from './components/Wipe';
+import { Mascot } from './components/Mascot';
 import { Phone } from './components/Phone';
 import { Letter } from './components/Letter';
 import { CREAM, SUNSET } from './theme';
@@ -36,15 +38,17 @@ export const SapphicSeason: React.FC = () => {
       <Leaves t={t} section={section} />
       <Hearts t={t} section={section} />
 
-      {section === intro && <TitleBlock t={t} out={intro.end} />}
+      {section === intro && <TitleBlock t={t} out={intro.end} fps={fps} />}
       {section === intro && <Phone t={t} fps={fps} lines={intro.lines.map((i) => LINES[i])} show={[0.1, intro.end]} header="voice note to the group chat" />}
       {section === outro && <Phone t={t} fps={fps} lines={outro.lines.map((i) => LINES[i])} show={[outro.start, DURATION - 1.6]} header="the group chat" />}
       {section === outro && <EndCard t={t} />}
       {section === bridge && <Letter t={t} lines={bridge.lines.map((i) => LINES[i])} end={bridge.end} />}
 
       {singing.map((l) =>
-        isTextPop(l) ? <TextPop key={l.start} line={l} t={t} fps={fps} /> : <LyricLine key={l.start} line={l} t={t} kind={section.kind} shout={isShout(l)} />,
+        isTextPop(l) ? <TextPop key={l.start} line={l} t={t} fps={fps} /> : <Kinetic key={l.start} line={l} t={t} kind={section.kind} fps={fps} shout={isShout(l)} />,
       )}
+
+      <Mascot t={t} section={section} line={LINES.find((l) => t >= l.start && t < l.end)} />
 
       {!onPhone && <SectionTag t={t} />}
       {!onPhone && (
@@ -52,6 +56,7 @@ export const SapphicSeason: React.FC = () => {
           Sapphic Season
         </div>
       )}
+      <Wipe t={t} />
     </AbsoluteFill>
   );
 };
@@ -72,28 +77,37 @@ const SectionTag: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-const GradientTitle: React.FC<{ size: number; style?: React.CSSProperties }> = ({ size, style }) => (
-  <div
-    style={{
-      fontFamily: SERIF, fontWeight: 900, fontStyle: 'italic', fontSize: size, lineHeight: 0.92, letterSpacing: -2,
-      fontVariationSettings: '"SOFT" 100, "WONK" 1',
-      background: `linear-gradient(100deg, ${SUNSET[0]}, ${SUNSET[1]} 25%, ${SUNSET[2]} 45%, ${SUNSET[4]} 70%, ${SUNSET[6]})`,
-      WebkitBackgroundClip: 'text', color: 'transparent', filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.45))', ...style,
-    }}
-  >
-    Sapphic
-    <br />
-    Season
-  </div>
-);
+const BouncyTitle: React.FC<{ size: number; t: number; fps: number; from: number; style?: React.CSSProperties }> = ({ size, t, fps, from, style }) => {
+  let k = 0;
+  return (
+    <div style={{ fontFamily: SERIF, fontWeight: 900, fontStyle: 'italic', fontSize: size, lineHeight: 0.95, letterSpacing: -2,
+      fontVariationSettings: '"SOFT" 100, "WONK" 1', ...style }}>
+      {['Sapphic', 'Season'].map((word, r) => (
+        <div key={word} style={{ marginLeft: r ? size * 0.35 : 0 }}>
+          {word.split('').map((ch) => {
+            const i = k++;
+            const s = spring({ frame: Math.round((t - from - i * 0.05) * fps), fps, config: { damping: 10, stiffness: 170 } });
+            return (
+              <span key={i} style={{ display: 'inline-block', color: SUNSET[[0, 1, 2, 4, 5, 6][i % 6]], opacity: Math.min(1, s * 2),
+                transform: `translateY(${(1 - s) * size * 0.6}px) rotate(${(1 - s) * (i % 2 ? 20 : -20)}deg)`,
+                WebkitTextStroke: `${size * 0.03}px #2A0A22`, paintOrder: 'stroke fill', textShadow: `${size * 0.04}px ${size * 0.05}px 0 #2A0A22` }}>
+                {ch}
+              </span>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+};
 
-const TitleBlock: React.FC<{ t: number; out: number }> = ({ t, out }) => {
+const TitleBlock: React.FC<{ t: number; out: number; fps: number }> = ({ t, out, fps }) => {
   const a = interpolate(t, [0, 1.2], [0, 1], { ...clamp, easing: ease });
   const o = interpolate(t, [out - 0.8, out], [0, 1], clamp);
   return (
     <div style={{ position: 'absolute', left: 170, top: 250, opacity: a * (1 - o), transform: `translateY(${(1 - a) * 40 - o * 40}px)` }}>
       <div style={{ fontFamily: SANS, fontWeight: 700, letterSpacing: 6, fontSize: 24, color: '#FFB98A', marginBottom: 28 }}>A LYRIC VIDEO</div>
-      <GradientTitle size={220} />
+      <BouncyTitle size={210} t={t} fps={fps} from={0.2} />
       <div style={{ fontFamily: HAND, fontWeight: 600, fontSize: 52, color: '#FFD1E8', marginTop: 34, transform: 'rotate(-3deg)' }}>
         {ARTIST}
       </div>
@@ -103,7 +117,6 @@ const TitleBlock: React.FC<{ t: number; out: number }> = ({ t, out }) => {
 
 const EndCard: React.FC<{ t: number }> = ({ t }) => {
   const a = interpolate(t, [DURATION - 1.5, DURATION - 0.6], [0, 1], { ...clamp, easing: ease });
-  const left = interpolate(t, [DURATION - 1.5, DURATION - 0.6], [170, 0], { ...clamp, easing: ease });
   return (
     <>
       <div style={{ position: 'absolute', left: 170, top: 300, opacity: interpolate(t, [SECTIONS[SECTIONS.length - 1].start, SECTIONS[SECTIONS.length - 1].start + 1], [0, 1], clamp) * (1 - a) }}>
@@ -114,7 +127,7 @@ const EndCard: React.FC<{ t: number }> = ({ t }) => {
         </div>
       </div>
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center', opacity: a, background: `rgba(20,10,31,${0.75 * a})` }}>
-        <GradientTitle size={200} style={{ textAlign: 'center', transform: `translateX(${left * 0}px) scale(${0.9 + 0.1 * a})` }} />
+        <BouncyTitle size={190} t={t} fps={30} from={DURATION - 1.5} style={{ textAlign: 'center' }} />
         <div style={{ fontFamily: HAND, fontWeight: 600, fontSize: 48, color: '#FFD1E8', marginTop: 24 }}>{ARTIST}</div>
       </AbsoluteFill>
     </>

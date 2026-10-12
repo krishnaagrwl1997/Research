@@ -57,7 +57,8 @@ const Sunburst: React.FC<{ t: number }> = ({ t }) => (
 export const Background: React.FC<{ t: number; section: Section }> = ({ t, section }) => {
   const idx = SECTIONS.indexOf(section);
   const prev = SECTIONS[idx - 1];
-  const fade = interpolate(t, [section.start, section.start + 0.8], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  // Hard swap at the section start; the Wipe overlay covers it.
+  const fade = t >= section.start ? 1 : 0;
   return (
     <AbsoluteFill>
       {prev && fade < 1 && <Layer kind={prev.kind} t={t} />}
