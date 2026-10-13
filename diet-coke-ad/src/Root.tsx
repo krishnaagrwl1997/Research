@@ -12,6 +12,7 @@ import React from 'react';
 import { Composition, continueRender, delayRender } from 'remotion';
 import { DietCokeAd } from './Ad';
 import { REEL_H, REEL_W, Reel } from './Reel';
+import { Cover } from './Cover';
 import { DURATION, FPS, H, W } from './lib';
 
 // Hold every frame until the bundled fonts are ready.
@@ -24,5 +25,6 @@ export const Root: React.FC = () => (
   <>
     <Composition id="DietCokeAd" component={DietCokeAd} durationInFrames={DURATION} fps={FPS} width={W} height={H} defaultProps={{ audio: true }} />
     <Composition id="Reel" component={Reel} durationInFrames={DURATION} fps={FPS} width={REEL_W} height={REEL_H} />
+    <Composition id="Cover" component={Cover} durationInFrames={1} fps={FPS} width={REEL_W} height={REEL_H} />
   </>
 );
