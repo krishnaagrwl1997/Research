@@ -77,7 +77,7 @@ const SectionTag: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-const BouncyTitle: React.FC<{ size: number; t: number; fps: number; from: number; style?: React.CSSProperties }> = ({ size, t, fps, from, style }) => {
+export const BouncyTitle: React.FC<{ size: number; t: number; fps: number; from: number; style?: React.CSSProperties }> = ({ size, t, fps, from, style }) => {
   let k = 0;
   return (
     <div style={{ fontFamily: SERIF, fontWeight: 900, fontStyle: 'italic', fontSize: size, lineHeight: 0.95, letterSpacing: -2,

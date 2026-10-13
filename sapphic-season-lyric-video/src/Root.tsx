@@ -1,10 +1,13 @@
 import { Composition } from 'remotion';
 import { SapphicSeason } from './SapphicSeason';
 import { FilmVideo } from './film/FilmVideo';
+import { Still } from 'remotion';
+import { Thumbnail } from './Thumbnail';
 import { DURATION, FPS } from './data';
 
 export const Root: React.FC = () => (
   <>
+  <Still id="Thumbnail" component={Thumbnail} width={1280} height={720} />
   <Composition
     id="SapphicSeasonFilm"
     component={FilmVideo}
