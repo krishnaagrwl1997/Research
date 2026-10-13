@@ -46,6 +46,18 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);padding-inl
 .badge .b2{font-size:11cqw;color:#D7263D;text-shadow:.7cqw .7cqw 0 #5B1E7A}
 .badge .b3{font-family:var(--f-body);font-weight:600;font-size:1.9cqw;letter-spacing:.2em;color:#2A0F2E;margin-top:1cqw}
 .badge .b3.f-kalam{font-family:var(--f-kalam);font-size:3.4cqw;letter-spacing:0}
+body.vert #stage{aspect-ratio:9/16;width:min(100%,420px)}
+body.vert .controls{width:min(100%,420px)}
+body.vert .tx{-webkit-text-stroke:.24cqw #2A0F2E}
+body.vert .card.sticker{outline-width:1.2cqw;box-shadow:2cqw 2cqw 0 1.2cqw rgba(30,8,30,.35)}
+body.vert .sub{bottom:21%;font-size:3.4cqw;white-space:normal;width:max-content;max-width:84%;text-align:center;padding:.5cqw 2cqw;border-radius:1cqw}
+body.vert .badge{width:74cqw;height:74cqw;top:40%}
+body.vert .badge .b1{font-size:9.5cqw}body.vert .badge .b2{font-size:18.5cqw;text-shadow:1.1cqw 1.1cqw 0 #5B1E7A}body.vert .badge .b3{font-size:3.2cqw}body.vert .badge .b3.f-kalam{font-size:5.6cqw}
+body.vert .stamp{font-size:12cqw}
+body.vert .chat{font-size:4.6cqw}body.vert .chat span{font-size:3.6cqw}
+body.vert .rec{font-size:2.6cqw}
+body.vert .w.chip{box-shadow:.9cqw .9cqw 0 rgba(0,0,0,.28)}
+body.vert .rain{background:repeating-linear-gradient(105deg,transparent 0 2.8cqw,rgba(220,235,255,.45) 2.8cqw 3.1cqw)}
 .controls{display:flex;gap:10px;align-items:center;width:min(100%,1100px);flex-wrap:wrap}
 .controls button{font:600 .95rem var(--f-body);padding:7px 18px;border-radius:99px;border:0;background:var(--accent);color:#1d0a1f;cursor:pointer}
 .controls button:focus-visible{outline:2px solid #fff;outline-offset:2px}
@@ -58,6 +70,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);padding-inl
 <div class="controls"><button type="button" id="play">▶ Play</button><input type="range" id="seek" min="0" max="91.2" step="0.01" value="0" aria-label="Position"><span id="time">0:00</span></div>
 <audio id="song" src="audio/meri-toh-alag-hai.mp3" preload="auto"></audio>
 <script>
+if(location.hash==="#vertical") document.body.classList.add("vert");
 const PANEL = "box-shadow:.8cqw .8cqw 0 rgba(30,8,30,.35)";
 const S = [
  {t:"0:00–0:02",s:"intro",ref:"Ref 2",st:"y2k",bg:"#F9A8C6",
@@ -268,8 +281,11 @@ const hash=(n)=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(
 const beatPos=t=>(t-GRID0)/B;
 const beatFrac=t=>{const b=beatPos(t);return b-Math.floor(b)};
 const kick=t=>Math.exp(-beatFrac(t)*7);          // 1 on the beat, decays
-const P=(v)=>(v/160*100).toFixed(3)+"%";           // x units -> %
-const PY=(v)=>(v/90*100).toFixed(3)+"%";           // y units -> %
+// Vertical (9:16 Reels) mode: open the page with #vertical
+const V = location.hash==="#vertical";
+const UW = V?90:160, UH = V?160:90, CQ = UW/100;   // frame units; 1cqw = CQ units
+const P=(v)=>(v/UW*100).toFixed(3)+"%";            // x units -> %
+const PY=(v)=>(v/UH*100).toFixed(3)+"%";           // y units -> %
 const lineAt=t=>{for(let i=LINES.length-1;i>=0;i--) if(t>=LINES[i].a) return i; return 0};
 
 /* ---------- confetti ---------- */
@@ -286,17 +302,39 @@ function confetti(t,n=16,kinds=KINDS){
   let h="", k=kick(t);
   for(let i=0;i<n;i++){
     const x=hash(i)*100+Math.sin(t*.35+i)*3, y=hash(i+40)*100+Math.cos(t*.3+i*1.7)*4;
-    const r=hash(i+80)*360+t*(hash(i+9)>.5?40:-40), sz=2.6+hash(i+20)*3.4, s=1+.35*k;
+    const r=hash(i+80)*360+t*(hash(i+9)>.5?40:-40), sz=(2.6+hash(i+20)*3.4)*(V?1.6:1), s=1+.35*k;
     h+=`<div class="cf" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;width:${sz.toFixed(2)}cqw;transform:rotate(${r.toFixed(1)}deg) scale(${s.toFixed(3)})">${MOTIFS[kinds[i%kinds.length]]}</div>`;
   }
   return `<div class="cfl">${h}</div>`;
 }
 
 /* ---------- image cards ---------- */
+const VCACHE={};
+function vLayers(sc){
+  if(VCACHE[sc]) return VCACHE[sc];
+  const im=S[sc].im, px=l=>[l[3]*19.2,l[4]*10.8];           // landscape size in px
+  const fit=(l,bx,by,bw,bh)=>{ const [pw,ph]=px(l), a=pw/ph, BW=bw*10.8, BH=bh*19.2; let w=Math.min(BW,BH*a), h=w/a; return [bx+(bw-w/10.8)/2, by+(bh-h/19.2)/2, w/10.8, h/19.2] };
+  const strips=im.every(l=>l[3]<=21&&l[4]>=99), full=im.length===1&&im[0][3]>=99&&im[0][4]>=99;
+  let out;
+  if(strips||full) out=im.map(l=>l.slice());
+  else if(im.length>=4) out=im.map(l=>{ const [pw,ph]=px(l), w=pw*.85/10.8, h=ph*.85/19.2, cx=8+(l[1]+l[3]/2)*.84, cy=8+(l[2]+l[4]/2)*.5; return [l[0],cx-w/2,cy-h/2,w,h,l[5],l[6],l[7]] });
+  else {
+    const area=l=>l[3]*l[4], main=im.reduce((m,l,j)=>area(l)>area(im[m])?j:m,0);
+    const pair = im.length===2 && area(im[1-main])>area(im[main])*.5;
+    out=im.map((l,j)=>{
+      let g;
+      if(pair) g=fit(l, j?50:4, 7, 46, 44);
+      else if(j===main) g=fit(l,7,6,86,46);
+      else g=fit(l, j%2?60:4, j%2?40:5, 34, 18);
+      return [l[0],...g,l[5],l[6],l[7]];
+    });
+  }
+  return VCACHE[sc]=out;
+}
 function cards(L,t,u,dur,next){
   const s=S[L.sc]; if(!s) return "";
   const k=kick(t), boil=`url(#boil${Math.floor(t*12)%6})`;
-  return s.im.map((l,j)=>{
+  return (V?vLayers(L.sc):s.im).map((l,j)=>{
     let [r,x,y,w,h,size,pos,extra=""]=l;
     // keep cards inside the frame so they read as collage stickers
     const full = w>=99 && h>=99; const strip = w<=21 && h>=99;
@@ -335,8 +373,14 @@ const ZONE={L:{cx:46,w:62,yc:40,base:7.6},R:{cx:114,w:62,yc:40,base:7.6},C:{cx:8
 const W_FACTOR=.5;
 function wrap(r,maxChars){ const out=[]; let cur=""; for(const w of r.split(" ")){ const n=cur?cur+" "+w:w; if(n.length>maxChars&&cur){out.push(cur);cur=w}else cur=n } if(cur) out.push(cur); return out }
 function rowsOf(txt,maxChars){ return txt.split(/(?<=[,?])\s+/).flatMap(r=>wrap(r,maxChars)) }
-const maxCharsFor=(w,base)=>Math.max(6,Math.floor(w/(W_FACTOR*1.6*base*.82)));
+const maxCharsFor=(w,base)=>Math.max(6,Math.floor(w/(W_FACTOR*CQ*base*.82)));
+const ZONE_V={D:{cx:42,w:70,yc:109,base:12.5},C:{cx:45,w:76,yc:80,base:13.5}};
 function layoutRows(L){
+  if(V){
+    const z=L.zone==="C"?ZONE_V.C:ZONE_V.D, rows=rowsOf(L.txt,maxCharsFor(z.w,z.base));
+    const sz=Math.min(z.base,...rows.map(r=>z.w/(r.length*W_FACTOR*CQ))), rh=sz*CQ*1.32, n=rows.length;
+    return rows.map((r,i)=>({r,cx:z.cx,y:z.yc+(i-(n-1)/2)*rh,sz}));
+  }
   const z=ZONE[L.zone], rows=rowsOf(L.txt, maxCharsFor(z.w||46, L.base||z.base));
   const out=[];
   if(L.zone==="LR"){
@@ -412,9 +456,9 @@ function textLayer(L,t,u,dur){
 }
 function steamPath(L,u){
   const right=L.zone==="R"; const x0=right?30:130, y0=60;
-  const d=`M${x0} ${y0} C ${x0+(right?12:-12)} 30, ${right?70:90} 22, ${right?96:64} 30 S ${right?132:28} 46, ${right?152:8} 20`;
+  const d=V?"M30 70 C 12 84, 30 96, 52 92 S 80 84, 70 100":`M${x0} ${y0} C ${x0+(right?12:-12)} 30, ${right?70:90} 22, ${right?96:64} 30 S ${right?132:28} 46, ${right?152:8} 20`;
   const draw=clamp(u/1.1), flow=(u*30)%20;
-  return `<svg class="steam" viewBox="0 0 160 90" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" pathLength="100" class="st1" style="stroke-dashoffset:${(100-100*eOutCubic(draw)).toFixed(2)}"/><path d="${d}" pathLength="100" class="st2" style="stroke-dashoffset:${(-flow).toFixed(2)};opacity:${draw.toFixed(2)}"/></svg>`;
+  return `<svg class="steam" viewBox="0 0 ${UW} ${UH}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" pathLength="100" class="st1" style="stroke-dashoffset:${(100-100*eOutCubic(draw)).toFixed(2)}"/><path d="${d}" pathLength="100" class="st2" style="stroke-dashoffset:${(-flow).toFixed(2)};opacity:${draw.toFixed(2)}"/></svg>`;
 }
 
 /* ---------- scene renderers ---------- */
@@ -430,10 +474,10 @@ function lineScene(i,t){
   body += `<div class="ht ${s.st}"></div>`;
   if(L.steam) body+=steamPath(L,u);
   if(L.sc===22) body+=`<div class="rain" style="background-position:${(-t*40).toFixed(1)}px ${(t*900).toFixed(1)}px"></div>`;
-  if(L.sc===19){ const p=clamp((u-.15)/.3); body+=`<div class="chat" style="left:8%;top:9%;transform:scale(${eOutBack(p).toFixed(3)}) rotate(-4deg)">hey 🙂 <span>✓✓</span></div>` }
+  if(L.sc===19){ const p=clamp((u-.15)/.3); body+=`<div class="chat" style="left:${V?6:8}%;top:${V?4:9}%;transform:scale(${eOutBack(p).toFixed(3)}) rotate(-4deg)">hey 🙂 <span>✓✓</span></div>` }
   if(L.sc===10) body+=`<div class="rec" style="left:53%;top:10%;opacity:${beatFrac(t)<.5?1:0}">REC</div>`;
   const T=textLayer(L,t,u,dur);
-  if(L.stamp){ const st=LINES[i].a+dur*.42, q=t-st; if(q>0){ const p=clamp(q/.22); body+=`<div class="stamp" style="left:27%;top:50%;transform:translate(-50%,-50%) rotate(-12deg) scale(${lerp(2.4,1,eOutBack(p)).toFixed(3)});opacity:${clamp(q/.08)}">कैंसल</div>`; T.shake+=Math.exp(-q*12)*1.5 } }
+  if(L.stamp){ const st=LINES[i].a+dur*.42, q=t-st; if(q>0){ const p=clamp(q/.22); body+=`<div class="stamp" style="left:${V?50:27}%;top:${V?32:50}%;transform:translate(-50%,-50%) rotate(-12deg) scale(${lerp(2.4,1,eOutBack(p)).toFixed(3)});opacity:${clamp(q/.08)}">कैंसल</div>`; T.shake+=Math.exp(-q*12)*1.5 } }
   return {bg, body:body+T.html, shake:T.shake, sub:L.en, u, L};
 }
 const CROPS=[[1,"cover","50% 50%"],[5,"170%","40% 70%"],[2,"190%","45% 22%"],[3,"170%","55% 38%"],[4,"190%","25% 42%"],[2,"200%","85% 12%"],[3,"300%","95% 8%"],[1,"240%","48% 30%"],[5,"150%","70% 85%"],[4,"190%","75% 42%"],[3,"160%","50% 20%"],[2,"cover","50% 50%"]];
